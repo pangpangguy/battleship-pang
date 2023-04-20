@@ -1,0 +1,9 @@
+.board {
+  display: grid;
+  grid-template-columns: repeat(11, auto);
+  gap: 1px;
+  padding: 2rem;
+  border: 1px solid black;
+  border-radius: 15px;
+  background-color: rgb(221, 221, 243);
+}

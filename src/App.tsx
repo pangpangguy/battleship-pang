@@ -1,11 +1,13 @@
 import "./App.css";
+import Board from "./components/board";
 
 function App() {
   return (
     <div className="App">
-      <h1>Battleship App</h1>
-      <div className="card">
-        <p>Example text</p>
+      <h2>Place your ships on the board:</h2>
+      <Board />
+      <div>
+        <p>Example placeholder text</p>
       </div>
     </div>
   );

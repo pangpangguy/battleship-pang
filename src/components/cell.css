@@ -9,3 +9,8 @@
   font-size: 1.5rem;
   border-color: transparent;
 }
+
+.shipCell {
+  background-color: rgb(121, 211, 121);
+  display: inline-block;
+}

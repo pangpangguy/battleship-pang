@@ -1,0 +1,23 @@
+.ship-placement {
+  display: flex;
+  background-color: blanchedalmond;
+  justify-content: space-around;
+  align-items: center;
+  border-radius: 15px;
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid black;
+}
+.ships {
+  display: grid;
+  width: auto;
+  grid-template-columns: auto;
+  grid-template-rows: auto auto auto auto auto;
+  gap: 0.5rem;
+}
+
+.startGame {
+  background-color: red;
+  height: 3em;
+  font-size: 1em;
+}

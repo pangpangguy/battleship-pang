@@ -1,10 +1,11 @@
+import { ReactElement } from "react";
 import "./board.css";
 import Cell from "./cell";
 
-export default function Board() {
+export default function Board(): ReactElement {
   const size: number = 11;
 
-  const generateGrid = () => {
+  const generateGrid = (): ReactElement[] => {
     const grid = [];
 
     //Create first column for row header

@@ -10,7 +10,7 @@
   border-color: transparent;
 }
 
-.shipCell {
+.ship-cell {
   background-color: rgb(121, 211, 121);
   display: inline-block;
 }

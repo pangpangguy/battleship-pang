@@ -7,6 +7,6 @@ export default function Cell({ value }: { value: string }): ReactElement {
   } else if (value.length <= 4) {
     return <div className="cell">{value}</div>;
   } else {
-    return <div className="cell shipCell">{value}</div>;
+    return <div className="cell ship-cell">{value}</div>;
   }
 }

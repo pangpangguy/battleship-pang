@@ -3,9 +3,9 @@ import Ship from "./ship";
 import "./ship-placement.css";
 
 interface Ship {
-  name: String;
+  name: string;
   size: number;
-  acronym: String;
+  acronym: string;
 }
 
 const shipList: Ship[] = [
@@ -24,7 +24,7 @@ export default function ShipPlacement(): ReactElement {
   return (
     <div className="ship-placement">
       <div className="ships">{renderShips}</div>
-      <button className="startGame"> Start Game</button>
+      <button className="start-game"> Start Game</button>
     </div>
   );
 }

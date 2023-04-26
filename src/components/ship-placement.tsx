@@ -1,19 +1,46 @@
+import { useState, useRef, ReactElement } from "react";
+import { Position, SelectedShipInterface, ShipInterface, shipList } from "../common/types";
 import Ship from "./ship";
 import "./ship-placement.css";
 
-const shipList = [
-  { name: "Carrier", size: 5, acronym: "CR" },
-  { name: "Battleship", size: 4, acronym: "BS" },
-  { name: "Destroyer", size: 3, acronym: "DT" },
-  { name: "Submarine", size: 3, acronym: "SB" },
-  { name: "Patrol Boat", size: 2, acronym: "PB" },
-];
+export default function ShipPlacement(): ReactElement {
+  const [selectedShip, setSelectedShip] = useState<String | null>(null);
+  const [cursorPosition, setCursorPosition] = useState<Position>({ xCoord: 0, yCoord: 0 });
 
-export default function ShipPlacement() {
-  const renderShips: React.ReactElement[] = [];
-  shipList.forEach((ship) => {
-    renderShips.push(<Ship {...ship} key={ship.acronym} />);
+  const ships: ShipInterface[] = shipList.map((ship) => {
+    return {
+      ...ship,
+      onBoard: false,
+    };
   });
+
+  const renderShips: React.ReactElement[] = ships.map((ship) => {
+    const isSelected = selectedShip == ship.name;
+    return (
+      <Ship
+        ship={ship}
+        shipPosition={cursorPosition}
+        selected={isSelected}
+        onShipSelect={handleShipSelect}
+        key={ship.acronym}
+      />
+    );
+  });
+
+  function handleMouseMove(event: MouseEvent): void {
+    setCursorPosition({ xCoord: event.clientX, yCoord: event.clientY });
+  }
+
+  function handleShipSelect(ship: ShipInterface) {
+    if (selectedShip == null) {
+      setSelectedShip(ship.name);
+      document.addEventListener("mousemove", handleMouseMove);
+    } else {
+      setSelectedShip(null);
+      document.removeEventListener("mousemove", handleMouseMove);
+    }
+  }
+
   return (
     <div className="ship-placement">
       <div className="ships">{renderShips}</div>

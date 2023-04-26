@@ -11,7 +11,7 @@ export default function Board(): ReactElement {
     //Create first column for row header
     const headerCols: ReactElement[] = [];
     for (let i = 0; i < size; i++) {
-      const cellVal = i == 0 ? "" : i.toString();
+      const cellVal = i === 0 ? "" : i.toString();
       headerCols.push(<Cell value={cellVal} key={i} />);
     }
 

@@ -6,10 +6,10 @@ export default function Board(): ReactElement {
   const size: number = 11;
 
   const generateGrid = (): ReactElement[] => {
-    const grid = [];
+    const grid: ReactElement[] = [];
 
     //Create first column for row header
-    const headerCols = [];
+    const headerCols: ReactElement[] = [];
     for (let i = 0; i < size; i++) {
       const cellVal = i == 0 ? "" : i.toString();
       headerCols.push(<Cell value={cellVal} key={i} />);
@@ -23,7 +23,7 @@ export default function Board(): ReactElement {
 
     //Create the rest of grid, column by column
     for (let col = 1; col < size; col++) {
-      const cols = [];
+      const cols: ReactElement[] = [];
 
       //First cell in the column is the header (A to J)
       const colHeader: string = String.fromCharCode("A".charCodeAt(0) + col - 1);

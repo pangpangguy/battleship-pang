@@ -1,7 +1,14 @@
+import { ReactElement } from "react";
 import Ship from "./ship";
 import "./ship-placement.css";
 
-const shipList = [
+interface Ship {
+  name: String;
+  size: number;
+  acronym: String;
+}
+
+const shipList: Ship[] = [
   { name: "Carrier", size: 5, acronym: "CR" },
   { name: "Battleship", size: 4, acronym: "BS" },
   { name: "Destroyer", size: 3, acronym: "DT" },
@@ -9,7 +16,7 @@ const shipList = [
   { name: "Patrol Boat", size: 2, acronym: "PB" },
 ];
 
-export default function ShipPlacement() {
+export default function ShipPlacement(): ReactElement {
   const renderShips: React.ReactElement[] = [];
   shipList.forEach((ship) => {
     renderShips.push(<Ship {...ship} key={ship.acronym} />);

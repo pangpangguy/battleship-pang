@@ -10,7 +10,6 @@
   border-color: transparent;
 }
 
-.shipCell {
-  background-color: rgb(121, 211, 121);
-  display: inline-block;
+.hovered {
+  background-color: green;
 }

@@ -1,17 +1,31 @@
+import { CellInterface } from "../common/types";
 import "./board.css";
 import Cell from "./cell";
+import { CellState } from "../common/types";
+import { ReactElement } from "react";
 
-export default function Board() {
+interface BoardProps {
+  board: CellInterface[][];
+  handleMouseEnter: (id: string) => void;
+  handleMouseLeave: (id: string) => void;
+}
+
+export default function Board({ board, handleMouseEnter, handleMouseLeave }: BoardProps) {
   const size: number = 11;
-
   const generateGrid = () => {
-    const grid = [];
+    const grid: ReactElement[] = [];
 
     //Create first column for row header
     const headerCols = [];
     for (let i = 0; i < size; i++) {
-      const cellVal = i == 0 ? "" : i.toString();
-      headerCols.push(<Cell value={cellVal} key={i} />);
+      headerCols.push(
+        <Cell
+          cell={{ cellId: i.toString(), state: CellState.Header, hovered: false }}
+          handleMouseEnter={handleMouseEnter}
+          handleMouseLeave={handleMouseLeave}
+          key={i}
+        />
+      );
     }
 
     grid.push(
@@ -25,15 +39,25 @@ export default function Board() {
       const cols = [];
 
       //First cell in the column is the header (A to J)
-      const colHeader: string = String.fromCharCode("A".charCodeAt(0) + col - 1);
-      cols.push(<Cell value={colHeader} key={colHeader} />);
+      const colHeaderId: string = String.fromCharCode("A".charCodeAt(0) + col - 1);
+      cols.push(
+        <Cell
+          cell={{ cellId: colHeaderId, state: CellState.Header, hovered: false }}
+          handleMouseEnter={handleMouseEnter}
+          handleMouseLeave={handleMouseLeave}
+          key={colHeaderId}
+        />
+      );
 
       for (let row = 1; row < size; row++) {
-        const cellId: string = `${row}-${colHeader}`;
-        cols.push(<Cell value={cellId} key={cellId} />);
+        const cell: CellInterface = board[row - 1][col - 1];
+        cols.push(
+          <Cell cell={cell} handleMouseEnter={handleMouseEnter} handleMouseLeave={handleMouseLeave} key={cell.cellId} />
+        );
       }
+
       grid.push(
-        <div className="col" key={colHeader}>
+        <div className="col" key={colHeaderId}>
           {cols}
         </div>
       );

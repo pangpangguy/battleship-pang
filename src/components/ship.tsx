@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Position, ShipInterface } from "../common/types";
 
+import "./ship.css";
 export default function Ship({
   ship,
   shipPosition,
@@ -13,7 +14,6 @@ export default function Ship({
   selected: boolean;
 }) {
   const style = {
-    cursor: selected ? "move" : "default",
     left: `${shipPosition.xCoord}px`,
     top: `${shipPosition.yCoord}px`,
     position: selected ? "absolute" : "static",
@@ -27,7 +27,7 @@ export default function Ship({
   for (let i = 0; i < ship.size; i++) {
     const cellId = `${ship.acronym}-${i}`;
     shipCells.push(
-      <div className="cell shipCell" key={cellId}>
+      <div className="ship-cell" key={cellId}>
         {cellId}
       </div>
     );

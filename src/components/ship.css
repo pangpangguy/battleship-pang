@@ -1,7 +1,8 @@
-.ship {
-  background-color: rgb(66, 51, 29);
-  /*width: fit-content;
-  height: 4rem;
-  margin: auto 0;
-*/
+.ship-cell {
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 0.75rem;
+  border: 1px solid white;
+  background-color: rgb(138, 228, 138);
+  display: inline-block;
 }

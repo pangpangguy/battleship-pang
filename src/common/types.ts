@@ -9,6 +9,12 @@ export interface ShipInterface {
   onBoard: boolean;
 }
 
+export interface CellInterface {
+  cellId: string;
+  state: CellState;
+  hovered: boolean;
+}
+
 export interface SelectedShipInterface {
   shipName: String;
   shipPosition: Position;
@@ -31,3 +37,12 @@ export const shipList = [
   { name: "Submarine", size: 3, acronym: "SB" },
   { name: "Patrol Boat", size: 2, acronym: "PB" },
 ];
+
+export enum CellState {
+  Unoccupied,
+  Occupied,
+  Hit,
+  Miss,
+  Sunk,
+  Header,
+}

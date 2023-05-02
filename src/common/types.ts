@@ -2,6 +2,7 @@ export interface ShipInterface {
   name: string;
   size: number;
   acronym: string;
+  orientation: "horizontal" | "vertical";
   onBoard: boolean;
 }
 

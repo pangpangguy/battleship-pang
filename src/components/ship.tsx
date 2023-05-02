@@ -1,3 +1,4 @@
+import { ReactElement } from "react";
 import { Position, ShipInterface } from "../common/types";
 
 import "./ship.css";
@@ -26,11 +27,14 @@ export default function Ship({
     onShipSelect(ship);
   }
 
-  const shipCells = [];
+  const shipCells: ReactElement[] = [];
   for (let i = 0; i < ship.size; i++) {
     const cellId = `${ship.acronym}-${i}`;
     shipCells.push(
-      <div className={classNames("ship-cell")} key={cellId}>
+      <div
+        className={classNames("ship-cell", { "ship-cell--vertical": selected && ship.orientation === "vertical" })}
+        key={cellId}
+      >
         {cellId}
       </div>
     );

@@ -2,6 +2,7 @@ import { Position, ShipInterface } from "../common/types";
 
 import "./ship.css";
 import classNames from "classnames";
+
 export default function Ship({
   ship,
   shipPosition,
@@ -18,11 +19,10 @@ export default function Ship({
     top: `${shipPosition.yCoord}px`,
     position: selected ? "absolute" : "static",
     pointerEvents: selected || ship.onBoard ? "none" : "auto",
-    zIndex: 2,
+    zIndex: selected ? 3 : 2,
   } as React.CSSProperties;
 
   function handleShipClick(ship: ShipInterface) {
-    console.log("test");
     onShipSelect(ship);
   }
 
@@ -47,6 +47,8 @@ export default function Ship({
       >
         {shipCells}
       </div>
+
+      {/* This is the ship that is displayed in the ship placement area while the selected ship moved around*/}
       <div
         className={classNames("ship", { "ship--on-board": ship.onBoard })}
         style={{ display: selected ? "unset" : "none" }}

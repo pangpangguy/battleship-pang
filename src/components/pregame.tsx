@@ -1,16 +1,16 @@
 import { useState, useCallback } from "react";
-import { CellInterface, CellState, Position, ShipInterface, shipList } from "../common/types";
+import { CellInterface, CellState, Position, ShipInterface } from "../common/types";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
+import { boardSize, shipList } from "../common/constants";
 
-export default function Game() {
-  const size: number = 11;
-  const generateCells = () => {
+export default function Pregame() {
+  const generateCells = (): CellInterface[][] => {
     const output: CellInterface[][] = [];
-    for (let row = 0; row < size - 1; row++) {
+    for (let row = 0; row < boardSize - 1; row++) {
       const cols: CellInterface[] = [];
 
-      for (let col = 0; col < size - 1; col++) {
+      for (let col = 0; col < boardSize - 1; col++) {
         const colHeader: string = String.fromCharCode("A".charCodeAt(0) + col);
         const cellId: string = `${row + 1}-${colHeader}`;
 
@@ -21,7 +21,7 @@ export default function Game() {
     return output;
   };
 
-  const generateShips = () => {
+  const generateShips = (): ShipInterface[] => {
     return shipList.map((ship) => {
       return { ...ship, onBoard: false };
     });
@@ -34,7 +34,7 @@ export default function Game() {
   const [hoveredCells, setHoveredCells] = useState<string[]>([]);
 
   const handleMouseEnter = useCallback(
-    (id: string) => {
+    (id: string): void => {
       if (cellCanBeHovered(id)) {
         const cellSelectSize = selectedShip ? selectedShip.size : 1;
 
@@ -57,7 +57,7 @@ export default function Game() {
   );
 
   const handleMouseLeave = useCallback(
-    (id: string) => {
+    (id: string): void => {
       if (cellCanBeHovered(id)) {
         setHoveredCells([]);
       }
@@ -65,21 +65,8 @@ export default function Game() {
     [board, selectedShip]
   );
 
-  function cellCanBeHovered(id: string): boolean {
-    // If a ship is not selected, return
-    if (id.length <= 1 || id === "10") return false;
-
-    // Ignore cells already occupied by ships, return
-    if (board.flat().find((cell) => cell.cellId === id)?.state === CellState.Occupied) return false;
-
-    // If a ship is not selected, return
-    if (!selectedShip) return false;
-
-    return true;
-  }
-
   const handleMouseClick = useCallback(
-    (id: string) => {
+    (id: string): void => {
       if (cellCanBeHovered(id)) {
         // for each cell in hoveredcells, set the state to occupied and set the new board.
         const newBoard = board.map((rowCells) => {
@@ -92,7 +79,7 @@ export default function Game() {
         setBoard(newBoard);
 
         handleShipSelect(null);
-        const newShips = ships.map((ship) => {
+        const newShips = ships.map((ship: ShipInterface) => {
           if (ship.name === selectedShip?.name) {
             return { ...ship, onBoard: true };
           } else return { ...ship };
@@ -106,7 +93,8 @@ export default function Game() {
   function handleMouseMove(event: MouseEvent): void {
     setCursorPosition({ xCoord: event.clientX, yCoord: event.clientY });
   }
-  function handleShipSelect(ship: ShipInterface | null) {
+
+  function handleShipSelect(ship: ShipInterface | null): void {
     if (selectedShip == null && ship != null) {
       setSelectedShip(ship);
       document.addEventListener("mousemove", handleMouseMove);
@@ -114,6 +102,19 @@ export default function Game() {
       setSelectedShip(null);
       document.removeEventListener("mousemove", handleMouseMove);
     }
+  }
+
+  function cellCanBeHovered(id: string): boolean {
+    // If a ship is not selected, return
+    if (id.length <= 1 || id === "10") return false;
+
+    // Ignore cells already occupied by ships, return
+    if (board.flat().find((cell) => cell.cellId === id)?.state === CellState.Occupied) return false;
+
+    // If a ship is not selected, return
+    if (!selectedShip) return false;
+
+    return true;
   }
 
   return (

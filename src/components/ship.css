@@ -5,4 +5,9 @@
   border: 1px solid white;
   background-color: rgb(138, 228, 138);
   display: inline-block;
+  cursor: pointer;
+}
+
+.ship--on-board {
+  opacity: 0.5;
 }

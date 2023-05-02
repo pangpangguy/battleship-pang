@@ -6,11 +6,19 @@ import { ReactElement } from "react";
 
 interface BoardProps {
   board: CellInterface[][];
+  hoveredCells: string[];
   handleMouseEnter: (id: string) => void;
   handleMouseLeave: (id: string) => void;
+  handleMouseClick: (id: string) => void;
 }
 
-export default function Board({ board, handleMouseEnter, handleMouseLeave }: BoardProps) {
+export default function Board({
+  board,
+  hoveredCells,
+  handleMouseEnter,
+  handleMouseLeave,
+  handleMouseClick,
+}: BoardProps) {
   const size: number = 11;
   const generateGrid = () => {
     const grid: ReactElement[] = [];
@@ -20,9 +28,11 @@ export default function Board({ board, handleMouseEnter, handleMouseLeave }: Boa
     for (let i = 0; i < size; i++) {
       headerCols.push(
         <Cell
-          cell={{ cellId: i.toString(), state: CellState.Header, hovered: false }}
+          cell={{ cellId: i.toString(), state: CellState.Header }}
+          hovered={false}
           handleMouseEnter={handleMouseEnter}
           handleMouseLeave={handleMouseLeave}
+          handleMouseClick={handleMouseClick}
           key={i}
         />
       );
@@ -42,9 +52,11 @@ export default function Board({ board, handleMouseEnter, handleMouseLeave }: Boa
       const colHeaderId: string = String.fromCharCode("A".charCodeAt(0) + col - 1);
       cols.push(
         <Cell
-          cell={{ cellId: colHeaderId, state: CellState.Header, hovered: false }}
+          cell={{ cellId: colHeaderId, state: CellState.Header }}
+          hovered={false}
           handleMouseEnter={handleMouseEnter}
           handleMouseLeave={handleMouseLeave}
+          handleMouseClick={handleMouseClick}
           key={colHeaderId}
         />
       );
@@ -52,7 +64,14 @@ export default function Board({ board, handleMouseEnter, handleMouseLeave }: Boa
       for (let row = 1; row < size; row++) {
         const cell: CellInterface = board[row - 1][col - 1];
         cols.push(
-          <Cell cell={cell} handleMouseEnter={handleMouseEnter} handleMouseLeave={handleMouseLeave} key={cell.cellId} />
+          <Cell
+            cell={cell}
+            hovered={hoveredCells.includes(cell.cellId)}
+            handleMouseEnter={handleMouseEnter}
+            handleMouseLeave={handleMouseLeave}
+            handleMouseClick={handleMouseClick}
+            key={cell.cellId}
+          />
         );
       }
 

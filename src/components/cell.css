@@ -11,5 +11,10 @@
 }
 
 .hovered {
-  background-color: green;
+  cursor: pointer;
+  background-color: rgb(239, 165, 28);
+}
+.occupied {
+  cursor: default;
+  background-color: rgb(138, 228, 138);
 }

@@ -3,46 +3,38 @@ import { Position, SelectedShipInterface, ShipInterface, shipList } from "../com
 import Ship from "./ship";
 import "./ship-placement.css";
 
-export default function ShipPlacement(): ReactElement {
-  const [selectedShip, setSelectedShip] = useState<String | null>(null);
-  const [cursorPosition, setCursorPosition] = useState<Position>({ xCoord: 0, yCoord: 0 });
+interface ShipPlacementInterface {
+  ships: ShipInterface[];
+  selectedShip: ShipInterface | null;
+  cursorPosition: Position;
+  handleShipSelect: (ship: ShipInterface | null) => void;
+}
 
-  const ships: ShipInterface[] = shipList.map((ship) => {
-    return {
-      ...ship,
-      onBoard: false,
-    };
-  });
+export default function ShipPlacement({
+  ships,
+  selectedShip,
+  cursorPosition,
+  handleShipSelect,
+}: ShipPlacementInterface): ReactElement {
+  const renderShips: ReactElement[] = [];
 
-  const renderShips: React.ReactElement[] = ships.map((ship) => {
-    const isSelected = selectedShip == ship.name;
-    return (
+  for (let i = 0; i < ships.length; i++) {
+    const ship = ships[i];
+    const selectedShipName = selectedShip ? selectedShip.name : "";
+    const isSelected = selectedShipName === ship.name;
+    renderShips.push(
       <Ship
         ship={ship}
         shipPosition={cursorPosition}
         selected={isSelected}
-        onShipSelect={handleShipSelect}
+        onShipSelect={(ship) => handleShipSelect(ship)}
         key={ship.acronym}
       />
     );
-  });
-
-  function handleMouseMove(event: MouseEvent): void {
-    setCursorPosition({ xCoord: event.clientX, yCoord: event.clientY });
-  }
-
-  function handleShipSelect(ship: ShipInterface) {
-    if (selectedShip == null) {
-      setSelectedShip(ship.name);
-      document.addEventListener("mousemove", handleMouseMove);
-    } else {
-      setSelectedShip(null);
-      document.removeEventListener("mousemove", handleMouseMove);
-    }
   }
 
   return (
-    <div className="ship-placement">
+    <div className="ship-placement" onClick={() => handleShipSelect(null)}>
       <div className="ships">{renderShips}</div>
       <button className="start-game"> Start Game</button>
     </div>

@@ -12,17 +12,11 @@ export interface ShipInterface {
 export interface CellInterface {
   cellId: string;
   state: CellState;
-  hovered: boolean;
 }
 
 export interface SelectedShipInterface {
   shipName: String;
   shipPosition: Position;
-}
-
-export interface shipCellInterface {
-  ship: ShipInterface;
-  cellId: string;
 }
 
 export interface Position {

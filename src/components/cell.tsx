@@ -24,7 +24,7 @@ export default function Cell({ cell, hovered, handleMouseEnter, handleMouseLeave
         hovered: hovered,
         occupied: cell.state === CellState.Occupied,
       })}
-      onClick={(e) => {
+      onClick={() => {
         handleMouseClick(cell.cellId);
       }}
     >

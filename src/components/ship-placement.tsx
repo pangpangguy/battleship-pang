@@ -1,5 +1,5 @@
-import { useState, useRef, ReactElement } from "react";
-import { Position, SelectedShipInterface, ShipInterface, shipList } from "../common/types";
+import { ReactElement } from "react";
+import { Position, ShipInterface } from "../common/types";
 import Ship from "./ship";
 import "./ship-placement.css";
 

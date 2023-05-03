@@ -68,27 +68,34 @@ export default function Pregame() {
   const handleMouseClick = useCallback(
     (id: string): void => {
       if (checkIfCellHoverable(id)) {
-        // for each cell in hoveredcells, set the state to occupied and set the new board.
-        const newBoard = board.map((rowCells) => {
-          return rowCells.map((cell) => {
-            if (hoveredCells.includes(cell.cellId)) {
-              return { ...cell, state: CellState.Occupied };
-            } else return { ...cell };
-          });
-        });
-        setBoard(newBoard);
-
-        handleShipSelect(null);
-        const newShips = ships.map((ship: ShipInterface) => {
-          if (ship.name === selectedShip?.name) {
-            return { ...ship, onBoard: true };
-          } else return { ...ship };
-        });
-        setShips(newShips);
+        updateBoard();
+        updateShips();
       }
     },
     [hoveredCells, board, selectedShip]
   );
+
+  function updateBoard() {
+    // for each cell in hoveredcells, set the state to occupied and set the new board.
+    const newBoard = board.map((rowCells) => {
+      return rowCells.map((cell) => {
+        if (hoveredCells.includes(cell.cellId)) {
+          return { ...cell, state: CellState.Occupied };
+        } else return { ...cell };
+      });
+    });
+    setBoard(newBoard);
+  }
+
+  function updateShips() {
+    handleShipSelect(null);
+    const newShips = ships.map((ship: ShipInterface) => {
+      if (ship.name === selectedShip?.name) {
+        return { ...ship, onBoard: true };
+      } else return { ...ship };
+    });
+    setShips(newShips);
+  }
 
   function handleMouseMove(event: MouseEvent): void {
     setCursorPosition({ xCoord: event.clientX, yCoord: event.clientY });

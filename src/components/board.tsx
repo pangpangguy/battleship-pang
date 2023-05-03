@@ -24,7 +24,7 @@ export default function Board({
     const grid: ReactElement[] = [];
 
     //Create first column for row header
-    const headerCols = [];
+    const headerCols: ReactElement[] = [];
     for (let i = 0; i < size; i++) {
       headerCols.push(
         <Cell
@@ -46,7 +46,7 @@ export default function Board({
 
     //Create the rest of grid, column by column
     for (let col = 1; col < size; col++) {
-      const cols = [];
+      const cols: ReactElement[] = [];
 
       //First cell in the column is the header (A to J)
       const colHeaderId: string = String.fromCharCode("A".charCodeAt(0) + col - 1);

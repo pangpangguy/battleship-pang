@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, MouseEvent } from "react";
 import { Position, ShipInterface } from "../common/types";
 import Ship from "./ship";
 import "./ship-placement.css";
@@ -32,9 +32,13 @@ export default function ShipPlacement({
       />
     );
   }
-
+  function handleClick(event: MouseEvent<HTMLDivElement>) {
+    if (event.button === 0 && selectedShip) {
+      handleShipSelect(null);
+    }
+  }
   return (
-    <div className="ship-placement" onClick={() => handleShipSelect(null)}>
+    <div className="ship-placement" onClick={handleClick}>
       <div className="ships">{renderShips}</div>
       <button className="start-game"> Start Game</button>
     </div>

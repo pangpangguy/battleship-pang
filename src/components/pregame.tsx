@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import { CellInterface, CellState, Position, ShipInterface } from "../common/types";
+import { CellInterface, CellState, Position, ShipInterface, useStateRef } from "../common/types";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
 import { boardSize, shipList } from "../common/constants";
@@ -28,15 +28,16 @@ export default function Pregame() {
   };
 
   const [board, setBoard] = useState(generateCells());
-  const [ships, setShips] = useState(generateShips());
-  const selectedShip = useRef<ShipInterface | null>(null);
+  const [ships, setShips, shipsRef] = useStateRef(generateShips());
+  const [selectedShip, setSelectedShip, selectedShipRef] = useStateRef(null);
+
   const [cursorPosition, setCursorPosition] = useState<Position>({ xCoord: 0, yCoord: 0 });
   const [hoveredCells, setHoveredCells] = useState<string[]>([]);
 
   const handleMouseEnter = useCallback(
     (id: string): void => {
       if (cellCanBeHovered(id)) {
-        const cellSelectSize = selectedShip.current ? selectedShip.current.size : 1;
+        const cellSelectSize = selectedShip ? selectedShip.size : 1;
 
         // Select all cells with id's that are in the range of the ship size
         const selectedCells: string[] = [];
@@ -82,7 +83,7 @@ export default function Pregame() {
 
         //Update the placed ship in the ships list (onBoard = true).
         const newShips = ships.map((ship: ShipInterface) => {
-          if (ship.name === selectedShip.current?.name) {
+          if (ship.name === selectedShip.name) {
             return { ...ship, onBoard: true };
           } else return { ...ship };
         });
@@ -95,32 +96,35 @@ export default function Pregame() {
     [hoveredCells, board]
   );
 
-  function handleMouseMove(event: MouseEvent): void {
+  const handleMouseMove = useCallback((event: MouseEvent): void => {
     setCursorPosition({ xCoord: event.clientX, yCoord: event.clientY });
-  }
+  }, []);
 
-  function handleShipRotate(event: MouseEvent): void {
+  const handleShipRotate = useCallback((event: MouseEvent): void => {
+    console.log("handleShipRotate");
     event.preventDefault();
-
     // If a ship is selected and the right mouse button is clicked
-    if (selectedShip.current !== null && event.button === 2) {
+    if (selectedShipRef.current && event.button === 2) {
       // Rotate the selected ship
-      const newShips: ShipInterface[] = ships.map((ship: ShipInterface) => {
-        if (ship.name === selectedShip.current!.name) {
+      const newShips: ShipInterface[] = shipsRef.current.map((ship: ShipInterface) => {
+        if (ship.name === selectedShipRef.current.name) {
+          console.log(ship.orientation);
           return { ...ship, orientation: ship.orientation === "horizontal" ? "vertical" : "horizontal" };
         } else return { ...ship };
       });
       setShips(newShips);
     }
-  }
+  }, []);
 
   function handleShipSelect(ship: ShipInterface | null): void {
-    if (selectedShip.current === null && ship) {
-      selectedShip.current = ship;
+    if (!selectedShip && ship) {
+      //Selects a ship
+      setSelectedShip(ship);
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("contextmenu", handleShipRotate);
     } else {
-      selectedShip.current = null;
+      //Deselects a ship
+      setSelectedShip(null);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("contextmenu", handleShipRotate);
     }
@@ -134,7 +138,7 @@ export default function Pregame() {
     if (board.flat().find((cell) => cell.cellId === id)?.state === CellState.Occupied) return false;
 
     // If a ship is not selected, return
-    if (!selectedShip.current) return false;
+    if (!selectedShip) return false;
 
     return true;
   }
@@ -151,7 +155,7 @@ export default function Pregame() {
       <ShipPlacement
         ships={ships}
         handleShipSelect={handleShipSelect}
-        selectedShip={selectedShip.current}
+        selectedShip={selectedShip}
         cursorPosition={cursorPosition}
       />
     </div>

@@ -31,10 +31,7 @@ export default function Ship({
   for (let i = 0; i < ship.size; i++) {
     const cellId = `${ship.acronym}-${i}`;
     shipCells.push(
-      <div
-        className={classNames("ship-cell", { "ship-cell--vertical": selected && ship.orientation === "vertical" })}
-        key={cellId}
-      >
+      <div className={classNames("ship-cell")} key={cellId}>
         {cellId}
       </div>
     );
@@ -43,7 +40,10 @@ export default function Ship({
     <>
       <div
         style={style}
-        className={classNames("ship", { "ship--on-board": ship.onBoard })}
+        className={classNames("ship", {
+          "ship--on-board": ship.onBoard,
+          "ship-cell--vertical": selected && ship.orientation === "vertical",
+        })}
         onClick={(e) => {
           e.stopPropagation();
           handleShipClick(ship);

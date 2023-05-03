@@ -4,7 +4,6 @@ export interface ShipInterface {
   acronym: string;
   onBoard: boolean;
 }
-
 export interface CellInterface {
   cellId: string;
   state: CellState;

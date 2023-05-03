@@ -19,9 +19,9 @@ export default function ShipPlacement({
   const renderShips: ReactElement[] = [];
 
   for (let i = 0; i < ships.length; i++) {
-    const ship = ships[i];
-    const selectedShipName = selectedShip ? selectedShip.name : "";
-    const isSelected = selectedShipName === ship.name;
+    const ship: ShipInterface = ships[i];
+    const selectedShipName: string | null = selectedShip?.name ?? "";
+    const isSelected: boolean = selectedShipName === ship.name;
     renderShips.push(
       <Ship
         ship={ship}

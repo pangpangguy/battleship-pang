@@ -35,7 +35,7 @@ export default function Pregame() {
 
   const handleMouseEnter = useCallback(
     (id: string): void => {
-      if (cellCanBeHovered(id)) {
+      if (checkIfCellHoverable(id)) {
         const cellSelectSize = selectedShip ? selectedShip.size : 1;
 
         // Select all cells with id's that are in the range of the ship size
@@ -58,7 +58,7 @@ export default function Pregame() {
 
   const handleMouseLeave = useCallback(
     (id: string): void => {
-      if (cellCanBeHovered(id)) {
+      if (checkIfCellHoverable(id)) {
         setHoveredCells([]);
       }
     },
@@ -67,7 +67,7 @@ export default function Pregame() {
 
   const handleMouseClick = useCallback(
     (id: string): void => {
-      if (cellCanBeHovered(id)) {
+      if (checkIfCellHoverable(id)) {
         // for each cell in hoveredcells, set the state to occupied and set the new board.
         const newBoard = board.map((rowCells) => {
           return rowCells.map((cell) => {
@@ -95,7 +95,7 @@ export default function Pregame() {
   }
 
   function handleShipSelect(ship: ShipInterface | null): void {
-    if (selectedShip == null && ship != null) {
+    if (selectedShip === null && ship != null) {
       setSelectedShip(ship);
       document.addEventListener("mousemove", handleMouseMove);
     } else {
@@ -104,15 +104,15 @@ export default function Pregame() {
     }
   }
 
-  function cellCanBeHovered(id: string): boolean {
+  function checkIfCellHoverable(id: string): boolean {
     // If a ship is not selected, return
+    if (!selectedShip) return false;
+
+    // If cell is a header, return
     if (id.length <= 1 || id === "10") return false;
 
     // Ignore cells already occupied by ships, return
     if (board.flat().find((cell) => cell.cellId === id)?.state === CellState.Occupied) return false;
-
-    // If a ship is not selected, return
-    if (!selectedShip) return false;
 
     return true;
   }

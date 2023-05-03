@@ -11,7 +11,7 @@ export interface CellInterface {
 }
 
 export interface SelectedShipInterface {
-  shipName: String;
+  shipName: string;
   shipPosition: Position;
 }
 

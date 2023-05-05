@@ -8,4 +8,4 @@ export const shipList: Ship[] = [
   { name: "Patrol Boat", size: 2, acronym: "PB" },
 ];
 
-export const boardSize = 11;
+export const boardSize = 10;

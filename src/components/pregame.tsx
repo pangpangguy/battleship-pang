@@ -7,10 +7,10 @@ import { boardSize, shipList } from "../common/constants";
 export default function Pregame() {
   const generateCells = (): ICell[][] => {
     const output: ICell[][] = [];
-    for (let row = 0; row < boardSize - 1; row++) {
+    for (let row = 0; row < boardSize; row++) {
       const cols: ICell[] = [];
 
-      for (let col = 0; col < boardSize - 1; col++) {
+      for (let col = 0; col < boardSize; col++) {
         const colHeader: string = String.fromCharCode("A".charCodeAt(0) + col);
         const cellId = `${row + 1}-${colHeader}`;
 

@@ -1,11 +1,19 @@
 import { useState, useCallback } from "react";
-import { CellState, Position, ShipInterface, useStateRef } from "../common/types";
+import { CellState, Position, PregameCell, ShipInterface, useStateRef } from "../common/types";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
-import { generateCells, shipList } from "../common/constants";
+import { generateBoard, shipList } from "../common/constants";
 
 export default function Pregame() {
-  const [board, setBoard] = useState(generateCells());
+  const generatePregameBoard = (): PregameCell[][] => {
+    const board = generateBoard();
+    return board.map((row) => {
+      return row.map((cell) => {
+        return { ...cell, cellState: CellState.Unoccupied, isHovered: "none" };
+      });
+    });
+  };
+  const [board, setBoard] = useState<PregameCell[][]>(generatePregameBoard());
   const [cursorPosition, setCursorPosition] = useState<Position>({ xCoord: 0, yCoord: 0 });
 
   //Keeping refs as well for the following states as they are used in event listeners
@@ -35,8 +43,7 @@ export default function Pregame() {
 
   const handlePlaceShip = useCallback(
     (id: string): void => {
-      console.log(hoveredCells);
-      if (checkIfCellHoverable(id) && hoveredCells.length > 0) {
+      if (selectedShip && hoveredCells.length === selectedShip.size) {
         // for each cell in hoveredcells, set the state to occupied and set the new board.
         const newBoard = board.map((rowCells) => {
           return rowCells.map((cell) => {
@@ -106,7 +113,7 @@ export default function Pregame() {
     }
   }
   function checkIfCellHoverable(id: string): boolean {
-    // If a ship is not selected, return
+    // Ignore header cells return
     if (id.length <= 1 || id === "10") return false;
 
     // Ignore cells already occupied by ships, return
@@ -128,18 +135,21 @@ export default function Pregame() {
         // Combine the rowNumber and newColHeader to form the cellId
         const cellId: string = `${rowNumber}-${newColHeader}`;
 
-        // Check if the cell is valid for ship placement
-        if (checkIfCellHoverable(cellId)) {
+        //Check if the cell is valid for ship placement
+        const newColHeaderASCII = newColHeader.charCodeAt(0);
+        if (newColHeaderASCII >= 65 && newColHeaderASCII <= 74) {
           selectedCells.push(cellId);
         }
       }
     } else {
       for (let i = 0; i < shipSize; i++) {
         // Combine the rowNumber and newColHeader to form the cellId
-        const cellId: string = `${parseInt(rowNumber) + i}-${colHeader}`;
-        console.log(checkIfCellHoverable(cellId));
+
+        const newRowHeader: number = parseInt(rowNumber) + i;
+        const cellId: string = `${newRowHeader}-${colHeader}`;
+
         // Check if the cell is valid for ship placement
-        if (checkIfCellHoverable(cellId)) {
+        if (checkIfCellHoverable(cellId) && newRowHeader <= 10 && newRowHeader >= 1) {
           selectedCells.push(cellId);
         }
       }

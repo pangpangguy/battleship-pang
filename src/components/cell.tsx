@@ -13,10 +13,10 @@ interface CellProps {
 export default function Cell({ cell, hovered, handleMouseEnter, handleMouseLeave, handleMouseClick }: CellProps) {
   return (
     <div
-      onMouseEnter={(e) => {
+      onMouseEnter={() => {
         handleMouseEnter(cell.cellId);
       }}
-      onMouseLeave={(e) => {
+      onMouseLeave={() => {
         handleMouseLeave(cell.cellId);
       }}
       className={classNames("cell", {

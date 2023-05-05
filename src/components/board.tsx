@@ -20,7 +20,6 @@ export default function Board({
   handleMouseLeave,
   handleMouseClick,
 }: BoardProps) {
-  console.log(hoveredCells);
   const generateGrid = () => {
     const grid: ReactElement[] = [];
 

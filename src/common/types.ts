@@ -10,7 +10,11 @@ export interface ShipInterface {
 
 export interface CellInterface {
   cellId: string;
-  state: CellState;
+}
+
+export interface PregameCell extends CellInterface {
+  cellState: CellState.Unoccupied | CellState.Occupied;
+  isHovered: "valid" | "invalid" | "none";
 }
 
 export interface SelectedShipInterface {
@@ -29,7 +33,6 @@ export enum CellState {
   Hit,
   Miss,
   Sunk,
-  Header,
 }
 
 //useStateRef is a custom hook that returns a ref to the state, as well as the state itself.

@@ -28,17 +28,16 @@ export default function Pregame() {
   };
 
   const [board, setBoard] = useState(generateCells());
+  const [cursorPosition, setCursorPosition] = useState<Position>({ xCoord: 0, yCoord: 0 });
+
+  //Keeping refs as well for the following states as they are used in event listeners
   const [ships, setShips, shipsRef] = useStateRef(generateShips());
   const [selectedShip, setSelectedShip, selectedShipRef] = useStateRef(null);
-  const [cursorPosition, setCursorPosition] = useState<Position>({ xCoord: 0, yCoord: 0 });
   const [hoveredCells, setHoveredCells, hoveredCellsRef] = useStateRef([]);
-
-  const [orientation, setOrientation] = useState<"horizontal" | "vertical">("horizontal");
 
   const handleMouseEnter = useCallback(
     (id: string): void => {
-      if (checkIfCellHoverable(id)) {
-        console.log("here");
+      if (selectedShip && checkIfCellHoverable(id)) {
         calculateHoveredCells(id, selectedShipRef.current.size, selectedShipRef.current.orientation);
       }
     },
@@ -47,16 +46,17 @@ export default function Pregame() {
 
   const handleMouseLeave = useCallback(
     (id: string): void => {
-      if (checkIfCellHoverable(id)) {
+      if (selectedShip && checkIfCellHoverable(id)) {
         setHoveredCells([]);
       }
     },
     [board, selectedShip]
   );
 
-  const handleMouseClick = useCallback(
+  const handlePlaceShip = useCallback(
     (id: string): void => {
-      if (checkIfCellHoverable(id)) {
+      console.log(hoveredCells);
+      if (checkIfCellHoverable(id) && hoveredCells.length > 0) {
         // for each cell in hoveredcells, set the state to occupied and set the new board.
         const newBoard = board.map((rowCells) => {
           return rowCells.map((cell) => {
@@ -100,19 +100,15 @@ export default function Pregame() {
             ...ship,
             orientation: ship.orientation === "horizontal" ? "vertical" : "horizontal",
           };
-          console.log("rotate!");
 
           setSelectedShip(newShip);
           if (hoveredCellsRef.current.length > 0) {
             calculateHoveredCells(hoveredCellsRef.current[0], newShip.size, newShip.orientation);
           }
-          console.log(newShip.orientation);
           return newShip;
         } else return { ...ship };
       });
       setShips(newShips);
-
-      setOrientation(orientation === "horizontal" ? "vertical" : "horizontal");
     }
     //Dependency is empty to make sure we remove the same function that we added.
   }, []);
@@ -137,9 +133,6 @@ export default function Pregame() {
     // Ignore cells already occupied by ships, return
     if (board.flat().find((cell) => cell.cellId === id)?.state === CellState.Occupied) return false;
 
-    // If a ship is not selected, return
-    if (!selectedShip) return false;
-
     return true;
   }
 
@@ -147,10 +140,6 @@ export default function Pregame() {
     // Select all cells with id's that are in the range of the ship size
     const selectedCells: string[] = [];
     const [rowNumber, colHeader] = id.split("-");
-
-    console.log("shipSize: ", shipSize);
-    console.log("shipOrientation: ", shipOrientation);
-    console.log("orientation: ", orientation);
 
     if (shipOrientation === "horizontal") {
       for (let i = 0; i < shipSize; i++) {
@@ -169,7 +158,7 @@ export default function Pregame() {
       for (let i = 0; i < shipSize; i++) {
         // Combine the rowNumber and newColHeader to form the cellId
         const cellId: string = `${parseInt(rowNumber) + i}-${colHeader}`;
-
+        console.log(checkIfCellHoverable(cellId));
         // Check if the cell is valid for ship placement
         if (checkIfCellHoverable(cellId)) {
           selectedCells.push(cellId);
@@ -186,7 +175,7 @@ export default function Pregame() {
         hoveredCells={hoveredCells}
         handleMouseEnter={handleMouseEnter}
         handleMouseLeave={handleMouseLeave}
-        handleMouseClick={handleMouseClick}
+        handleMouseClick={handlePlaceShip}
       />
       <ShipPlacement
         ships={ships}

@@ -32,13 +32,14 @@ export default function ShipPlacement({
       />
     );
   }
-  function handleClick(event: MouseEvent<HTMLDivElement>) {
+  function handleDeselectShip(event: MouseEvent<HTMLDivElement>) {
+    // If the user clicks on the ship placement area while a ship is selected, deselect the ship
     if (event.button === 0 && selectedShip) {
       handleShipSelect(null);
     }
   }
   return (
-    <div className="ship-placement" onClick={handleClick}>
+    <div className="ship-placement" onClick={handleDeselectShip}>
       <div className="ships">{renderShips}</div>
       <button className="start-game"> Start Game</button>
     </div>

@@ -3,6 +3,7 @@ import "./board.css";
 import Cell from "./cell";
 import { CellState } from "../common/types";
 import { ReactElement } from "react";
+import { boardSize } from "../common/constants";
 
 interface BoardProps {
   board: CellInterface[][];
@@ -19,13 +20,13 @@ export default function Board({
   handleMouseLeave,
   handleMouseClick,
 }: BoardProps) {
-  const size: number = 11;
+  console.log(hoveredCells);
   const generateGrid = () => {
     const grid: ReactElement[] = [];
 
     //Create first column for row header
     const headerCols = [];
-    for (let i = 0; i < size; i++) {
+    for (let i = 0; i < boardSize; i++) {
       headerCols.push(
         <Cell
           cell={{ cellId: i.toString(), state: CellState.Header }}
@@ -45,7 +46,7 @@ export default function Board({
     );
 
     //Create the rest of grid, column by column
-    for (let col = 1; col < size; col++) {
+    for (let col = 1; col < boardSize; col++) {
       const cols = [];
 
       //First cell in the column is the header (A to J)
@@ -61,7 +62,7 @@ export default function Board({
         />
       );
 
-      for (let row = 1; row < size; row++) {
+      for (let row = 1; row < boardSize; row++) {
         const cell: CellInterface = board[row - 1][col - 1];
         cols.push(
           <Cell

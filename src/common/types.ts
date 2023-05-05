@@ -32,6 +32,7 @@ export enum CellState {
   Header,
 }
 
+//useStateRef is a custom hook that returns a ref to the state, as well as the state itself.
 export function useStateRef(initialValue: any) {
   const [value, setValue] = useState(initialValue);
 

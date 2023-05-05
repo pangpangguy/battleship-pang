@@ -1,13 +1,12 @@
 import { CellInterface } from "../common/types";
 import "./board.css";
 import Cell from "./cell";
-import { CellState } from "../common/types";
 import { ReactElement } from "react";
 import { boardSize } from "../common/constants";
 
 interface BoardProps {
   board: CellInterface[][];
-  hoveredCells: string[];
+  hoveredCells: { cells: string[]; isValid: boolean };
   handleMouseEnter: (id: string) => void;
   handleMouseLeave: (id: string) => void;
   handleMouseClick: (id: string) => void;
@@ -20,21 +19,16 @@ export default function Board({
   handleMouseLeave,
   handleMouseClick,
 }: BoardProps) {
-  const generateGrid = () => {
+  const generateGrid = (): ReactElement[] => {
     const grid: ReactElement[] = [];
 
     //Create first column for row header
     const headerCols = [];
     for (let i = 0; i < boardSize; i++) {
       headerCols.push(
-        <Cell
-          cell={{ cellId: i.toString(), state: CellState.Header }}
-          hovered={false}
-          handleMouseEnter={handleMouseEnter}
-          handleMouseLeave={handleMouseLeave}
-          handleMouseClick={handleMouseClick}
-          key={i}
-        />
+        <div className="cell header" key={i}>
+          {i.toString()}
+        </div>
       );
     }
 
@@ -51,22 +45,25 @@ export default function Board({
       //First cell in the column is the header (A to J)
       const colHeaderId: string = String.fromCharCode("A".charCodeAt(0) + col - 1);
       cols.push(
-        <Cell
-          cell={{ cellId: colHeaderId, state: CellState.Header }}
-          hovered={false}
-          handleMouseEnter={handleMouseEnter}
-          handleMouseLeave={handleMouseLeave}
-          handleMouseClick={handleMouseClick}
-          key={colHeaderId}
-        />
+        <div className="cell header" key={colHeaderId}>
+          {colHeaderId}
+        </div>
       );
 
+      //Construct the rest of the column
       for (let row = 1; row < boardSize; row++) {
-        const cell: CellInterface = board[row - 1][col - 1];
+        const cell = board[row - 1][col - 1];
+        //Check if the cell is hovered
+        const cellIsHovered: "valid" | "invalid" | null = hoveredCells.cells.includes(cell.cellId)
+          ? hoveredCells.isValid
+            ? "valid"
+            : "invalid"
+          : null;
+
         cols.push(
           <Cell
             cell={cell}
-            hovered={hoveredCells.includes(cell.cellId)}
+            isHovered={cellIsHovered}
             handleMouseEnter={handleMouseEnter}
             handleMouseLeave={handleMouseLeave}
             handleMouseClick={handleMouseClick}

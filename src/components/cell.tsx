@@ -4,13 +4,13 @@ import classNames from "classnames";
 
 interface CellProps {
   cell: CellInterface;
-  hovered: boolean;
+  isHovered: "valid" | "invalid" | null;
   handleMouseEnter: (cellId: string) => void;
   handleMouseLeave: (cellId: string) => void;
   handleMouseClick: (cellId: string) => void;
 }
 
-export default function Cell({ cell, hovered, handleMouseEnter, handleMouseLeave, handleMouseClick }: CellProps) {
+export default function Cell({ cell, isHovered, handleMouseEnter, handleMouseLeave, handleMouseClick }: CellProps) {
   return (
     <div
       onMouseEnter={() => {
@@ -20,9 +20,9 @@ export default function Cell({ cell, hovered, handleMouseEnter, handleMouseLeave
         handleMouseLeave(cell.cellId);
       }}
       className={classNames("cell", {
-        header: cell.cellId.length <= 1 || cell.cellId === "10",
-        hovered: hovered,
-        occupied: cell.state === CellState.Occupied,
+        hovered: isHovered === "valid",
+        "hovered--invalid": isHovered === "invalid",
+        occupied: cell.cellState === CellState.Occupied,
       })}
       onClick={() => {
         handleMouseClick(cell.cellId);

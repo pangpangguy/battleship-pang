@@ -10,11 +10,7 @@ export interface ShipInterface {
 
 export interface CellInterface {
   cellId: string;
-}
-
-export interface PregameCell extends CellInterface {
-  cellState: CellState.Unoccupied | CellState.Occupied;
-  isHovered: "valid" | "invalid" | "none";
+  cellState: CellState | null;
 }
 
 export interface SelectedShipInterface {

@@ -19,7 +19,7 @@ export const generateBoard = (): CellInterface[][] => {
       const colHeader: string = String.fromCharCode("A".charCodeAt(0) + col);
       const cellId: string = `${row + 1}-${colHeader}`;
 
-      cols.push({ cellId: cellId });
+      cols.push({ cellId: cellId, cellState: CellState.Unoccupied });
     }
     output.push(cols);
   }

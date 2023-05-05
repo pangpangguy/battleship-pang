@@ -1,10 +1,6 @@
-interface ShipTypeInterface {
-  name: string;
-  size: number;
-  acronym: string;
-}
+import { Ship } from "./types";
 
-export const shipList: ShipTypeInterface[] = [
+export const shipList: Ship[] = [
   { name: "Carrier", size: 5, acronym: "CR" },
   { name: "Battleship", size: 4, acronym: "BS" },
   { name: "Destroyer", size: 3, acronym: "DT" },
@@ -12,4 +8,4 @@ export const shipList: ShipTypeInterface[] = [
   { name: "Patrol Boat", size: 2, acronym: "PB" },
 ];
 
-export const boardSize: number = 11;
+export const boardSize = 11;

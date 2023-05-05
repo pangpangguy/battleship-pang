@@ -1,11 +1,10 @@
-import { CellInterface } from "../common/types";
-import "./board.css";
-import Cell from "./cell";
-import { CellState } from "../common/types";
 import { ReactElement } from "react";
+import { ICell, CellState } from "../common/types";
+import Cell from "./cell";
+import "./board.css";
 
 interface BoardProps {
-  board: CellInterface[][];
+  board: ICell[][];
   hoveredCells: string[];
   handleMouseEnter: (id: string) => void;
   handleMouseLeave: (id: string) => void;
@@ -62,7 +61,7 @@ export default function Board({
       );
 
       for (let row = 1; row < size; row++) {
-        const cell: CellInterface = board[row - 1][col - 1];
+        const cell: ICell = board[row - 1][col - 1];
         cols.push(
           <Cell
             cell={cell}

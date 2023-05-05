@@ -1,18 +1,18 @@
 import { useState, useCallback } from "react";
-import { CellInterface, CellState, Position, ShipInterface } from "../common/types";
+import { ICell, CellState, Position, PregameShip } from "../common/types";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
 import { boardSize, shipList } from "../common/constants";
 
 export default function Pregame() {
-  const generateCells = (): CellInterface[][] => {
-    const output: CellInterface[][] = [];
+  const generateCells = (): ICell[][] => {
+    const output: ICell[][] = [];
     for (let row = 0; row < boardSize - 1; row++) {
-      const cols: CellInterface[] = [];
+      const cols: ICell[] = [];
 
       for (let col = 0; col < boardSize - 1; col++) {
         const colHeader: string = String.fromCharCode("A".charCodeAt(0) + col);
-        const cellId: string = `${row + 1}-${colHeader}`;
+        const cellId = `${row + 1}-${colHeader}`;
 
         cols.push({ cellId: cellId, state: CellState.Unoccupied });
       }
@@ -21,7 +21,7 @@ export default function Pregame() {
     return output;
   };
 
-  const generateShips = (): ShipInterface[] => {
+  const generateShips = (): PregameShip[] => {
     return shipList.map((ship) => {
       return { ...ship, onBoard: false };
     });
@@ -29,8 +29,8 @@ export default function Pregame() {
 
   const [board, setBoard] = useState(generateCells());
   const [ships, setShips] = useState(generateShips());
-  const [selectedShip, setSelectedShip] = useState<ShipInterface | null>(null);
-  const [cursorPosition, setCursorPosition] = useState<Position>({ xCoord: 0, yCoord: 0 });
+  const [selectedShip, setSelectedShip] = useState<PregameShip | null>(null);
+  const [cursorPosition, setCursorPosition] = useState<Position>({ x: 0, y: 0 });
   const [hoveredCells, setHoveredCells] = useState<string[]>([]);
 
   const handleMouseEnter = useCallback(
@@ -47,7 +47,7 @@ export default function Pregame() {
           const newColHeader: string = String.fromCharCode(colHeader.charCodeAt(0) + i);
 
           // Combine the rowNumber and newColHeader to form the cellId
-          const cellId: string = `${rowNumber}-${newColHeader}`;
+          const cellId = `${rowNumber}-${newColHeader}`;
           selectedCells.push(cellId);
         }
         setHoveredCells(selectedCells);
@@ -89,7 +89,7 @@ export default function Pregame() {
 
   function updateShips() {
     handleShipSelect(null);
-    const newShips = ships.map((ship: ShipInterface) => {
+    const newShips = ships.map((ship: PregameShip) => {
       if (ship.name === selectedShip?.name) {
         return { ...ship, onBoard: true };
       } else return { ...ship };
@@ -98,10 +98,10 @@ export default function Pregame() {
   }
 
   function handleMouseMove(event: MouseEvent): void {
-    setCursorPosition({ xCoord: event.clientX, yCoord: event.clientY });
+    setCursorPosition({ x: event.clientX, y: event.clientY });
   }
 
-  function handleShipSelect(ship: ShipInterface | null): void {
+  function handleShipSelect(ship: PregameShip | null): void {
     if (selectedShip === null && ship != null) {
       setSelectedShip(ship);
       document.addEventListener("mousemove", handleMouseMove);

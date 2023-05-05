@@ -1,22 +1,22 @@
-export interface ShipInterface {
+export interface Ship {
   name: string;
   size: number;
   acronym: string;
+}
+
+export interface PregameShip extends Ship {
   onBoard: boolean;
 }
-export interface CellInterface {
+
+//Adding an "I" in front (according to convention) to differentiate it with the Cell component
+export interface ICell {
   cellId: string;
   state: CellState;
 }
 
-export interface SelectedShipInterface {
-  shipName: string;
-  shipPosition: Position;
-}
-
 export interface Position {
-  xCoord: number;
-  yCoord: number;
+  x: number;
+  y: number;
 }
 
 export enum CellState {

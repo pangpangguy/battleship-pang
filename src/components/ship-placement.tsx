@@ -1,13 +1,13 @@
 import { ReactElement } from "react";
-import { Position, ShipInterface } from "../common/types";
+import { Position, PregameShip } from "../common/types";
 import Ship from "./ship";
 import "./ship-placement.css";
 
 interface ShipPlacementInterface {
-  ships: ShipInterface[];
-  selectedShip: ShipInterface | null;
+  ships: PregameShip[];
+  selectedShip: PregameShip | null;
   cursorPosition: Position;
-  handleShipSelect: (ship: ShipInterface | null) => void;
+  handleShipSelect: (ship: PregameShip | null) => void;
 }
 
 export default function ShipPlacement({
@@ -19,7 +19,7 @@ export default function ShipPlacement({
   const renderShips: ReactElement[] = [];
 
   for (let i = 0; i < ships.length; i++) {
-    const ship: ShipInterface = ships[i];
+    const ship: PregameShip = ships[i];
     const selectedShipName: string | null = selectedShip?.name ?? "";
     const isSelected: boolean = selectedShipName === ship.name;
     renderShips.push(

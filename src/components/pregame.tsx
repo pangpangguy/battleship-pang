@@ -1,37 +1,17 @@
 import { useState, useCallback } from "react";
-import { CellInterface, CellState, Position, ShipInterface, useStateRef } from "../common/types";
+import { CellState, Position, ShipInterface, useStateRef } from "../common/types";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
-import { boardSize, shipList } from "../common/constants";
+import { generateCells, shipList } from "../common/constants";
 
 export default function Pregame() {
-  const generateCells = (): CellInterface[][] => {
-    const output: CellInterface[][] = [];
-    for (let row = 0; row < boardSize - 1; row++) {
-      const cols: CellInterface[] = [];
-
-      for (let col = 0; col < boardSize - 1; col++) {
-        const colHeader: string = String.fromCharCode("A".charCodeAt(0) + col);
-        const cellId: string = `${row + 1}-${colHeader}`;
-
-        cols.push({ cellId: cellId, state: CellState.Unoccupied });
-      }
-      output.push(cols);
-    }
-    return output;
-  };
-
-  const generateShips = (): ShipInterface[] => {
-    return shipList.map((ship) => {
-      return { ...ship, onBoard: false, orientation: "horizontal" };
-    });
-  };
-
   const [board, setBoard] = useState(generateCells());
   const [cursorPosition, setCursorPosition] = useState<Position>({ xCoord: 0, yCoord: 0 });
 
   //Keeping refs as well for the following states as they are used in event listeners
-  const [ships, setShips, shipsRef] = useStateRef(generateShips());
+  const [ships, setShips, shipsRef] = useStateRef(
+    shipList.map((ship) => ({ ...ship, onBoard: false, orientation: "horizontal" }))
+  );
   const [selectedShip, setSelectedShip, selectedShipRef] = useStateRef(null);
   const [hoveredCells, setHoveredCells, hoveredCellsRef] = useStateRef([]);
 
@@ -88,7 +68,6 @@ export default function Pregame() {
 
   const handleShipRotate = useCallback((event: MouseEvent): void => {
     event.preventDefault();
-    event.stopPropagation();
 
     // If a ship is selected and the right mouse button is clicked
     if (selectedShipRef.current && event.button === 2) {
@@ -110,11 +89,11 @@ export default function Pregame() {
       });
       setShips(newShips);
     }
-    //Dependency is empty to make sure we remove the same function that we added.
+    //Dependency is empty to make sure we remove the same function that we added in the event listener.
   }, []);
 
   function handleShipSelect(ship: ShipInterface | null): void {
-    if (!selectedShip && ship) {
+    if (ship) {
       //Selects a ship
       setSelectedShip(ship);
       window.addEventListener("mousemove", handleMouseMove);

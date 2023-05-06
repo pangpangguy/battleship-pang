@@ -1,12 +1,12 @@
 import { useState, useCallback } from "react";
-import { CellState, Position, ShipInterface, useStateRef } from "../common/types";
+import { CellState, Position, PregameShip, Ship, useStateRef } from "../common/types";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
 import { generateCells, shipList } from "../common/constants";
 
 export default function Pregame() {
   const [board, setBoard] = useState(generateCells());
-  const [cursorPosition, setCursorPosition] = useState<Position>({ xCoord: 0, yCoord: 0 });
+  const [cursorPosition, setCursorPosition] = useState<Position>({ x: 0, y: 0 });
 
   //Keeping refs as well for the following states as they are used in event listeners
   const [ships, setShips, shipsRef] = useStateRef(
@@ -38,22 +38,10 @@ export default function Pregame() {
       console.log(hoveredCells);
       if (checkIfCellHoverable(id) && hoveredCells.length > 0) {
         // for each cell in hoveredcells, set the state to occupied and set the new board.
-        const newBoard = board.map((rowCells) => {
-          return rowCells.map((cell) => {
-            if (hoveredCells.includes(cell.cellId)) {
-              return { ...cell, state: CellState.Occupied };
-            } else return { ...cell };
-          });
-        });
-        setBoard(newBoard);
+        updateBoard();
 
         //Update the placed ship in the ships list (onBoard = true).
-        const newShips = ships.map((ship: ShipInterface) => {
-          if (ship.name === selectedShip.name) {
-            return { ...ship, onBoard: true };
-          } else return { ...ship };
-        });
-        setShips(newShips);
+        updateShips();
 
         //Remove event listeners from the placed ship
         handleShipSelect(null);
@@ -62,10 +50,6 @@ export default function Pregame() {
     [hoveredCells, board]
   );
 
-  const handleMouseMove = useCallback((event: MouseEvent): void => {
-    setCursorPosition({ xCoord: event.clientX, yCoord: event.clientY });
-  }, []);
-
   const handleShipRotate = useCallback((event: MouseEvent): void => {
     event.preventDefault();
 
@@ -73,9 +57,9 @@ export default function Pregame() {
     if (selectedShipRef.current && event.button === 2) {
       // Rotate the selected ship
 
-      const newShips: ShipInterface[] = shipsRef.current.map((ship: ShipInterface) => {
+      const newShips: PregameShip[] = shipsRef.current.map((ship: PregameShip) => {
         if (ship.name === selectedShipRef.current.name) {
-          const newShip: ShipInterface = {
+          const newShip: PregameShip = {
             ...ship,
             orientation: ship.orientation === "horizontal" ? "vertical" : "horizontal",
           };
@@ -92,7 +76,33 @@ export default function Pregame() {
     //Dependency is empty to make sure we remove the same function that we added in the event listener.
   }, []);
 
-  function handleShipSelect(ship: ShipInterface | null): void {
+  function updateBoard() {
+    // for each cell in hoveredcells, set the state to occupied and set the new board.
+    const newBoard = board.map((rowCells) => {
+      return rowCells.map((cell) => {
+        if (hoveredCells.includes(cell.cellId)) {
+          return { ...cell, state: CellState.Occupied };
+        } else return { ...cell };
+      });
+    });
+    setBoard(newBoard);
+  }
+
+  function updateShips() {
+    handleShipSelect(null);
+    const newShips = ships.map((ship: PregameShip) => {
+      if (ship.name === selectedShip?.name) {
+        return { ...ship, onBoard: true };
+      } else return { ...ship };
+    });
+    setShips(newShips);
+  }
+
+  function handleMouseMove(event: MouseEvent): void {
+    setCursorPosition({ x: event.clientX, y: event.clientY });
+  }
+
+  function handleShipSelect(ship: Ship | null): void {
     if (ship) {
       //Selects a ship
       setSelectedShip(ship);
@@ -107,6 +117,9 @@ export default function Pregame() {
   }
   function checkIfCellHoverable(id: string): boolean {
     // If a ship is not selected, return
+    if (!selectedShip) return false;
+
+    // If cell is a header, return
     if (id.length <= 1 || id === "10") return false;
 
     // Ignore cells already occupied by ships, return

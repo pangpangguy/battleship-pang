@@ -1,12 +1,11 @@
-import { CellInterface } from "../common/types";
-import "./board.css";
-import Cell from "./cell";
-import { CellState } from "../common/types";
 import { ReactElement } from "react";
 import { boardSize } from "../common/constants";
+import { ICell, CellState } from "../common/types";
+import Cell from "./cell";
+import "./board.css";
 
 interface BoardProps {
-  board: CellInterface[][];
+  board: ICell[][];
   hoveredCells: string[];
   handleMouseEnter: (id: string) => void;
   handleMouseLeave: (id: string) => void;
@@ -20,13 +19,13 @@ export default function Board({
   handleMouseLeave,
   handleMouseClick,
 }: BoardProps) {
-  console.log(hoveredCells);
+  console.log(board);
   const generateGrid = () => {
     const grid: ReactElement[] = [];
 
     //Create first column for row header
-    const headerCols = [];
-    for (let i = 0; i < boardSize; i++) {
+    const headerCols: ReactElement[] = [];
+    for (let i = 0; i <= boardSize; i++) {
       headerCols.push(
         <Cell
           cell={{ cellId: i.toString(), state: CellState.Header }}
@@ -47,7 +46,7 @@ export default function Board({
 
     //Create the rest of grid, column by column
     for (let col = 1; col < boardSize; col++) {
-      const cols = [];
+      const cols: ReactElement[] = [];
 
       //First cell in the column is the header (A to J)
       const colHeaderId: string = String.fromCharCode("A".charCodeAt(0) + col - 1);
@@ -62,8 +61,8 @@ export default function Board({
         />
       );
 
-      for (let row = 1; row < boardSize; row++) {
-        const cell: CellInterface = board[row - 1][col - 1];
+      for (let row = 1; row <= boardSize; row++) {
+        const cell: ICell = board[row - 1][col - 1];
         cols.push(
           <Cell
             cell={cell}

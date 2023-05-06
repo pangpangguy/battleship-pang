@@ -1,6 +1,6 @@
-import { CellInterface, CellState } from "./types";
+import { Ship, ICell, CellState } from "./types";
 
-export const shipList = [
+export const shipList: Ship[] = [
   { name: "Carrier", size: 5, acronym: "CR" },
   { name: "Battleship", size: 4, acronym: "BS" },
   { name: "Destroyer", size: 3, acronym: "DT" },
@@ -8,14 +8,12 @@ export const shipList = [
   { name: "Patrol Boat", size: 2, acronym: "PB" },
 ];
 
-export const boardSize: number = 11;
+export const generateCells = (): ICell[][] => {
+  const output: ICell[][] = [];
+  for (let row = 0; row < boardSize; row++) {
+    const cols: ICell[] = [];
 
-export const generateCells = (): CellInterface[][] => {
-  const output: CellInterface[][] = [];
-  for (let row = 0; row < boardSize - 1; row++) {
-    const cols: CellInterface[] = [];
-
-    for (let col = 0; col < boardSize - 1; col++) {
+    for (let col = 0; col < boardSize; col++) {
       const colHeader: string = String.fromCharCode("A".charCodeAt(0) + col);
       const cellId: string = `${row + 1}-${colHeader}`;
 
@@ -25,3 +23,4 @@ export const generateCells = (): CellInterface[][] => {
   }
   return output;
 };
+export const boardSize = 10;

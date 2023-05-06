@@ -35,7 +35,6 @@ export default function Pregame() {
 
   const handlePlaceShip = useCallback(
     (id: string): void => {
-      console.log(hoveredCells);
       if (checkIfCellHoverable(id) && hoveredCells.length > 0) {
         // for each cell in hoveredcells, set the state to occupied and set the new board.
         updateBoard();
@@ -117,7 +116,7 @@ export default function Pregame() {
   }
   function checkIfCellHoverable(id: string): boolean {
     // If a ship is not selected, return
-    if (!selectedShip) return false;
+    if (!selectedShipRef) return false;
 
     // If cell is a header, return
     if (id.length <= 1 || id === "10") return false;
@@ -150,7 +149,6 @@ export default function Pregame() {
       for (let i = 0; i < shipSize; i++) {
         // Combine the rowNumber and newColHeader to form the cellId
         const cellId: string = `${parseInt(rowNumber) + i}-${colHeader}`;
-        console.log(checkIfCellHoverable(cellId));
         // Check if the cell is valid for ship placement
         if (checkIfCellHoverable(cellId)) {
           selectedCells.push(cellId);

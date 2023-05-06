@@ -19,7 +19,6 @@ export default function Board({
   handleMouseLeave,
   handleMouseClick,
 }: BoardProps) {
-  console.log(board);
   const generateGrid = () => {
     const grid: ReactElement[] = [];
 

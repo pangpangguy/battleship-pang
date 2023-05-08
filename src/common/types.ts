@@ -13,7 +13,7 @@ export interface PregameShip extends Ship {
 
 export interface CellInfo {
   cellId: string;
-  cellState: CellState | null;
+  cellState: CellState;
 }
 
 export interface Position {

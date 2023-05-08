@@ -72,6 +72,7 @@ export default function Pregame() {
 
   const handleMouseMove = useCallback((event: MouseEvent): void => {
     setCursorPosition({ x: event.clientX, y: event.clientY });
+    //Dependency is empty to make sure we remove the same function that we have attached to the event listener.
   }, []);
 
   const handleShipRotate = useCallback((event: MouseEvent): void => {
@@ -98,7 +99,7 @@ export default function Pregame() {
       });
       setShips(newShips);
     }
-    //Dependency is empty to make sure we remove the same function that we added in the event listener.
+    //Dependency is empty to make sure we remove the same function that we have attached to the event listener.
   }, []);
 
   function handleShipSelect(ship: PregameShip | null): void {

@@ -3,8 +3,11 @@ import { CellInfo, CellState, Position, PregameShip } from "../common/types";
 import { boardSize, shipList } from "../common/constants";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
+interface PregameProps {
+  handleStartGame: () => void;
+}
 
-export default function Pregame() {
+export default function Pregame({ handleStartGame }: PregameProps) {
   const generateCells = (): CellInfo[][] => {
     const output: CellInfo[][] = [];
     for (let row = 0; row < boardSize; row++) {
@@ -126,6 +129,7 @@ export default function Pregame() {
 
   return (
     <>
+      <h2>Place your ships on the board:</h2>
       <Board
         board={board}
         hoveredCells={hoveredCells}
@@ -138,6 +142,7 @@ export default function Pregame() {
         handleShipSelect={handleShipSelect}
         selectedShip={selectedShip}
         cursorPosition={cursorPosition}
+        handleStartGame={handleStartGame}
       />
     </>
   );

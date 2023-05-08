@@ -8,6 +8,7 @@ interface ShipPlacementInterface {
   selectedShip: PregameShip | null;
   cursorPosition: Position;
   handleShipSelect: (ship: PregameShip | null) => void;
+  handleStartGame: () => void;
 }
 
 export default function ShipPlacement({
@@ -15,6 +16,7 @@ export default function ShipPlacement({
   selectedShip,
   cursorPosition,
   handleShipSelect,
+  handleStartGame,
 }: ShipPlacementInterface): ReactElement {
   const renderShips: ReactElement[] = [];
 
@@ -32,11 +34,16 @@ export default function ShipPlacement({
       />
     );
   }
-
+  function onStartGame() {
+    handleStartGame();
+  }
   return (
     <div className="ship-placement" onClick={() => handleShipSelect(null)}>
       <div className="ships">{renderShips}</div>
-      <button className="start-game"> Start Game</button>
+      <button className="start-game" disabled={!ships.every((ship) => ship.onBoard)} onClick={onStartGame}>
+        {" "}
+        Start Game
+      </button>
     </div>
   );
 }

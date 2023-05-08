@@ -26,3 +26,8 @@ export enum CellState {
   Sunk,
   Header,
 }
+export enum GamePhase {
+  PreGame,
+  GameStart,
+  GameEnd,
+}

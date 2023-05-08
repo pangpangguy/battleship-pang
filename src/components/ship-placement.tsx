@@ -41,7 +41,6 @@ export default function ShipPlacement({
     <div className="ship-placement" onClick={() => handleShipSelect(null)}>
       <div className="ships">{renderShips}</div>
       <button className="start-game" disabled={!ships.every((ship) => ship.onBoard)} onClick={onStartGame}>
-        {" "}
         Start Game
       </button>
     </div>

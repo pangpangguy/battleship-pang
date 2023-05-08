@@ -18,7 +18,12 @@
 }
 
 .start-game {
-  background-color: red;
+  background-color: rgb(174, 255, 152);
   height: 3em;
   font-size: 1em;
+}
+
+.start-game:disabled {
+  cursor: not-allowed;
+  border: none;
 }

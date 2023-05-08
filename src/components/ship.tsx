@@ -1,5 +1,6 @@
 import { ReactElement } from "react";
-import { Position, ShipInterface } from "../common/types";
+import { Position, PregameShip } from "../common/types";
+import { CSSProperties } from "react";
 
 import "./ship.css";
 import classNames from "classnames";
@@ -10,20 +11,20 @@ export default function Ship({
   onShipSelect,
   selected,
 }: {
-  ship: ShipInterface;
+  ship: PregameShip;
   shipPosition: Position;
-  onShipSelect: (ship: ShipInterface) => void;
+  onShipSelect: (ship: PregameShip) => void;
   selected: boolean;
 }) {
   const style = {
-    left: `${shipPosition.xCoord}px`,
-    top: `${shipPosition.yCoord}px`,
+    left: `${shipPosition.x}px`,
+    top: `${shipPosition.y}px`,
     position: selected ? "absolute" : "static",
     pointerEvents: selected || ship.onBoard ? "none" : "auto",
     zIndex: selected ? 3 : 2,
-  } as React.CSSProperties;
+  } as CSSProperties;
 
-  function handleShipClick(ship: ShipInterface) {
+  function handleShipClick(ship: PregameShip) {
     onShipSelect(ship);
   }
 

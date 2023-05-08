@@ -1,26 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 
-export interface ShipInterface {
+export interface Ship {
   name: string;
   size: number;
   acronym: string;
-  orientation: "horizontal" | "vertical";
-  onBoard: boolean;
 }
 
-export interface CellInterface {
+export interface PregameShip extends Ship {
+  onBoard: boolean;
+  orientation: "horizontal" | "vertical";
+}
+
+export interface CellInfo {
   cellId: string;
   cellState: CellState | null;
 }
 
-export interface SelectedShipInterface {
-  shipName: String;
-  shipPosition: Position;
-}
-
 export interface Position {
-  xCoord: number;
-  yCoord: number;
+  x: number;
+  y: number;
 }
 
 export enum CellState {

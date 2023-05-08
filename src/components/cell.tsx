@@ -1,16 +1,19 @@
-import { CellInterface, CellState } from "../common/types";
+import { CellInfo, CellState } from "../common/types";
 import "./cell.css";
 import classNames from "classnames";
 
 interface CellProps {
-  cell: CellInterface;
   isHovered: "valid" | "invalid" | null;
+  cell: CellInfo;
   handleMouseEnter: (cellId: string) => void;
   handleMouseLeave: (cellId: string) => void;
   handleMouseClick: (cellId: string) => void;
 }
 
 export default function Cell({ cell, isHovered, handleMouseEnter, handleMouseLeave, handleMouseClick }: CellProps) {
+  if (cell.cellId === "5-A") {
+    console.log(cell.cellState);
+  }
   return (
     <div
       onMouseEnter={() => {

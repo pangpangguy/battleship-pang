@@ -1,16 +1,19 @@
 import { useState, useCallback } from "react";
-import { CellInterface, CellState, Position, ShipInterface, useStateRef } from "../common/types";
+import { CellInfo, CellState, Position, PregameShip, useStateRef } from "../common/types";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
 import { generateBoard, shipList } from "../common/constants";
 
 export default function Pregame() {
-  const [board, setBoard] = useState<CellInterface[][]>(generateBoard());
-  const [cursorPosition, setCursorPosition] = useState<Position>({ xCoord: 0, yCoord: 0 });
+  const [board, setBoard] = useState<CellInfo[][]>(generateBoard());
+  const [cursorPosition, setCursorPosition] = useState<Position>({ x: 0, y: 0 });
 
   //Keeping refs as well for the following states as they are used in event listeners
   const [ships, setShips, shipsRef] = useStateRef(
-    shipList.map((ship) => ({ ...ship, onBoard: false, orientation: "horizontal" }))
+    shipList.map((ship) => {
+      const newPregameShip: PregameShip = { ...ship, onBoard: false, orientation: "horizontal" };
+      return newPregameShip;
+    })
   );
   const [selectedShip, setSelectedShip, selectedShipRef] = useStateRef(null);
   const [hoveredCells, setHoveredCells, hoveredCellsRef] = useStateRef([]);
@@ -36,23 +39,9 @@ export default function Pregame() {
   const handlePlaceShip = useCallback(
     (id: string): void => {
       if (selectedShip && placementIsValid()) {
-        // for each cell in hoveredcells, set the state to occupied and set the new board.
-        const newBoard: CellInterface[][] = board.map((rowCells) => {
-          return rowCells.map((cell) => {
-            if (hoveredCells.includes(cell.cellId)) {
-              return { ...cell, cellState: CellState.Occupied };
-            } else return { ...cell };
-          });
-        });
-        setBoard(newBoard);
-
-        //Update the placed ship in the ships list (onBoard = true).
-        const newShips = ships.map((ship: ShipInterface) => {
-          if (ship.name === selectedShip.name) {
-            return { ...ship, onBoard: true };
-          } else return { ...ship };
-        });
-        setShips(newShips);
+        console.log("tes");
+        updateBoard();
+        updateShips();
 
         //Remove event listeners from the placed ship
         handleShipSelect(null);
@@ -61,8 +50,29 @@ export default function Pregame() {
     [hoveredCells, board]
   );
 
+  function updateBoard() {
+    const newBoard: CellInfo[][] = board.map((rowCells) => {
+      return rowCells.map((cell) => {
+        if (hoveredCells.includes(cell.cellId)) {
+          return { ...cell, cellState: CellState.Occupied };
+        } else return { ...cell };
+      });
+    });
+    setBoard(newBoard);
+  }
+
+  function updateShips() {
+    handleShipSelect(null);
+    const newShips: PregameShip = ships.map((ship: PregameShip) => {
+      if (ship.name === selectedShip?.name) {
+        return { ...ship, onBoard: true };
+      } else return { ...ship };
+    });
+    setShips(newShips);
+  }
+
   const handleMouseMove = useCallback((event: MouseEvent): void => {
-    setCursorPosition({ xCoord: event.clientX, yCoord: event.clientY });
+    setCursorPosition({ x: event.clientX, y: event.clientY });
   }, []);
 
   const handleShipRotate = useCallback((event: MouseEvent): void => {
@@ -72,9 +82,9 @@ export default function Pregame() {
     if (selectedShipRef.current && event.button === 2) {
       // Rotate the selected ship
 
-      const newShips: ShipInterface[] = shipsRef.current.map((ship: ShipInterface) => {
+      const newShips: PregameShip[] = shipsRef.current.map((ship: PregameShip) => {
         if (ship.name === selectedShipRef.current.name) {
-          const newShip: ShipInterface = {
+          const newShip: PregameShip = {
             ...ship,
             orientation: ship.orientation === "horizontal" ? "vertical" : "horizontal",
           };
@@ -91,7 +101,7 @@ export default function Pregame() {
     //Dependency is empty to make sure we remove the same function that we added in the event listener.
   }, []);
 
-  function handleShipSelect(ship: ShipInterface | null): void {
+  function handleShipSelect(ship: PregameShip | null): void {
     if (ship) {
       //Selects a ship
       setSelectedShip(ship);

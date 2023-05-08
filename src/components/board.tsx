@@ -1,10 +1,6 @@
 import { ReactElement } from "react";
-<<<<<<< HEAD
-=======
 import { CellInfo, CellState } from "../common/types";
->>>>>>> 7f3110f (fix : Change ICell to CellInfo)
 import { boardSize } from "../common/constants";
-import { ICell, CellState } from "../common/types";
 import Cell from "./cell";
 import "./board.css";
 

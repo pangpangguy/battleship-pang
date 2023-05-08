@@ -1,8 +1,8 @@
 import { useState, useCallback } from "react";
 import { CellInfo, CellState, Position, PregameShip, useStateRef } from "../common/types";
+import { generateBoard, shipList } from "../common/constants";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
-import { generateBoard, shipList } from "../common/constants";
 
 export default function Pregame() {
   const [board, setBoard] = useState<CellInfo[][]>(generateBoard());
@@ -15,13 +15,13 @@ export default function Pregame() {
       return newPregameShip;
     })
   );
-  const [selectedShip, setSelectedShip, selectedShipRef] = useStateRef(null);
-  const [hoveredCells, setHoveredCells, hoveredCellsRef] = useStateRef([]);
+  const [selectedShip, setSelectedShip, selectedShipRef] = useStateRef<PregameShip | null>(null);
+  const [hoveredCells, setHoveredCells, hoveredCellsRef] = useStateRef<string[]>([]);
 
   const handleMouseEnter = useCallback(
     (id: string): void => {
       if (selectedShip) {
-        calculateHoveredCells(id, selectedShipRef.current.size, selectedShipRef.current.orientation);
+        calculateHoveredCells(id, selectedShip.size, selectedShip.orientation);
       }
     },
     [board, selectedShip]
@@ -39,7 +39,6 @@ export default function Pregame() {
   const handlePlaceShip = useCallback(
     (id: string): void => {
       if (selectedShip && placementIsValid()) {
-        console.log("tes");
         updateBoard();
         updateShips();
 
@@ -63,7 +62,7 @@ export default function Pregame() {
 
   function updateShips() {
     handleShipSelect(null);
-    const newShips: PregameShip = ships.map((ship: PregameShip) => {
+    const newShips: PregameShip[] = ships.map((ship: PregameShip) => {
       if (ship.name === selectedShip?.name) {
         return { ...ship, onBoard: true };
       } else return { ...ship };
@@ -79,11 +78,12 @@ export default function Pregame() {
     event.preventDefault();
 
     // If a ship is selected and the right mouse button is clicked
-    if (selectedShipRef.current && event.button === 2) {
-      // Rotate the selected ship
+    if (selectedShipRef.current !== null && event.button === 2) {
+      const selectedShipName = selectedShipRef.current.name;
 
+      // Rotate the selected ship
       const newShips: PregameShip[] = shipsRef.current.map((ship: PregameShip) => {
-        if (ship.name === selectedShipRef.current.name) {
+        if (ship.name === selectedShipName) {
           const newShip: PregameShip = {
             ...ship,
             orientation: ship.orientation === "horizontal" ? "vertical" : "horizontal",

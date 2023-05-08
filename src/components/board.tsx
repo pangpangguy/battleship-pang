@@ -1,11 +1,15 @@
 import { ReactElement } from "react";
+<<<<<<< HEAD
+=======
+import { CellInfo, CellState } from "../common/types";
+>>>>>>> 7f3110f (fix : Change ICell to CellInfo)
 import { boardSize } from "../common/constants";
 import { ICell, CellState } from "../common/types";
 import Cell from "./cell";
 import "./board.css";
 
 interface BoardProps {
-  board: ICell[][];
+  board: CellInfo[][];
   hoveredCells: string[];
   handleMouseEnter: (id: string) => void;
   handleMouseLeave: (id: string) => void;
@@ -61,7 +65,7 @@ export default function Board({
       );
 
       for (let row = 1; row <= boardSize; row++) {
-        const cell: ICell = board[row - 1][col - 1];
+        const cell: CellInfo = board[row - 1][col - 1];
         cols.push(
           <Cell
             cell={cell}

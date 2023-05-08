@@ -11,8 +11,7 @@ export interface PregameShip extends Ship {
   orientation: "horizontal" | "vertical";
 }
 
-//Adding an "I" in front (according to convention) to differentiate it with the Cell component
-export interface ICell {
+export interface CellInfo {
   cellId: string;
   state: CellState;
 }

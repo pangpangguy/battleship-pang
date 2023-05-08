@@ -1,10 +1,41 @@
 import { useState, useCallback } from "react";
+<<<<<<< HEAD
 import { CellState, Position, PregameShip, Ship, useStateRef } from "../common/types";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
 import { generateCells, shipList } from "../common/constants";
 
 export default function Pregame() {
+=======
+import { CellInfo, CellState, Position, PregameShip } from "../common/types";
+import { boardSize, shipList } from "../common/constants";
+import Board from "./board";
+import ShipPlacement from "./ship-placement";
+
+export default function Pregame() {
+  const generateCells = (): CellInfo[][] => {
+    const output: CellInfo[][] = [];
+    for (let row = 0; row < boardSize; row++) {
+      const cols: CellInfo[] = [];
+
+      for (let col = 0; col < boardSize; col++) {
+        const colHeader: string = String.fromCharCode("A".charCodeAt(0) + col);
+        const cellId = `${row + 1}-${colHeader}`;
+
+        cols.push({ cellId: cellId, state: CellState.Unoccupied });
+      }
+      output.push(cols);
+    }
+    return output;
+  };
+
+  const generateShips = (): PregameShip[] => {
+    return shipList.map((ship) => {
+      return { ...ship, onBoard: false };
+    });
+  };
+
+>>>>>>> 7f3110f (fix : Change ICell to CellInfo)
   const [board, setBoard] = useState(generateCells());
   const [cursorPosition, setCursorPosition] = useState<Position>({ x: 0, y: 0 });
 

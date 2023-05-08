@@ -1,14 +1,14 @@
 import { useState, useCallback } from "react";
-import { ICell, CellState, Position, PregameShip } from "../common/types";
+import { CellInfo, CellState, Position, PregameShip } from "../common/types";
+import { boardSize, shipList } from "../common/constants";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
-import { boardSize, shipList } from "../common/constants";
 
 export default function Pregame() {
-  const generateCells = (): ICell[][] => {
-    const output: ICell[][] = [];
+  const generateCells = (): CellInfo[][] => {
+    const output: CellInfo[][] = [];
     for (let row = 0; row < boardSize; row++) {
-      const cols: ICell[] = [];
+      const cols: CellInfo[] = [];
 
       for (let col = 0; col < boardSize; col++) {
         const colHeader: string = String.fromCharCode("A".charCodeAt(0) + col);

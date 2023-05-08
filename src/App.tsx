@@ -1,8 +1,8 @@
 import { ReactElement, useState } from "react";
 import { GamePhase } from "./common/types";
-import "./App.css";
 import Pregame from "./components/pregame";
-import GameStart from "./gamestart";
+import GameStart from "./components/gamestart";
+import "./App.css";
 
 function App(): ReactElement {
   const [gameState, useGameState] = useState<GamePhase>(GamePhase.PreGame);

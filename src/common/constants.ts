@@ -1,4 +1,4 @@
-import { Ship, ICell, CellState } from "./types";
+import { Ship, CellState, CellInfo } from "./types";
 
 export const shipList: Ship[] = [
   { name: "Carrier", size: 5, acronym: "CR" },
@@ -8,10 +8,10 @@ export const shipList: Ship[] = [
   { name: "Patrol Boat", size: 2, acronym: "PB" },
 ];
 
-export const generateCells = (): ICell[][] => {
-  const output: ICell[][] = [];
+export const generateCells = (): CellInfo[][] => {
+  const output: CellInfo[][] = [];
   for (let row = 0; row < boardSize; row++) {
-    const cols: ICell[] = [];
+    const cols: CellInfo[] = [];
 
     for (let col = 0; col < boardSize; col++) {
       const colHeader: string = String.fromCharCode("A".charCodeAt(0) + col);

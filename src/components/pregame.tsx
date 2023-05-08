@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import { CellInfo, CellState, Position, PregameShip, Ship, useStateRef } from "../common/types";
-import { generateCells, boardSize, shipList } from "../common/constants";
+import { CellState, Position, PregameShip, Ship, useStateRef } from "../common/types";
+import { generateCells, shipList } from "../common/constants";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
 

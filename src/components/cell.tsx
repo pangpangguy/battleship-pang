@@ -1,9 +1,9 @@
-import { CellInfo, CellState, hoverState } from "../common/types";
+import { CellInfo, CellState, HoverState } from "../common/types";
 import "./cell.css";
 import classNames from "classnames";
 
 interface CellProps {
-  isHovered: hoverState;
+  isHovered: HoverState;
   cell: CellInfo;
   handleMouseEnter: (cellId: string) => void;
   handleMouseLeave: (cellId: string) => void;

@@ -153,11 +153,8 @@ export default function Pregame() {
 
   //Check if the placement is valid for the current hovered cells
   function placementIsValid(): boolean {
-    //If there are no hovered cells, return
-    if (hoveredCells.length < 0) return false;
-
-    //If no ship is selected, return
-    if (!selectedShip) return false;
+    //If no ship selected or there are no hovered cells, return
+    if (!selectedShip || hoveredCells.length <= 0) return false;
 
     //If parts of the ships are not inside the board), return
     if (hoveredCells.length !== selectedShip.size) return false;

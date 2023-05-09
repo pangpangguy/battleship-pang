@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { CellInfo } from "../common/types";
+import { CellInfo, HoverState } from "../common/types";
 import { boardSize } from "../common/constants";
 import "./board.css";
 import Cell from "./cell";
@@ -54,7 +54,7 @@ export default function Board({
       for (let row = 0; row < boardSize; row++) {
         const cell: CellInfo = board[row][col];
         //Check if the cell is hovered
-        const cellIsHovered: "valid" | "invalid" | null = hoveredCells.cells.includes(cell.cellId)
+        const cellIsHovered: HoverState = hoveredCells.cells.includes(cell.cellId)
           ? hoveredCells.isValid
             ? "valid"
             : "invalid"

@@ -17,6 +17,7 @@ export interface CellInfo {
 }
 
 export type HoverState = "valid" | "invalid" | null;
+
 export interface Position {
   x: number;
   y: number;

@@ -2,6 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-direction: column;
   margin: 20px;
   padding: 20px;
   background-color: #f0f0f0;
@@ -10,8 +11,16 @@
 }
 
 h1 {
-  white-space: nowrap;
   font-size: 2.5rem;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  white-space: nowrap;
+}
+
+.boards-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .opponent-board {
@@ -21,4 +30,25 @@ h1 {
 
 .player-board {
   width: 50%;
+}
+
+.restart-btn-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.restart-btn {
+  background-color: rgb(255, 186, 186);
+  border: none;
+  transition: 0.2s;
+}
+
+.restart-btn:hover {
+  background-color: rgb(255, 123, 123);
+}
+
+.restart-btn:focus {
+  outline: none;
 }

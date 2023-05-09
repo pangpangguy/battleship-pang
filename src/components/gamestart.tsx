@@ -10,25 +10,30 @@ export default function GameStart() {
 
   return (
     <div className="container">
-      <div className="opponent-board">
-        <h1>Select a cell to attack:</h1>
-        <Board
-          board={playerBoard}
-          hoveredCells={[]}
-          handleMouseEnter={function (id: string): void {}}
-          handleMouseLeave={function (id: string): void {}}
-          handleMouseClick={function (id: string): void {}}
-        />
+      <div className="restart-btn-wrapper">
+        <button className="restart-btn">Restart Game</button>
       </div>
-      <div className="player-board">
-        <h1>Your Board</h1>
-        <Board
-          board={opponentBoard}
-          hoveredCells={[]}
-          handleMouseEnter={function (id: string): void {}}
-          handleMouseLeave={function (id: string): void {}}
-          handleMouseClick={function (id: string): void {}}
-        />
+      <div className="boards-wrapper">
+        <div className="opponent-board">
+          <h1>Select a cell to attack:</h1>
+          <Board
+            board={opponentBoard}
+            hoveredCells={[]}
+            handleMouseEnter={function (id: string): void {}}
+            handleMouseLeave={function (id: string): void {}}
+            handleMouseClick={function (id: string): void {}}
+          />
+        </div>
+        <div className="player-board">
+          <h1>Your Board</h1>
+          <Board
+            board={playerBoard}
+            hoveredCells={[]}
+            handleMouseEnter={function (id: string): void {}}
+            handleMouseLeave={function (id: string): void {}}
+            handleMouseClick={function (id: string): void {}}
+          />
+        </div>
       </div>
     </div>
   );

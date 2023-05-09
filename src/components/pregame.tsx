@@ -38,7 +38,7 @@ export default function Pregame() {
 
   const handlePlaceShip = useCallback(
     (id: string): void => {
-      if (selectedShip && placementIsValid()) {
+      if (placementIsValid()) {
         updateBoard();
         updateShips();
 

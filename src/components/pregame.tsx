@@ -151,18 +151,25 @@ export default function Pregame() {
     setHoveredCells(selectedCells);
   }
 
-  //Check if the placement is valid, i.e the hovered cells are not occupied by ships
+  //Check if the placement is valid for the current hovered cells
   function placementIsValid(): boolean {
-    if (selectedShip && hoveredCells.length > 0) {
-      return (
-        hoveredCells.length === selectedShip.size &&
-        board
-          .flat()
-          .filter((cell) => hoveredCells.includes(cell.cellId))
-          .every((cell) => cell.cellState === CellState.Unoccupied)
-      );
-    }
-    return false;
+    //If there are no hovered cells, return
+    if (hoveredCells.length < 0) return false;
+
+    //If no ship is selected, return
+    if (!selectedShip) return false;
+
+    //If parts of the ships are not inside the board), return
+    if (hoveredCells.length !== selectedShip.size) return false;
+
+    //Check if the hovered cells are not already occupied by ships
+    return (
+      hoveredCells.length === selectedShip.size &&
+      board
+        .flat()
+        .filter((cell) => hoveredCells.includes(cell.cellId))
+        .every((cell) => cell.cellState === CellState.Unoccupied)
+    );
   }
 
   return (

@@ -13,7 +13,7 @@ export default function GameStart() {
       <div className="opponent-board">
         <h1>Select a cell to attack:</h1>
         <Board
-          board={playerBoard}
+          board={opponentBoard}
           hoveredCells={[]}
           handleMouseEnter={function (id: string): void {}}
           handleMouseLeave={function (id: string): void {}}
@@ -23,7 +23,7 @@ export default function GameStart() {
       <div className="player-board">
         <h1>Your Board</h1>
         <Board
-          board={opponentBoard}
+          board={playerBoard}
           hoveredCells={[]}
           handleMouseEnter={function (id: string): void {}}
           handleMouseLeave={function (id: string): void {}}

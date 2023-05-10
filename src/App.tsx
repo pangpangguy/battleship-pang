@@ -1,7 +1,7 @@
 import { ReactElement, useState } from "react";
 import { GamePhase } from "./common/types";
 import Pregame from "./components/pregame";
-import GameStart from "./components/gamestart";
+import GameStart from "./components/gameStart";
 import "./App.css";
 
 function App(): ReactElement {

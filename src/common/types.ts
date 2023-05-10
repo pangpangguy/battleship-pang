@@ -11,7 +11,7 @@ export interface PregameShip extends Ship {
 
 export interface CellInfo {
   cellId: string;
-  state: CellState;
+  cellState: CellState;
 }
 
 export interface Position {
@@ -26,4 +26,9 @@ export enum CellState {
   Miss,
   Sunk,
   Header,
+}
+export enum GamePhase {
+  PreGame,
+  GameStart,
+  GameEnd,
 }

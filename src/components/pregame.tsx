@@ -7,6 +7,8 @@ import ShipPlacement from "./ship-placement";
 
 export default function Pregame() {
   const [board, setBoard] = useState(generateCells());
+  const [ships, setShips] = useState(generateShips());
+  const [selectedShip, setSelectedShip] = useState<PregameShip | null>(null);
   const [cursorPosition, setCursorPosition] = useState<Position>({ x: 0, y: 0 });
 
   //Keeping refs as well for the following states as they are used in event listeners
@@ -115,6 +117,7 @@ export default function Pregame() {
       window.removeEventListener("contextmenu", handleShipRotate);
     }
   }
+
   function checkIfCellHoverable(id: string): boolean {
     // If a ship is not selected, return
     if (!selectedShipRef) return false;

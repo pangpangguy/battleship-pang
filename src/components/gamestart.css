@@ -1,0 +1,70 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  margin: 20px;
+  padding: 20px;
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px #cecece;
+}
+
+h1 {
+  font-size: 2.5rem;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  white-space: nowrap;
+}
+
+.boards-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.opponent-board {
+  width: 50%;
+  margin-right: 10px;
+  user-select: none;
+}
+
+.opponent-board .board .cell:not(.header) {
+  cursor: pointer;
+}
+
+.opponent-board .board .cell:not(.header):hover {
+  background-color: rgb(151, 255, 151);
+}
+
+.player-board {
+  width: 50%;
+  margin-right: 10px;
+  position: relative;
+  user-select: none;
+}
+
+.player-board > div {
+  opacity: 0.55;
+}
+
+.restart-btn-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.restart-btn {
+  background-color: rgb(255, 186, 186);
+  border: none;
+  transition: 0.2s;
+}
+
+.restart-btn:hover {
+  background-color: rgb(255, 123, 123);
+}
+
+.restart-btn:focus {
+  outline: none;
+}

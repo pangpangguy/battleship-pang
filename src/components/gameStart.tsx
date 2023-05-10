@@ -18,7 +18,7 @@ export default function GameStart() {
           <h1>Select a cell to attack:</h1>
           <Board
             board={opponentBoard}
-            hoveredCells={[]}
+            hoveredCells={{ cells: [], isValid: false }}
             handleMouseEnter={function (id: string): void {}}
             handleMouseLeave={function (id: string): void {}}
             handleMouseClick={function (id: string): void {}}
@@ -28,7 +28,7 @@ export default function GameStart() {
           <h1>Your Board</h1>
           <Board
             board={playerBoard}
-            hoveredCells={[]}
+            hoveredCells={{ cells: [], isValid: false }}
             handleMouseEnter={function (id: string): void {}}
             handleMouseLeave={function (id: string): void {}}
             handleMouseClick={function (id: string): void {}}

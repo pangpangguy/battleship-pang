@@ -5,7 +5,7 @@ import Board from "./board";
 import ShipPlacement from "./ship-placement";
 import { createCellId, generateBoard, useStateRef } from "../common/utils";
 
-export default function Pregame() {
+export default function Pregame({ handleStartGame }: { handleStartGame: () => void }) {
   const [board, setBoard] = useState<CellInfo[][]>(generateBoard());
   const [cursorPosition, setCursorPosition] = useState<Position>({ x: 0, y: 0 });
 
@@ -177,6 +177,7 @@ export default function Pregame() {
         handleShipSelect={handleShipSelect}
         selectedShip={selectedShip}
         cursorPosition={cursorPosition}
+        handleStartGame={handleStartGame}
       />
     </div>
   );

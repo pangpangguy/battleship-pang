@@ -1,7 +1,40 @@
+import { useState } from "react";
+import { CellInfo } from "../common/types";
+import { generateBoard } from "../common/constants";
+import Board from "./board";
+import "./gamestart.css";
+
 export default function GameStart() {
+  const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
+  const [opponentBoard, setOpponentBoard] = useState<CellInfo[][]>(generateBoard());
+
   return (
-    <div>
-      <h1>Game Start Page</h1>
+    <div className="container">
+      <div className="restart-btn-wrapper">
+        <button className="restart-btn">Restart Game</button>
+      </div>
+      <div className="boards-wrapper">
+        <div className="opponent-board">
+          <h1>Select a cell to attack:</h1>
+          <Board
+            board={opponentBoard}
+            hoveredCells={[]}
+            handleMouseEnter={function (id: string): void {}}
+            handleMouseLeave={function (id: string): void {}}
+            handleMouseClick={function (id: string): void {}}
+          />
+        </div>
+        <div className="player-board">
+          <h1>Your Board</h1>
+          <Board
+            board={playerBoard}
+            hoveredCells={[]}
+            handleMouseEnter={function (id: string): void {}}
+            handleMouseLeave={function (id: string): void {}}
+            handleMouseClick={function (id: string): void {}}
+          />
+        </div>
+      </div>
     </div>
   );
 }

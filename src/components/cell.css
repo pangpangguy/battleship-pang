@@ -18,3 +18,20 @@
   cursor: default;
   background-color: rgb(138, 228, 138);
 }
+
+.occupied.hovered--invalid {
+  cursor: not-allowed;
+  background-color: rgb(138, 228, 138);
+}
+
+.miss {
+  background-color: white;
+}
+
+.hit {
+  background-color: rgb(250, 111, 111);
+}
+
+.sunk {
+  background-color: rgb(250, 19, 19);
+}

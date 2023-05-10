@@ -1,12 +1,19 @@
-import { useState } from "react";
-import { CellInfo } from "../common/types";
-import { generateBoard } from "../common/constants";
+import { CellInfo, CellState } from "../common/types";
+import { useEffect, useState } from "react";
+import { generateBoard, generateRandomBoard } from "../common/constants";
 import Board from "./board";
 import "./gamestart.css";
 
 export default function GameStart() {
   const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
   const [opponentBoard, setOpponentBoard] = useState<CellInfo[][]>(generateBoard());
+
+  //Randomly generates a board with random states for testing purposes
+  //To be removed later
+
+  useEffect(() => {
+    setPlayerBoard(generateRandomBoard());
+  }, []);
 
   return (
     <div className="container">
@@ -18,7 +25,7 @@ export default function GameStart() {
           <h1>Select a cell to attack:</h1>
           <Board
             board={opponentBoard}
-            hoveredCells={[]}
+            hoveredCells={{ cells: [], isValid: false }}
             handleMouseEnter={function (id: string): void {}}
             handleMouseLeave={function (id: string): void {}}
             handleMouseClick={function (id: string): void {}}
@@ -28,7 +35,7 @@ export default function GameStart() {
           <h1>Your Board</h1>
           <Board
             board={playerBoard}
-            hoveredCells={[]}
+            hoveredCells={{ cells: [], isValid: false }}
             handleMouseEnter={function (id: string): void {}}
             handleMouseLeave={function (id: string): void {}}
             handleMouseClick={function (id: string): void {}}

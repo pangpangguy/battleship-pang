@@ -9,7 +9,6 @@ function App(): ReactElement {
 
   function handleStartGame() {
     useGameState(GamePhase.GameStart);
-    console.log("Start game!");
   }
 
   function renderCurrentGamePhase() {

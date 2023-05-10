@@ -34,7 +34,7 @@ export default function ShipPlacement({
   }
   function handleDeselectShip(event: MouseEvent<HTMLDivElement>) {
     // If the user clicks on the ship placement area while a ship is selected, deselect the ship
-    if (event.button === 0 && selectedShip) {
+    if (selectedShip) {
       handleShipSelect(null);
     }
   }

@@ -1,6 +1,6 @@
-import { CellInfo, CellState } from "../common/types";
+import { CellInfo } from "../common/types";
 import { useEffect, useState } from "react";
-import { generateBoard, generateRandomBoard } from "../common/constants";
+import { generateBoard, generateBoardWithShips } from "../common/constants";
 import Board from "./board";
 import "./gamestart.css";
 
@@ -10,9 +10,8 @@ export default function GameStart() {
 
   //Randomly generates a board with random states for testing purposes
   //To be removed later
-
   useEffect(() => {
-    setPlayerBoard(generateRandomBoard());
+    setPlayerBoard(generateBoardWithShips());
   }, []);
 
   return (

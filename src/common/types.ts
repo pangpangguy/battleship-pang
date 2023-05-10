@@ -14,6 +14,8 @@ export interface CellInfo {
   cellState: CellState;
 }
 
+export type HoverState = "valid" | "invalid" | null;
+
 export interface Position {
   x: number;
   y: number;
@@ -25,7 +27,6 @@ export enum CellState {
   Hit,
   Miss,
   Sunk,
-  Header,
 }
 export enum GamePhase {
   PreGame,

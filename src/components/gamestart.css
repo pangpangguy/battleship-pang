@@ -26,10 +26,26 @@ h1 {
 .opponent-board {
   width: 50%;
   margin-right: 10px;
+  user-select: none;
+}
+
+.opponent-board .board .cell:not(.header) {
+  cursor: pointer;
+}
+
+.opponent-board .board .cell:not(.header):hover {
+  background-color: rgb(151, 255, 151);
 }
 
 .player-board {
   width: 50%;
+  margin-right: 10px;
+  position: relative;
+  user-select: none;
+}
+
+.player-board > div {
+  opacity: 0.55;
 }
 
 .restart-btn-wrapper {

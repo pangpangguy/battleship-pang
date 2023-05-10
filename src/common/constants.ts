@@ -1,4 +1,4 @@
-import { Ship, CellState, CellInfo } from "./types";
+import { Ship } from "./types";
 
 export const shipList: Ship[] = [
   { name: "Carrier", size: 5, acronym: "CR" },

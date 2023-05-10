@@ -22,7 +22,7 @@ export default function Cell({ cell, hovered, handleMouseEnter, handleMouseLeave
       className={classNames("cell", {
         header: cell.cellId.length <= 1 || cell.cellId === "10",
         hovered: hovered,
-        occupied: cell.state === CellState.Occupied,
+        occupied: cell.cellState === CellState.Occupied,
       })}
       onClick={() => {
         handleMouseClick(cell.cellId);

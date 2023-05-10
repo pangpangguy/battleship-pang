@@ -1,14 +1,13 @@
 import { useState, useCallback } from "react";
 import { CellState, Position, PregameShip, Ship } from "../common/types";
+import { useStateRef, generateBoard, createCellId } from "../common/utils";
 import { shipList } from "../common/constants";
-import { useStateRef, generateCells, createCellId } from "../common/utils";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
 
 export default function Pregame() {
-  const [board, setBoard] = useState(generateCells());
+  const [board, setBoard] = useState(generateBoard());
   const [ships, setShips] = useState(generateShips());
-  const [selectedShip, setSelectedShip] = useState<PregameShip | null>(null);
   const [cursorPosition, setCursorPosition] = useState<Position>({ x: 0, y: 0 });
 
   //Keeping refs as well for the following states as they are used in event listeners

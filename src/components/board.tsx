@@ -27,7 +27,7 @@ export default function Board({
     for (let i = 0; i <= boardSize; i++) {
       headerCols.push(
         <Cell
-          cell={{ cellId: i.toString(), state: CellState.Header }}
+          cell={{ cellId: i.toString(), cellState: CellState.Header }}
           hovered={false}
           handleMouseEnter={handleMouseEnter}
           handleMouseLeave={handleMouseLeave}
@@ -51,7 +51,7 @@ export default function Board({
       const colHeaderId: string = String.fromCharCode("A".charCodeAt(0) + col - 1);
       cols.push(
         <Cell
-          cell={{ cellId: colHeaderId, state: CellState.Header }}
+          cell={{ cellId: colHeaderId, cellState: CellState.Header }}
           hovered={false}
           handleMouseEnter={handleMouseEnter}
           handleMouseLeave={handleMouseLeave}

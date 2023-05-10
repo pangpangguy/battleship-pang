@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { CellInfo } from "../common/types";
+import { generateBoard } from "../common/utils";
 import Board from "./board";
 import "./gamestart.css";
 

@@ -26,13 +26,13 @@ export function createCellId(row: number, col: number | string): string {
 }
 
 //Function to generate the board
-export const generateCells = (): CellInfo[][] => {
+export const generateBoard = (): CellInfo[][] => {
   const output: CellInfo[][] = [];
   for (let row = 0; row < boardSize; row++) {
     const cols: CellInfo[] = [];
 
     for (let col = 0; col < boardSize; col++) {
-      cols.push({ cellId: createCellId(row + 1, col), state: CellState.Unoccupied });
+      cols.push({ cellId: createCellId(row + 1, col), cellState: CellState.Unoccupied });
     }
     output.push(cols);
   }

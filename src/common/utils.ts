@@ -16,6 +16,15 @@ export function useStateRef(initialValue: any) {
   return [value, setValue, ref];
 }
 
+//Function to create the cellId from the row and column input
+//Row is between 1 and 10
+//Col is between A and J. If a number is passed, it is converted to the corresponding letter
+export function createCellId(row: number, col: number | string): string {
+  const colHeader = typeof col === "string" ? col : String.fromCharCode("A".charCodeAt(0) + col);
+
+  return `${row}-${colHeader}`;
+}
+
 //Function to generate the board
 export const generateCells = (): CellInfo[][] => {
   const output: CellInfo[][] = [];
@@ -23,10 +32,7 @@ export const generateCells = (): CellInfo[][] => {
     const cols: CellInfo[] = [];
 
     for (let col = 0; col < boardSize; col++) {
-      const colHeader: string = String.fromCharCode("A".charCodeAt(0) + col);
-      const cellId: string = `${row + 1}-${colHeader}`;
-
-      cols.push({ cellId: cellId, state: CellState.Unoccupied });
+      cols.push({ cellId: createCellId(row + 1, col), state: CellState.Unoccupied });
     }
     output.push(cols);
   }

@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
-import { CellState, Position, PregameShip, Ship, useStateRef } from "../common/types";
-import { generateCells, shipList } from "../common/constants";
+import { CellState, Position, PregameShip, Ship } from "../common/types";
+import { shipList } from "../common/constants";
+import { useStateRef, generateCells, createCellId } from "../common/utils";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
 
@@ -131,14 +132,11 @@ export default function Pregame() {
     // Select all cells with id's that are in the range of the ship size
     const selectedCells: string[] = [];
     const [rowNumber, colHeader] = id.split("-");
-
     if (shipOrientation === "horizontal") {
       for (let i = 0; i < shipSize; i++) {
-        // Calculate the new colHeader by incrementing the charCodeAt value
-        const newColHeader: string = String.fromCharCode(colHeader.charCodeAt(0) + i);
-
-        // Combine the rowNumber and newColHeader to form the cellId
-        const cellId: string = `${rowNumber}-${newColHeader}`;
+        colHeader.charCodeAt(0) + i;
+        //Construct the cell Id
+        const cellId: string = createCellId(parseInt(rowNumber), String.fromCharCode(colHeader.charCodeAt(0) + i));
 
         // Check if the cell is valid for ship placement
         if (checkIfCellHoverable(cellId)) {
@@ -148,13 +146,14 @@ export default function Pregame() {
     } else {
       for (let i = 0; i < shipSize; i++) {
         // Combine the rowNumber and newColHeader to form the cellId
-        const cellId: string = `${parseInt(rowNumber) + i}-${colHeader}`;
+        const cellId: string = createCellId(parseInt(rowNumber) + i, colHeader);
         // Check if the cell is valid for ship placement
         if (checkIfCellHoverable(cellId)) {
           selectedCells.push(cellId);
         }
       }
     }
+    console.log(selectedCells);
     setHoveredCells(selectedCells);
   }
 

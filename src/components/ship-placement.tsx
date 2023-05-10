@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, MouseEvent } from "react";
 import { Position, PregameShip } from "../common/types";
 import Ship from "./ship";
 import "./ship-placement.css";
@@ -32,9 +32,14 @@ export default function ShipPlacement({
       />
     );
   }
-
+  function handleDeselectShip(event: MouseEvent<HTMLDivElement>) {
+    // If the user clicks on the ship placement area while a ship is selected, deselect the ship
+    if (event.button === 0 && selectedShip) {
+      handleShipSelect(null);
+    }
+  }
   return (
-    <div className="ship-placement" onClick={() => handleShipSelect(null)}>
+    <div className="ship-placement" onClick={handleDeselectShip}>
       <div className="ships">{renderShips}</div>
       <button className="start-game"> Start Game</button>
     </div>

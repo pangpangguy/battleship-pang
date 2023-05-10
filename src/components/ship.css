@@ -8,6 +8,10 @@
   cursor: pointer;
 }
 
+.ship-cell--vertical .ship-cell {
+  display: block;
+}
+
 .ship--on-board {
   opacity: 0.5;
 }

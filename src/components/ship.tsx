@@ -1,5 +1,6 @@
-import { CSSProperties } from "react";
+import { ReactElement } from "react";
 import { Position, PregameShip } from "../common/types";
+import { CSSProperties } from "react";
 
 import "./ship.css";
 import classNames from "classnames";
@@ -27,7 +28,7 @@ export default function Ship({
     onShipSelect(ship);
   }
 
-  const shipCells = [];
+  const shipCells: ReactElement[] = [];
   for (let i = 0; i < ship.size; i++) {
     const cellId = `${ship.acronym}-${i}`;
     shipCells.push(
@@ -40,7 +41,10 @@ export default function Ship({
     <>
       <div
         style={style}
-        className={classNames("ship", { "ship--on-board": ship.onBoard })}
+        className={classNames("ship", {
+          "ship--on-board": ship.onBoard,
+          "ship-cell--vertical": selected && ship.orientation === "vertical",
+        })}
         onClick={(e) => {
           e.stopPropagation();
           handleShipClick(ship);

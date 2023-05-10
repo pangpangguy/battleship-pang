@@ -12,8 +12,13 @@
 
 .hovered {
   cursor: pointer;
-  background-color: rgb(239, 165, 28);
+  background-color: rgb(73, 245, 130);
 }
+.hovered--invalid {
+  cursor: not-allowed;
+  background-color: rgb(248, 83, 83);
+}
+
 .occupied {
   cursor: default;
   background-color: rgb(138, 228, 138);

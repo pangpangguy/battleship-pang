@@ -8,7 +8,7 @@ export const shipList: Ship[] = [
   { name: "Patrol Boat", size: 2, acronym: "PB" },
 ];
 
-export const boardSize = 10;
+export const boardSize: number = 10;
 
 export const generateBoard = (): CellInfo[][] => {
   const output: CellInfo[][] = [];

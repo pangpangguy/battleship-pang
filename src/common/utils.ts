@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { boardSize, shipList } from "./constants";
+import { boardSize } from "./constants";
 import { CellInfo, CellState } from "./types";
 
 //useStateRef is a custom hook that returns a ref to the state, as well as the state itself.

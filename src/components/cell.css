@@ -5,31 +5,29 @@
   border: 1px solid white;
 }
 
+.cell.header {
+  font-size: 1.5rem;
+  border-color: transparent;
+}
+
 .cell:not(.header):not(.discovered) {
   opacity: 0.8;
   background-color: rgb(149, 219, 243);
 }
 
-.header {
-  font-size: 1.5rem;
-  border-color: transparent;
-}
-
-.hovered {
+.cell:not(.header).unoccupied.hovered {
+  opacity: 1;
   cursor: pointer;
   background-color: rgb(73, 245, 130);
 }
-.hovered--invalid {
+
+.cell:not(.header).unoccupied.hovered--invalid {
+  opacity: 1;
   cursor: not-allowed;
   background-color: rgb(248, 83, 83);
 }
 
-.occupied {
-  cursor: default;
-  background-color: rgb(138, 228, 138);
-}
-
-.occupied.hovered--invalid {
+.cell:not(.header).occupied {
   cursor: not-allowed;
   background-color: rgb(138, 228, 138);
 }

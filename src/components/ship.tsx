@@ -1,6 +1,5 @@
-import { ReactElement } from "react";
+import { ReactElement, CSSProperties } from "react";
 import { Position, PregameShip } from "../common/types";
-import { CSSProperties } from "react";
 
 import "./ship.css";
 import classNames from "classnames";

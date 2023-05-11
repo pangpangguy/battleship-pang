@@ -1,10 +1,11 @@
 import { useState, useCallback } from "react";
-import { CellInfo, CellState, Position, PregameShip, useStateRef } from "../common/types";
-import { generateBoard, shipList } from "../common/constants";
+import { CellInfo, CellState, Position, PregameShip } from "../common/types";
+import { shipList } from "../common/constants";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
+import { createCellId, generateBoard, useStateRef } from "../common/utils";
 
-export default function Pregame() {
+export default function Pregame({ handleStartGame }: { handleStartGame: () => void }) {
   const [board, setBoard] = useState<CellInfo[][]>(generateBoard());
   const [cursorPosition, setCursorPosition] = useState<Position>({ x: 0, y: 0 });
 
@@ -39,7 +40,10 @@ export default function Pregame() {
   const handlePlaceShip = useCallback(
     (id: string): void => {
       if (placementIsValid()) {
+        // for each cell in hoveredcells, set the state to occupied and set the new board.
         updateBoard();
+
+        //Update the placed ship in the ships list (onBoard = true).
         updateShips();
 
         //Remove event listeners from the placed ship
@@ -48,32 +52,6 @@ export default function Pregame() {
     },
     [hoveredCells, board]
   );
-
-  function updateBoard() {
-    const newBoard: CellInfo[][] = board.map((rowCells) => {
-      return rowCells.map((cell) => {
-        if (hoveredCells.includes(cell.cellId)) {
-          return { ...cell, cellState: CellState.Occupied };
-        } else return { ...cell };
-      });
-    });
-    setBoard(newBoard);
-  }
-
-  function updateShips() {
-    handleShipSelect(null);
-    const newShips: PregameShip[] = ships.map((ship: PregameShip) => {
-      if (ship.name === selectedShip?.name) {
-        return { ...ship, onBoard: true };
-      } else return { ...ship };
-    });
-    setShips(newShips);
-  }
-
-  const handleMouseMove = useCallback((event: MouseEvent): void => {
-    setCursorPosition({ x: event.clientX, y: event.clientY });
-    //Dependency is empty to make sure we remove the same function that we have attached to the event listener.
-  }, []);
 
   const handleShipRotate = useCallback((event: MouseEvent): void => {
     event.preventDefault();
@@ -102,6 +80,32 @@ export default function Pregame() {
     //Dependency is empty to make sure we remove the same function that we have attached to the event listener.
   }, []);
 
+  function updateBoard() {
+    // for each cell in hoveredcells, set the state to occupied and set the new board.
+    const newBoard: CellInfo[][] = board.map((rowCells) => {
+      return rowCells.map((cell) => {
+        if (hoveredCells.includes(cell.cellId)) {
+          return { ...cell, cellState: CellState.Occupied };
+        } else return { ...cell };
+      });
+    });
+    setBoard(newBoard);
+  }
+
+  function updateShips() {
+    handleShipSelect(null);
+    const newShips: PregameShip[] = ships.map((ship: PregameShip) => {
+      if (ship.name === selectedShip?.name) {
+        return { ...ship, onBoard: true };
+      } else return { ...ship };
+    });
+    setShips(newShips);
+  }
+
+  function handleMouseMove(event: MouseEvent): void {
+    setCursorPosition({ x: event.clientX, y: event.clientY });
+  }
+
   function handleShipSelect(ship: PregameShip | null): void {
     if (ship) {
       //Selects a ship
@@ -120,17 +124,13 @@ export default function Pregame() {
     // Select all cells with id's that are in the range of the ship size
     const selectedCells: string[] = [];
     const [rowNumber, colHeader] = id.split("-");
-
     if (shipOrientation === "horizontal") {
       for (let i = 0; i < shipSize; i++) {
-        // Calculate the new colHeader by incrementing the charCodeAt value
-        const newColHeader: string = String.fromCharCode(colHeader.charCodeAt(0) + i);
-
-        // Combine the rowNumber and newColHeader to form the cellId
-        const cellId: string = `${rowNumber}-${newColHeader}`;
+        //Construct the cell Id
+        const cellId: string = createCellId(parseInt(rowNumber), String.fromCharCode(colHeader.charCodeAt(0) + i));
 
         //Check if the cell is valid
-        const newColHeaderASCII = newColHeader.charCodeAt(0);
+        const newColHeaderASCII = cellId.split("-")[1].charCodeAt(0);
         if (newColHeaderASCII >= 65 && newColHeaderASCII <= 74) {
           selectedCells.push(cellId);
         }
@@ -177,6 +177,7 @@ export default function Pregame() {
         handleShipSelect={handleShipSelect}
         selectedShip={selectedShip}
         cursorPosition={cursorPosition}
+        handleStartGame={handleStartGame}
       />
     </div>
   );

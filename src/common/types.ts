@@ -1,5 +1,3 @@
-import { useEffect, useRef, useState } from "react";
-
 export interface Ship {
   name: string;
   size: number;
@@ -29,4 +27,9 @@ export enum CellState {
   Hit,
   Miss,
   Sunk,
+}
+export enum GamePhase {
+  PreGame,
+  GameStart,
+  GameEnd,
 }

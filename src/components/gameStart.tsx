@@ -10,7 +10,6 @@ export default function GameStart() {
 
   //Randomly generates a board with ships with random states for testing purposes
   //To be removed later
-
   useEffect(() => {
     const cellStates = Object.values(CellState).filter((state) => typeof state === "string" && state !== "Occupied");
 

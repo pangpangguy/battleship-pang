@@ -28,7 +28,7 @@ export default function GameStart() {
     setOpponentBoard(generateRandomBoard);
   }, []);
 
-  function discoverCell(id: string): void {
+  function handleCellSelect(id: string): void {
     const [row, col] = id.split("-");
 
     const newBoard = opponentBoard.map((row) => {
@@ -56,7 +56,7 @@ export default function GameStart() {
             hoveredCells={{ cells: [], isValid: false }}
             handleMouseEnter={function (id: string): void {}}
             handleMouseLeave={function (id: string): void {}}
-            handleMouseClick={discoverCell}
+            handleMouseClick={handleCellSelect}
           />
         </div>
         <div className="player-board">

@@ -12,7 +12,9 @@ export default function GameStart() {
   //To be removed later
 
   useEffect(() => {
-    const cellStates = Object.values(CellState).filter((state) => typeof state === "string" && state !== "Occupied");
+    const cellStates = Object.values(CellState).filter(
+      (state) => typeof state === "string" && state !== "Occupied" && state != "Unoccupied"
+    );
 
     const generateRandomBoard = (): CellInfo[][] => {
       return generateBoard().map((row) => {
@@ -27,6 +29,21 @@ export default function GameStart() {
     setOpponentBoard(generateRandomBoard);
   }, []);
 
+  function discoverCell(id: string): void {
+    const [row, col] = id.split("-");
+
+    const newBoard = opponentBoard.map((row) => {
+      return row.map((cell) => {
+        if (cell.cellId === id && !cell.discovered) {
+          return { ...cell, discovered: true };
+        }
+        return cell;
+      });
+    });
+
+    setOpponentBoard(newBoard);
+  }
+
   return (
     <div className="container">
       <div className="restart-btn-wrapper">
@@ -40,7 +57,7 @@ export default function GameStart() {
             hoveredCells={{ cells: [], isValid: false }}
             handleMouseEnter={function (id: string): void {}}
             handleMouseLeave={function (id: string): void {}}
-            handleMouseClick={function (id: string): void {}}
+            handleMouseClick={discoverCell}
           />
         </div>
         <div className="player-board">

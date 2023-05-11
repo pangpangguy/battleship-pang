@@ -12,6 +12,7 @@ export interface PregameShip extends Ship {
 export interface CellInfo {
   cellId: string;
   cellState: CellState;
+  discovered: boolean;
 }
 
 export type HoverState = "valid" | "invalid" | null;

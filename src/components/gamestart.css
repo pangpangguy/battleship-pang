@@ -29,12 +29,13 @@ h1 {
   user-select: none;
 }
 
-.opponent-board .board .cell:not(.header) {
+.opponent-board .board .cell:not(.header):not(.discovered) {
   cursor: pointer;
 }
 
-.opponent-board .board .cell:not(.header):hover {
-  background-color: rgb(151, 255, 151);
+.opponent-board .board .cell:not(.header):not(.discovered):hover {
+  opacity: 1;
+  background-color: rgb(109, 205, 237);
 }
 
 .player-board {
@@ -56,13 +57,13 @@ h1 {
 }
 
 .restart-btn {
-  background-color: rgb(255, 186, 186);
+  background-color: rgb(250, 204, 204);
   border: none;
   transition: 0.2s;
 }
 
 .restart-btn:hover {
-  background-color: rgb(255, 123, 123);
+  background-color: rgb(152, 50, 50);
 }
 
 .restart-btn:focus {

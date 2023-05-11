@@ -19,10 +19,10 @@ export default function Cell({ cell, isHovered, handleMouseEnter, handleMouseLea
       onMouseLeave={() => {
         handleMouseLeave(cell.cellId);
       }}
-      className={classNames("cell", {
+      className={classNames("cell", `${CellState[cell.cellState].toLowerCase()}`, {
         hovered: isHovered === "valid",
         "hovered--invalid": isHovered === "invalid",
-        occupied: cell.cellState === CellState.Occupied,
+        discovered: cell.discovered,
       })}
       onClick={() => {
         handleMouseClick(cell.cellId);

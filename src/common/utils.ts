@@ -18,7 +18,7 @@ export const generateBoard = (): CellInfo[][] => {
     const cols: CellInfo[] = [];
 
     for (let col = 0; col < boardSize; col++) {
-      cols.push({ cellId: createCellId(row + 1, col), cellState: CellState.Unoccupied });
+      cols.push({ cellId: createCellId(row + 1, col), cellState: CellState.Unoccupied, discovered: false });
     }
     output.push(cols);
   }

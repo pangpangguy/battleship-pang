@@ -11,9 +11,6 @@ interface CellProps {
 }
 
 export default function Cell({ cell, isHovered, handleMouseEnter, handleMouseLeave, handleMouseClick }: CellProps) {
-  if (cell.cellId === "10-A") {
-    console.log(cell.cellState);
-  }
   return (
     <div
       onMouseEnter={() => {

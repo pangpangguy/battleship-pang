@@ -1,4 +1,4 @@
-import { CellInfo } from "../common/types";
+import { CellInfo, CellState } from "../common/types";
 import { useEffect, useState } from "react";
 import { generateBoard, generateBoardWithShips } from "../common/utils";
 import Board from "./board";
@@ -8,10 +8,23 @@ export default function GameStart() {
   const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
   const [opponentBoard, setOpponentBoard] = useState<CellInfo[][]>(generateBoard());
 
-  //Randomly generates a board with random states for testing purposes
+  //Randomly generates a board with ships with random states for testing purposes
   //To be removed later
+
   useEffect(() => {
-    setPlayerBoard(generateBoardWithShips());
+    const cellStates = Object.values(CellState).filter((state) => typeof state === "string" && state !== "Occupied");
+
+    const generateRandomBoard = (): CellInfo[][] => {
+      return generateBoard().map((row) => {
+        return row.map((cell) => {
+          const randomState = cellStates[Math.floor(Math.random() * cellStates.length)];
+          cell.cellState = CellState[randomState as keyof typeof CellState];
+          return cell;
+        });
+      });
+    };
+
+    setOpponentBoard(generateRandomBoard);
   }, []);
 
   return (

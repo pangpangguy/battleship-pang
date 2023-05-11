@@ -56,13 +56,13 @@ h1 {
 }
 
 .restart-btn {
-  background-color: rgb(255, 186, 186);
+  background-color: rgb(250, 204, 204);
   border: none;
   transition: 0.2s;
 }
 
 .restart-btn:hover {
-  background-color: rgb(255, 123, 123);
+  background-color: rgb(152, 50, 50);
 }
 
 .restart-btn:focus {

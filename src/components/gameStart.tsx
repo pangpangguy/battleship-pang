@@ -12,7 +12,7 @@ export default function GameStart() {
   //To be removed later
   useEffect(() => {
     const cellStates = Object.values(CellState).filter(
-      (state) => typeof state === "string" && state !== "Occupied" && state != "Unoccupied"
+      (state) => typeof state === "string" && state !== "Occupied" && state !== "Unoccupied"
     );
 
     const generateRandomBoard = (): CellInfo[][] => {

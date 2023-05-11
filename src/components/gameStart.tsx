@@ -28,9 +28,8 @@ export default function GameStart() {
     setOpponentBoard(generateRandomBoard);
   }, []);
 
+  //Handle cell selection
   function handleCellSelect(id: string): void {
-    const [row, col] = id.split("-");
-
     const newBoard = opponentBoard.map((row) => {
       return row.map((cell) => {
         if (cell.cellId === id && !cell.discovered) {

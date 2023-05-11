@@ -12,6 +12,8 @@ interface CellProps {
 }
 
 export default function Cell({ cell, isHovered, handleMouseEnter, handleMouseLeave, handleMouseClick }: CellProps) {
+  //Animation for displaying cell states upon clicking:
+  //Phase 0: no animation, Phase 1: start animation, Phase 2: end animation
   const [animationPhase, setAnimationPhase] = useState<0 | 1 | 2>(0);
 
   return (
@@ -28,11 +30,16 @@ export default function Cell({ cell, isHovered, handleMouseEnter, handleMouseLea
         discovered: cell.discovered,
       })}
       onClick={() => {
+        //Ignore discovered cells
         if (cell.discovered) return;
+
+        //Start animation
         setAnimationPhase(1);
         setTimeout(() => {
           setAnimationPhase(2);
         }, 500);
+
+        //Update cell info
         handleMouseClick(cell.cellId);
       }}
     >

@@ -1,6 +1,6 @@
 import { CellInfo } from "../common/types";
 import { useEffect, useState } from "react";
-import { generateBoard, generateBoardWithShips } from "../common/constants";
+import { generateBoard, generateBoardWithShips } from "../common/utils";
 import Board from "./board";
 import "./gamestart.css";
 

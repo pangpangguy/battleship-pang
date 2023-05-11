@@ -34,18 +34,18 @@ export const generateBoardWithShips = (): CellInfo[][] => {
     const max = boardSize - ship.size;
 
     //Randomly select an orientation for the ship
+    //0 for horizontal, 1 for vertical
     const orientation = getRandomNumber(2);
 
     //Based on the orientation, select a random starting point
-    let row = orientation === 1 ? getRandomNumber(boardSize - 1) : getRandomNumber(max);
-    let col = orientation === 0 ? getRandomNumber(boardSize - 1) : getRandomNumber(max);
+    let row = orientation === 0 ? getRandomNumber(boardSize - 1) : getRandomNumber(max);
+    let col = orientation === 1 ? getRandomNumber(boardSize - 1) : getRandomNumber(max);
 
     console.log(`Placing ${ship.name} at ${row}, ${col} of orientation ${orientation} and size ${ship.size}`);
 
     for (let i = 0; i < ship.size; i++) {
       if (orientation) {
         //Vertical
-        console.log(`${row + i}, ${col}`);
         board[row + i][col].cellState = CellState.Occupied;
       } else {
         //Horizontal

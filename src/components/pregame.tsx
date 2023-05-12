@@ -1,12 +1,14 @@
 import { useState, useCallback } from "react";
-import { CellInfo, CellState, Position, PregameShip } from "../common/types";
+import { CellState, Position, PregameCellInfo, PregameShip } from "../common/types";
 import { shipList } from "../common/constants";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
 import { createCellId, generateBoard, useStateRef } from "../common/utils";
 
 export default function Pregame({ handleStartGame }: { handleStartGame: () => void }) {
-  const [board, setBoard] = useState<CellInfo[][]>(generateBoard());
+  const [board, setBoard] = useState<PregameCellInfo[][]>(
+    generateBoard().map((cellRow) => cellRow.map((cell) => ({ ...cell, cellState: CellState.Unoccupied })))
+  );
   const [cursorPosition, setCursorPosition] = useState<Position>({ x: 0, y: 0 });
 
   //Keeping refs as well for the following states as they are used in event listeners
@@ -82,7 +84,7 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
 
   function updateBoard() {
     // for each cell in hoveredcells, set the state to occupied and set the new board.
-    const newBoard: CellInfo[][] = board.map((rowCells) => {
+    const newBoard: PregameCellInfo[][] = board.map((rowCells) => {
       return rowCells.map((cell) => {
         if (hoveredCells.includes(cell.cellId)) {
           return { ...cell, cellState: CellState.Occupied };

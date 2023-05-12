@@ -53,17 +53,10 @@ export default function Board({
       //Construct the rest of the column
       for (let row = 0; row < boardSize; row++) {
         const cell: CellInfo = board[row][col];
-        //Check if the cell is hovered
-        const cellIsHovered: HoverState = hoveredCells.cells.includes(cell.cellId)
-          ? hoveredCells.isValid
-            ? "valid"
-            : "invalid"
-          : null;
 
         cols.push(
           <Cell
             cell={cell}
-            isHovered={cellIsHovered}
             handleMouseEnter={handleMouseEnter}
             handleMouseLeave={handleMouseLeave}
             handleMouseClick={handleMouseClick}

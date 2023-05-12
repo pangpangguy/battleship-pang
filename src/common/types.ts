@@ -12,10 +12,17 @@ export interface PregameShip extends Ship {
 export interface CellInfo {
   cellId: string;
   cellState: CellState;
-  discovered: boolean;
+  hoverState: HoverState;
 }
 
-export type HoverState = "valid" | "invalid" | null;
+export interface PregameCellInfo extends CellInfo {
+  cellState: CellState.Unoccupied | CellState.Occupied;
+}
+
+export interface GameStartCellInfo extends CellInfo {
+  cellState: CellState.Hit | CellState.Miss | CellState.Sunk;
+  discovered: boolean;
+}
 
 export interface Position {
   x: number;
@@ -29,6 +36,13 @@ export enum CellState {
   Miss,
   Sunk,
 }
+
+export enum HoverState {
+  Valid,
+  Invalid,
+  None,
+}
+
 export enum GamePhase {
   PreGame,
   GameStart,

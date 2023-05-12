@@ -6,19 +6,12 @@ import Cell from "./cell";
 
 interface BoardProps {
   board: CellInfo[][];
-  hoveredCells: { cells: string[]; isValid: boolean };
   handleMouseEnter: (id: string) => void;
   handleMouseLeave: (id: string) => void;
   handleMouseClick: (id: string) => void;
 }
 
-export default function Board({
-  board,
-  hoveredCells,
-  handleMouseEnter,
-  handleMouseLeave,
-  handleMouseClick,
-}: BoardProps) {
+export default function Board({ board, handleMouseEnter, handleMouseLeave, handleMouseClick }: BoardProps) {
   const generateGrid = () => {
     const grid: ReactElement[] = [];
 

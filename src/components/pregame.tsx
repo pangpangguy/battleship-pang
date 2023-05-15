@@ -25,7 +25,16 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
     (id: string): void => {
       if (selectedShip) {
         const hoveredCells = calculateHoveredCells(id, selectedShip.size, selectedShip.orientation);
-        updateBoard(hoveredCells);
+
+        //Check if the placement is valid
+        const newHoverState = placementIsValid(hoveredCells) ? HoverState.Valid : HoverState.Invalid;
+        const newHoveredCells: PregameCellInfo[] = hoveredCells.map((id) => {
+          return { cellId: id, cellState: CellState.Unoccupied, hoverState: newHoverState };
+        });
+
+        //Update hovered cells and return it;
+        setHoveredCells(newHoveredCells);
+        updateBoard(newHoveredCells);
       }
     },
     [selectedShip]
@@ -76,10 +85,16 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
             ...ship,
             orientation: ship.orientation === "horizontal" ? "vertical" : "horizontal",
           };
-
           setSelectedShip(newShip);
+
           if (hoveredCellsRef.current.length > 0) {
-            calculateHoveredCells(hoveredCellsRef.current[0], newShip.size, newShip.orientation);
+            const newHoveredCells = calculateHoveredCells(
+              hoveredCellsRef.current[0].cellId,
+              newShip.size,
+              newShip.orientation
+            );
+
+            updateBoard(newHoveredCells);
           }
           return newShip;
         } else return { ...ship };
@@ -89,14 +104,15 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
     //Dependency is empty to make sure we remove the same function that we have attached to the event listener.
   }, []);
 
-  function updateBoard(targetCells: PregameCellInfo[]) {
+  //Accepst a list of new target cells to be updated on the board
+  function updateBoard(cellsToUpdate: PregameCellInfo[]) {
     //Update the new board with cells in targetCells
     setBoard((currentBoard) =>
       currentBoard.map((rowCells) => {
         return rowCells.map((cell) => {
-          const targetCell = targetCells.find((targetCell) => targetCell.cellId === cell.cellId);
-          if (targetCell) {
-            return { ...targetCell };
+          const newCell = cellsToUpdate.find((newCell) => newCell.cellId === cell.cellId);
+          if (newCell) {
+            return { ...newCell };
           } else return { ...cell };
         });
       })
@@ -131,14 +147,11 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
     }
   }
 
-  function calculateHoveredCells(
-    id: string,
-    shipSize: number,
-    shipOrientation: "horizontal" | "vertical"
-  ): PregameCellInfo[] {
+  function calculateHoveredCells(id: string, shipSize: number, shipOrientation: "horizontal" | "vertical"): string[] {
     // Select all cells with id's that are in the range of the ship size
     const selectedCells: string[] = [];
     const [rowNumber, colHeader] = id.split("-");
+
     if (shipOrientation === "horizontal") {
       for (let i = 0; i < shipSize; i++) {
         //Construct the cell Id
@@ -164,19 +177,7 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
       }
     }
 
-    // Checks if the placement is valid for the selected cells
-    const validPlacement: boolean = placementIsValid(selectedCells);
-
-    const newHoveredCells = board
-      .flat()
-      .filter((cell) => selectedCells.includes(cell.cellId))
-      .map((cell) => {
-        return { ...cell, hoverState: validPlacement ? HoverState.Valid : HoverState.Invalid };
-      });
-
-    //Update hovered cells and return it;
-    setHoveredCells(newHoveredCells);
-    return newHoveredCells;
+    return selectedCells;
   }
 
   //Check if the placement is valid for the current hovered cells

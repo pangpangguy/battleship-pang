@@ -1,5 +1,5 @@
 import { GameStartCellInfo, CellState, CellInfo, HoverState } from "../common/types";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { generateBoard } from "../common/utils";
 import Board from "./board";
 import "./gamestart.css";
@@ -27,32 +27,36 @@ export default function GameStart() {
   const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
   const [opponentBoard, setOpponentBoard] = useState<GameStartCellInfo[][]>(generateRandomBoard());
   const [status, setStatus] = useState<string>("");
+  const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  function discoverCell(id: string): void {
-    for (const cellRow of opponentBoard) {
-      for (const cell of cellRow) {
-        if (cell.cellId === id) {
-          if (cell.discovered) {
-            return; // Stop further processing if already discovered
-          }
+  const discoverCell = useCallback(
+    (id: string): void => {
+      for (const cellRow of opponentBoard) {
+        for (const cell of cellRow) {
+          if (cell.cellId === id) {
+            if (cell.discovered) {
+              return; // Stop further processing if already discovered
+            }
 
-          //Play animation message
-          showAnimationMessage(cell.cellState);
+            //Play animation message
+            showAnimationMessage(cell.cellState);
 
-          //Uncover the cell
-          const newBoard = opponentBoard.map((cellRow) => {
-            return cellRow.map((cell) => {
-              if (cell.cellId === id) {
-                return { ...cell, discovered: true };
-              }
-              return cell;
+            //Uncover the cell
+            const newBoard = opponentBoard.map((cellRow) => {
+              return cellRow.map((cell) => {
+                if (cell.cellId === id) {
+                  return { ...cell, discovered: true };
+                }
+                return cell;
+              });
             });
-          });
-          setOpponentBoard(newBoard);
+            setOpponentBoard(newBoard);
+          }
         }
       }
-    }
-  }
+    },
+    [opponentBoard, timeoutId]
+  );
 
   function showAnimationMessage(state: GameStartCellStates) {
     if (state === CellState.Hit) {
@@ -62,7 +66,11 @@ export default function GameStart() {
     } else {
       setStatus("You sunk a ship!");
     }
-    setTimeout(() => {
+    if (timeoutId.current) {
+      console.log("clearing timeout");
+      clearTimeout(timeoutId.current);
+    }
+    timeoutId.current = setTimeout(() => {
       setStatus("");
     }, 1000);
   }

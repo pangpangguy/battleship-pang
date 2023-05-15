@@ -64,7 +64,7 @@ export default function GameStart() {
     }
     setTimeout(() => {
       setStatus("");
-    }, 500);
+    }, 1000);
   }
 
   return (

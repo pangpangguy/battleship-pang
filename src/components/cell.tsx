@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { CellInfo, CellState, GameStartCellInfo, HoverState } from "../common/types";
 import "./cell.css";
 import classNames from "classnames";
@@ -23,7 +24,6 @@ export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleM
         discovered: "discovered" in cell && cell.discovered === true,
       })}
       onClick={() => {
-        //Update cell info
         handleMouseClick(cell.cellId);
       }}
     >

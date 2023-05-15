@@ -5,13 +5,11 @@ import Board from "./board";
 import "./gamestart.css";
 
 export default function GameStart() {
+  type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
+
   //Randomly generates a board with ships with random states for testing purposes
   //To be removed later
-  const randomStates: (CellState.Hit | CellState.Miss | CellState.Sunk)[] = [
-    CellState.Miss,
-    CellState.Hit,
-    CellState.Sunk,
-  ];
+  const randomStates: GameStartCellStates[] = [CellState.Miss, CellState.Hit, CellState.Sunk];
   const generateRandomBoard = (): GameStartCellInfo[][] => {
     return generateBoard().map((cellRow) => {
       return cellRow.map((cell) => {
@@ -25,13 +23,16 @@ export default function GameStart() {
       });
     });
   };
+
   const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
   const [opponentBoard, setOpponentBoard] = useState<GameStartCellInfo[][]>(generateRandomBoard());
+  const [status, setStatus] = useState<string>("");
 
   function discoverCell(id: string): void {
     const newBoard = opponentBoard.map((cellRow) => {
       return cellRow.map((cell) => {
         if (cell.cellId === id) {
+          showAnimationMessage(cell.cellState);
           return { ...cell, discovered: true };
         }
         return cell;
@@ -39,6 +40,19 @@ export default function GameStart() {
     });
 
     setOpponentBoard(newBoard);
+  }
+
+  function showAnimationMessage(state: GameStartCellStates) {
+    if (state === CellState.Hit) {
+      setStatus("You hit a ship!");
+    } else if (state === CellState.Miss) {
+      setStatus("You missed!");
+    } else {
+      setStatus("You sunk a ship!");
+    }
+    setTimeout(() => {
+      setStatus("");
+    }, 500);
   }
 
   return (
@@ -49,6 +63,7 @@ export default function GameStart() {
       <div className="boards-wrapper">
         <div className="opponent-board">
           <h1>Select a cell to attack:</h1>
+          <div className="animation-msg">{status}</div>
           <Board
             board={opponentBoard}
             handleMouseEnter={function (id: string): void {}}
@@ -58,6 +73,7 @@ export default function GameStart() {
         </div>
         <div className="player-board">
           <h1>Your Board</h1>
+          <div className="animation-msg">{status}</div>
           <Board
             board={playerBoard}
             handleMouseEnter={function (id: string): void {}}

@@ -23,7 +23,7 @@ function App(): ReactElement {
         return <div>Invalid game phase!</div>;
     }
   }
-  return <div className="App">{renderCurrentGamePhase()}</div>;
+  return <div className="App">{<GameStart />}</div>;
 }
 
 export default App;

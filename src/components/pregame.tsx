@@ -25,17 +25,7 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
     (id: string): void => {
       if (selectedShip) {
         const hoveredCells = calculateHoveredCells(id, selectedShip.size, selectedShip.orientation);
-
-        setBoard((currentBoard) =>
-          currentBoard.map((cellRow) =>
-            cellRow.map((cell) => {
-              const hoveredCell = hoveredCells.find((hoveredCell) => hoveredCell.cellId === cell.cellId);
-              if (hoveredCell) {
-                return { ...hoveredCell };
-              } else return { ...cell };
-            })
-          )
-        );
+        updateBoard(hoveredCells);
       }
     },
     [selectedShip]
@@ -43,13 +33,10 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
 
   const handleMouseLeave = useCallback(
     (id: string): void => {
-      setBoard((currentBoard) =>
-        currentBoard.map((cellRow) =>
-          cellRow.map((cell) => {
-            return { ...cell, hoverState: HoverState.None };
-          })
-        )
-      );
+      //Wanted to just update the hoveredCells to None instead of the whole board but it introduces a bug if I
+      //move my mouse too fast across the screen which causes some cell to not update.
+      //Will look into it if there's more time later on.
+      updateBoard(board.flat().map((cell) => ({ ...cell, hoverState: HoverState.None })));
     },
     [selectedShip]
   );
@@ -57,8 +44,14 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
   const handlePlaceShip = useCallback(
     (id: string): void => {
       if (hoveredCells.length > 0 && hoveredCells[0].hoverState === HoverState.Valid) {
+        const newCells = hoveredCells.map((cell) => {
+          cell.cellState = CellState.Occupied;
+          cell.hoverState = HoverState.None;
+          return cell;
+        });
+
         // for each cell in hoveredcells, set the state to occupied and set the new board.
-        updateBoard();
+        updateBoard(newCells);
 
         //Update the placed ship in the ships list (onBoard = true).
         updateShips();
@@ -96,13 +89,14 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
     //Dependency is empty to make sure we remove the same function that we have attached to the event listener.
   }, []);
 
-  function updateBoard() {
-    // for each cell in hoveredcells, set the state to occupied and set the new board.
+  function updateBoard(targetCells: PregameCellInfo[]) {
+    //Update the new board with cells in targetCells
     setBoard((currentBoard) =>
       currentBoard.map((rowCells) => {
         return rowCells.map((cell) => {
-          if (hoveredCells.some((hoveredCell) => hoveredCell.cellId === cell.cellId)) {
-            return { ...cell, cellState: CellState.Occupied };
+          const targetCell = targetCells.find((targetCell) => targetCell.cellId === cell.cellId);
+          if (targetCell) {
+            return { ...targetCell };
           } else return { ...cell };
         });
       })

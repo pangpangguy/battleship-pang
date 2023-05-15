@@ -1,6 +1,6 @@
 //Util functions used commonly throughout the code.
 import { useEffect, useRef, useState } from "react";
-import { CellInfo, CellState } from "./types";
+import { CellInfo, CellState, GamePhase, HoverState } from "./types";
 import { boardSize } from "./constants";
 
 //Function to create the cellId from the row and column input
@@ -18,7 +18,7 @@ export const generateBoard = (): CellInfo[][] => {
     const cols: CellInfo[] = [];
 
     for (let col = 0; col < boardSize; col++) {
-      cols.push({ cellId: createCellId(row + 1, col), cellState: CellState.Unoccupied, discovered: false });
+      cols.push({ cellId: createCellId(row + 1, col), cellState: CellState.Unoccupied, hoverState: HoverState.None });
     }
     output.push(cols);
   }

@@ -16,7 +16,7 @@
   background-color: rgb(149, 219, 243);
 }
 
-.cell:not(.header).unoccupied.hovered {
+.cell:not(.header).unoccupied.hovered--valid {
   opacity: 1;
   cursor: pointer;
   background-color: rgb(73, 245, 130);
@@ -31,6 +31,11 @@
 .cell:not(.header).occupied {
   cursor: not-allowed;
   background-color: rgb(138, 228, 138);
+}
+
+.cell:not(.header).occupied.hovered--invalid {
+  cursor: not-allowed;
+  background-color: rgba(193, 156, 111, 0.5);
 }
 
 .discovered.miss {

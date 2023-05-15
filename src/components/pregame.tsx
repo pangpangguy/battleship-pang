@@ -1,12 +1,12 @@
 import { useState, useCallback } from "react";
-import { CellInfo, CellState, Position, PregameShip } from "../common/types";
+import { CellState, HoverState, Position, PregameCellInfo, PregameShip } from "../common/types";
 import { shipList } from "../common/constants";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
 import { createCellId, generateBoard, useStateRef } from "../common/utils";
 
 export default function Pregame({ handleStartGame }: { handleStartGame: () => void }) {
-  const [board, setBoard] = useState<CellInfo[][]>(generateBoard());
+  const [board, setBoard, boardRef] = useStateRef<PregameCellInfo[][]>(generateBoard() as PregameCellInfo[][]);
   const [cursorPosition, setCursorPosition] = useState<Position>({ x: 0, y: 0 });
 
   //Keeping refs as well for the following states as they are used in event listeners
@@ -17,42 +17,46 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
     })
   );
   const [selectedShip, setSelectedShip, selectedShipRef] = useStateRef<PregameShip | null>(null);
-  const [hoveredCells, setHoveredCells, hoveredCellsRef] = useStateRef<string[]>([]);
+  const [hoveredCells, setHoveredCells, hoveredCellsRef] = useStateRef<PregameCellInfo[]>([]);
 
   const handleMouseEnter = useCallback(
     (id: string): void => {
       if (selectedShip) {
-        calculateHoveredCells(id, selectedShip.size, selectedShip.orientation);
+        const newHoveredCellsId = calculateHoveredCells(id, selectedShip.size, selectedShip.orientation);
+
+        const newHoveredCells = checkPlacementIsValidAndReturnCells(newHoveredCellsId);
+
+        //Update hovered cells and return it;
+        setHoveredCells(newHoveredCells);
+        updateBoard(newHoveredCells);
       }
     },
-    [board, selectedShip]
+    [selectedShip]
   );
 
-  const handleMouseLeave = useCallback(
-    (id: string): void => {
-      if (selectedShip) {
-        setHoveredCells([]);
-      }
-    },
-    [board, selectedShip]
-  );
+  const handleMouseLeave = useCallback((): void => {
+    updateBoard(hoveredCells.map((cell) => ({ ...cell, hoverState: HoverState.None })));
+    setHoveredCells([]);
+  }, [board, hoveredCells]);
 
-  const handlePlaceShip = useCallback(
-    (id: string): void => {
-      if (placementIsValid()) {
-        // for each cell in hoveredcells, set the state to occupied and set the new board.
-        updateBoard();
+  const handlePlaceShip = useCallback((): void => {
+    if (hoveredCells[0].hoverState === HoverState.Valid) {
+      //Update the board with cells states set to occupied
+      updateBoard(
+        hoveredCells.map((cell) => {
+          cell.cellState = CellState.Occupied;
+          cell.hoverState = HoverState.None;
+          return cell;
+        })
+      );
 
-        //Update the placed ship in the ships list (onBoard = true).
-        updateShips();
+      //Update the placed ship in the ships list (onBoard = true).
+      updateShips();
 
-        //Remove event listeners from the placed ship
-        handleShipSelect(null);
-      }
-    },
-    [hoveredCells, board]
-  );
-
+      //Remove event listeners from the placed ship
+      handleShipSelect(null);
+    }
+  }, [selectedShip, hoveredCells]);
   const handleShipRotate = useCallback((event: MouseEvent): void => {
     event.preventDefault();
 
@@ -67,11 +71,24 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
             ...ship,
             orientation: ship.orientation === "horizontal" ? "vertical" : "horizontal",
           };
-
           setSelectedShip(newShip);
+
+          //Handle the case where the ship is rotated while inside the board
           if (hoveredCellsRef.current.length > 0) {
-            calculateHoveredCells(hoveredCellsRef.current[0], newShip.size, newShip.orientation);
+            const firstCellId = hoveredCellsRef.current[0].cellId;
+            const newHoveredCellsId = calculateHoveredCells(firstCellId, newShip.size, newShip.orientation);
+
+            //Unhover currently hovered cells and hover the new ones
+            const currentHoveredCells = hoveredCellsRef.current.map((cell) => ({
+              ...cell,
+              hoverState: HoverState.None,
+            }));
+            const newHoveredCells = checkPlacementIsValidAndReturnCells(newHoveredCellsId);
+
+            updateBoard(newHoveredCells.concat(currentHoveredCells));
+            setHoveredCells(newHoveredCells);
           }
+
           return newShip;
         } else return { ...ship };
       });
@@ -80,16 +97,19 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
     //Dependency is empty to make sure we remove the same function that we have attached to the event listener.
   }, []);
 
-  function updateBoard() {
-    // for each cell in hoveredcells, set the state to occupied and set the new board.
-    const newBoard: CellInfo[][] = board.map((rowCells) => {
-      return rowCells.map((cell) => {
-        if (hoveredCells.includes(cell.cellId)) {
-          return { ...cell, cellState: CellState.Occupied };
-        } else return { ...cell };
-      });
-    });
-    setBoard(newBoard);
+  //Accepst a list of new target cells to be updated/replaced on the board
+  function updateBoard(cellsToUpdate: PregameCellInfo[]) {
+    //Update the new board with cells in targetCells
+    setBoard((currentBoard) =>
+      currentBoard.map((rowCells) => {
+        return rowCells.map((cell) => {
+          const newCell = cellsToUpdate.find((newCell) => newCell.cellId === cell.cellId);
+          if (newCell) {
+            return { ...newCell };
+          } else return { ...cell };
+        });
+      })
+    );
   }
 
   function updateShips() {
@@ -120,10 +140,11 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
     }
   }
 
-  function calculateHoveredCells(id: string, shipSize: number, shipOrientation: "horizontal" | "vertical"): void {
+  function calculateHoveredCells(id: string, shipSize: number, shipOrientation: "horizontal" | "vertical"): string[] {
     // Select all cells with id's that are in the range of the ship size
     const selectedCells: string[] = [];
     const [rowNumber, colHeader] = id.split("-");
+
     if (shipOrientation === "horizontal") {
       for (let i = 0; i < shipSize; i++) {
         //Construct the cell Id
@@ -148,26 +169,34 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
         }
       }
     }
-    setHoveredCells(selectedCells);
+
+    return selectedCells;
   }
 
-  //Check if the placement is valid for the current hovered cells
-  function placementIsValid(): boolean {
-    //If no ship selected or not all parts of the ship are inside the board, return
-    if (!selectedShip || hoveredCells.length !== selectedShip.size) return false;
+  //Checks if the placement is valid for the input cellIds (hovered) and return the cells with the new correct hover state
+  function checkPlacementIsValidAndReturnCells(cellIds: string[]): PregameCellInfo[] {
+    //An extra check but shouldn't happen
+    if (!selectedShipRef.current) {
+      throw new Error("Unexpected error: No ship selected!");
+    }
 
-    //Check if the hovered cells are not already occupied by ships
-    return board
-      .flat()
-      .filter((cell) => hoveredCells.includes(cell.cellId))
-      .every((cell) => cell.cellState === CellState.Unoccupied);
+    const cellsToCheck: PregameCellInfo[] = boardRef.current.flat().filter((cell) => cellIds.includes(cell.cellId));
+
+    //A placement is valid is all parts of ships are inside the board and the hovered cells are unoccupied
+    const placementIsValid =
+      cellIds.length === selectedShipRef.current.size &&
+      cellsToCheck.every((cell) => cell.cellState === CellState.Unoccupied);
+
+    return cellsToCheck.map((cell) => ({
+      ...cell,
+      hoverState: placementIsValid ? HoverState.Valid : HoverState.Invalid,
+    }));
   }
 
   return (
     <div>
       <Board
         board={board}
-        hoveredCells={{ cells: hoveredCells, isValid: placementIsValid() }}
         handleMouseEnter={handleMouseEnter}
         handleMouseLeave={handleMouseLeave}
         handleMouseClick={handlePlaceShip}

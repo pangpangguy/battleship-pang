@@ -43,9 +43,9 @@
 }
 
 .discovered.hit {
-  background-color: rgb(250, 111, 111);
+  background-color: rgb(255, 0, 0);
 }
 
 .discovered.sunk {
-  background-color: rgb(250, 19, 19);
+  background-color: rgba(255, 44, 44, 0.329);
 }

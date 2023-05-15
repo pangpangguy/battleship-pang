@@ -29,17 +29,29 @@ export default function GameStart() {
   const [status, setStatus] = useState<string>("");
 
   function discoverCell(id: string): void {
-    const newBoard = opponentBoard.map((cellRow) => {
-      return cellRow.map((cell) => {
+    for (const cellRow of opponentBoard) {
+      for (const cell of cellRow) {
         if (cell.cellId === id) {
-          showAnimationMessage(cell.cellState);
-          return { ...cell, discovered: true };
-        }
-        return cell;
-      });
-    });
+          if (cell.discovered) {
+            return; // Stop further processing if already discovered
+          }
 
-    setOpponentBoard(newBoard);
+          //Play animation message
+          showAnimationMessage(cell.cellState);
+
+          //Uncover the cell
+          const newBoard = opponentBoard.map((cellRow) => {
+            return cellRow.map((cell) => {
+              if (cell.cellId === id) {
+                return { ...cell, discovered: true };
+              }
+              return cell;
+            });
+          });
+          setOpponentBoard(newBoard);
+        }
+      }
+    }
   }
 
   function showAnimationMessage(state: GameStartCellStates) {

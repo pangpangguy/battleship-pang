@@ -35,7 +35,6 @@
 .cell:not(.header).occupied.hovered--invalid {
   cursor: not-allowed;
   background-color: rgba(193, 156, 111, 0.5);
-  /* Adjust the opacity and color values as desired */
 }
 
 .discovered.miss {

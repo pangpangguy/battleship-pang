@@ -26,14 +26,7 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
       if (selectedShip) {
         const newHoveredCellsId = calculateHoveredCells(id, selectedShip.size, selectedShip.orientation);
 
-        //Check if the placement is valid
-        const newHoverState = placementIsValid(newHoveredCellsId) ? HoverState.Valid : HoverState.Invalid;
-        const newHoveredCells: PregameCellInfo[] = board
-          .flat()
-          .filter((cell) => {
-            return newHoveredCellsId.includes(cell.cellId);
-          })
-          .map((cell) => ({ ...cell, hoverState: newHoverState }));
+        const newHoveredCells = checkPlacementIsValidAndReturnCells(newHoveredCellsId);
 
         //Update hovered cells and return it;
         setHoveredCells(newHoveredCells);
@@ -51,7 +44,7 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
       setHoveredCells([]);
       updateBoard(board.flat().map((cell) => ({ ...cell, hoverState: HoverState.None })));
     },
-    [selectedShip]
+    [selectedShip, hoveredCells]
   );
 
   const handlePlaceShip = useCallback(
@@ -96,26 +89,14 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
             const firstCellId = hoveredCellsRef.current[0].cellId;
             const newHoveredCellsId = calculateHoveredCells(firstCellId, newShip.size, newShip.orientation);
 
-            updateBoard(
-              hoveredCellsRef.current.map((cell) => ({
-                ...cell,
-                hoverState: HoverState.None,
-              }))
-            );
+            //Unhover currently hovered cells
+            const currentHoveredCells = hoveredCellsRef.current.map((cell) => ({
+              ...cell,
+              hoverState: HoverState.None,
+            }));
+            const newHoveredCells = checkPlacementIsValidAndReturnCells(newHoveredCellsId);
 
-            //Check if the placement is valid
-            const newHoverState = placementIsValid(newHoveredCellsId) ? HoverState.Valid : HoverState.Invalid;
-
-            const newHoveredCells: PregameCellInfo[] = boardRef.current
-              .flat()
-              .filter((cell) => {
-                return newHoveredCellsId.includes(cell.cellId);
-              })
-              .map((cell) => {
-                return { ...cell, hoverState: newHoverState };
-              });
-
-            updateBoard(newHoveredCells);
+            updateBoard(newHoveredCells.concat(currentHoveredCells));
             setHoveredCells(newHoveredCells);
           }
 
@@ -203,15 +184,24 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
     return selectedCells;
   }
 
-  //Check if the placement is valid for the current hovered cells
-  function placementIsValid(cellIds: string[]): boolean {
-    //If no ship selected or not all parts of the ship are inside the board, return
-    if (!selectedShipRef.current || cellIds.length !== selectedShipRef.current.size) return false;
-    //Check if the hovered cells are not already occupied by ships
-    return boardRef.current
-      .flat()
-      .filter((cell) => cellIds.includes(cell.cellId))
-      .every((cell) => cell.cellState === CellState.Unoccupied);
+  //Checks if the placement is valid for the input cellIds (hovered) and return the cells with the new correct hover state
+  function checkPlacementIsValidAndReturnCells(cellIds: string[]): PregameCellInfo[] {
+    //An extra check but shouldn't happen
+    if (!selectedShipRef.current) {
+      throw new Error("Unexpected error: No ship selected!");
+    }
+
+    const cellsToCheck: PregameCellInfo[] = boardRef.current.flat().filter((cell) => cellIds.includes(cell.cellId));
+
+    //A placement is valid is all parts of ships are inside the board and the hovered cells are unoccupied
+    const placementIsValid =
+      cellIds.length === selectedShipRef.current.size &&
+      cellsToCheck.every((cell) => cell.cellState === CellState.Unoccupied);
+
+    return cellsToCheck.map((cell) => ({
+      ...cell,
+      hoverState: placementIsValid ? HoverState.Valid : HoverState.Invalid,
+    }));
   }
 
   return (

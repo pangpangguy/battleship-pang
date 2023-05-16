@@ -31,8 +31,8 @@ function App(): ReactElement {
     useGameState(GamePhase.GameStart);
   }
 
-  function getGameStartBoard() {
-    return playerBoard;
+  function handleRestartGame() {
+    useGameState(GamePhase.PreGame);
   }
 
   //Accepst a list of new target cells to be updated/replaced on the board
@@ -80,6 +80,7 @@ function App(): ReactElement {
             opponentBoard={opponentBoard}
             playerBoard={playerBoard}
             handleUpdateOpponentBoard={handleUpdateOpponentBoard}
+            handleRestartGame={handleRestartGame}
           />
         );
       case GamePhase.GameEnd:
@@ -88,12 +89,7 @@ function App(): ReactElement {
         return <div>Invalid game phase!</div>;
     }
   }
-<<<<<<< HEAD
-  return <div className="App">{<GameStart />}</div>;
-=======
-
   return <div className="App">{renderCurrentGamePhase()}</div>;
->>>>>>> feat/862jmhcbh/gamestart-interactivity_player-board-ships
 }
 
 export default App;

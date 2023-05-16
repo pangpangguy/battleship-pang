@@ -20,6 +20,7 @@ export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleM
       }}
       className={classNames("cell", `${CellState[cell.cellState].toLowerCase()}`, {
         [`hovered--${HoverState[cell.hoverState].toLowerCase()}`]: cell.hoverState !== HoverState.None,
+        discovered: "discovered" in cell && cell.discovered === true,
       })}
       onClick={() => {
         handleMouseClick(cell.cellId);

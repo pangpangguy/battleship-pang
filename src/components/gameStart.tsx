@@ -1,62 +1,22 @@
-import { GameStartCellInfo, CellState, CellInfo, HoverState } from "../common/types";
-import { useCallback, useRef, useState } from "react";
-import { generateBoard } from "../common/utils";
+import { CellInfo, CellState, GameStartCellInfo } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
 
-export default function GameStart() {
+interface GameStartProps {
+  playerBoard: CellInfo[][];
+  opponentBoard: GameStartCellInfo[][];
+  handleUpdateOpponentBoard: (newBoard: GameStartCellInfo[]) => void;
+}
+export default function GameStart({ playerBoard, opponentBoard, handleUpdateOpponentBoard }: GameStartProps) {
   type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
-
-  //Randomly generates a board with ships with random states for testing purposes
-  //To be removed later
-  const randomStates: GameStartCellStates[] = [CellState.Miss, CellState.Hit, CellState.Sunk];
-  const generateRandomBoard = (): GameStartCellInfo[][] => {
-    return generateBoard().map((cellRow) => {
-      return cellRow.map((cell) => {
-        const randomState: CellState = randomStates[Math.floor(Math.random() * randomStates.length)];
-        return {
-          ...cell,
-          cellState: randomState,
-          discovered: false,
-          hoverState: HoverState.None,
-        };
-      });
-    });
-  };
-
-  const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
-  const [opponentBoard, setOpponentBoard] = useState<GameStartCellInfo[][]>(generateRandomBoard());
-  const [status, setStatus] = useState<string>("");
-  const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const discoverCell = useCallback(
-    (id: string): void => {
-      for (const cellRow of opponentBoard) {
-        for (const cell of cellRow) {
-          if (cell.cellId === id) {
-            if (cell.discovered) {
-              return; // Stop further processing if already discovered
-            }
-
-            //Play animation message
-            showAnimationMessage(cell.cellState);
-
-            //Uncover the cell
-            const newBoard = opponentBoard.map((cellRow) => {
-              return cellRow.map((cell) => {
-                if (cell.cellId === id) {
-                  return { ...cell, discovered: true };
-                }
-                return cell;
-              });
-            });
-            setOpponentBoard(newBoard);
-          }
-        }
-      }
-    },
-    [opponentBoard, timeoutId]
-  );
+  function discoverCell(id: string): void {
+    handleUpdateOpponentBoard(
+      opponentBoard
+        .flat()
+        .filter((cell) => cell.cellId === id)
+        .map((cell) => ({ ...cell, discovered: true }))
+    );
+  }
 
   function showAnimationMessage(state: GameStartCellStates) {
     if (state === CellState.Hit) {

@@ -4,7 +4,10 @@ import { generateBoard } from "../common/utils";
 import Board from "./board";
 import "./gamestart.css";
 
-export default function GameStart() {
+interface GameStartProps {
+  handleRestartGame: () => void;
+}
+export default function GameStart({ handleRestartGame }: GameStartProps) {
   const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
   const [opponentBoard, setOpponentBoard] = useState<CellInfo[][]>(generateBoard());
 
@@ -46,14 +49,15 @@ export default function GameStart() {
   return (
     <div className="container">
       <div className="restart-btn-wrapper">
-        <button className="restart-btn">Restart Game</button>
+        <button className="restart-btn" onClick={handleRestartGame}>
+          Restart Game
+        </button>
       </div>
       <div className="boards-wrapper">
         <div className="opponent-board">
           <h1>Select a cell to attack:</h1>
           <Board
             board={opponentBoard}
-            hoveredCells={{ cells: [], isValid: false }}
             handleMouseEnter={function (id: string): void {}}
             handleMouseLeave={function (id: string): void {}}
             handleMouseClick={discoverCell}
@@ -63,7 +67,6 @@ export default function GameStart() {
           <h1>Your Board</h1>
           <Board
             board={playerBoard}
-            hoveredCells={{ cells: [], isValid: false }}
             handleMouseEnter={function (id: string): void {}}
             handleMouseLeave={function (id: string): void {}}
             handleMouseClick={function (id: string): void {}}

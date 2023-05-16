@@ -11,12 +11,16 @@ function App(): ReactElement {
     useGameState(GamePhase.GameStart);
   }
 
+  function handleRestartGame() {
+    useGameState(GamePhase.PreGame);
+  }
+
   function renderCurrentGamePhase() {
     switch (gameState) {
       case GamePhase.PreGame:
         return <Pregame handleStartGame={handleStartGame} />;
       case GamePhase.GameStart:
-        return <GameStart />;
+        return <GameStart handleRestartGame={handleRestartGame} />;
       case GamePhase.GameEnd:
         return <div>Game over!</div>;
       default:

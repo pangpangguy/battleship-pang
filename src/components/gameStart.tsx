@@ -1,54 +1,21 @@
-import { CellInfo, CellState, GameStartCellInfo, HoverState } from "../common/types";
-import { useCallback, useEffect, useState } from "react";
-import { generateBoard } from "../common/utils";
+import { CellInfo, GameStartCellInfo } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
 
-export default function GameStart() {
-  type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
-
-  //Randomly generates a board with ships with random states for testing purposes
-  //To be removed later
-  const randomStates: GameStartCellStates[] = [CellState.Miss, CellState.Hit, CellState.Sunk];
-  const generateRandomBoard = (): GameStartCellInfo[][] => {
-    return generateBoard().map((cellRow) => {
-      return cellRow.map((cell) => {
-        const randomState: CellState = randomStates[Math.floor(Math.random() * randomStates.length)];
-        return {
-          ...cell,
-          cellState: randomState,
-          discovered: false,
-          hoverState: HoverState.None,
-        };
-      });
-    });
-  };
-
-  const discoverCell = useCallback(
-    (id: string): void => {
-      for (const cellRow of opponentBoard) {
-        for (const cell of cellRow) {
-          if (cell.cellId === id) {
-            if (cell.discovered) {
-              return; // Stop further processing if already discovered (for optimization purpose)
-            }
-
-            //Uncover the cell
-            const newBoard = opponentBoard.map((cellRow) => {
-              return cellRow.map((cell) => {
-                if (cell.cellId === id) {
-                  return { ...cell, discovered: true };
-                }
-                return cell;
-              });
-            });
-            setOpponentBoard(newBoard);
-          }
-        }
-      }
-    },
-    [opponentBoard]
-  );
+interface GameStartProps {
+  playerBoard: CellInfo[][];
+  opponentBoard: GameStartCellInfo[][];
+  handleUpdateOpponentBoard: (newBoard: GameStartCellInfo[]) => void;
+}
+export default function GameStart({ playerBoard, opponentBoard, handleUpdateOpponentBoard }: GameStartProps) {
+  function discoverCell(id: string): void {
+    handleUpdateOpponentBoard(
+      opponentBoard
+        .flat()
+        .filter((cell) => cell.cellId === id)
+        .map((cell) => ({ ...cell, discovered: true }))
+    );
+  }
 
   return (
     <div className="container">

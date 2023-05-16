@@ -1,7 +1,8 @@
 //Util functions used commonly throughout the code.
 import { useEffect, useRef, useState } from "react";
-import { CellInfo, CellState, GamePhase, GameStartCellInfo, HoverState } from "./types";
+import { CellInfo, CellState, GamePhase, GameStartCellInfo, HoverState, PregameCellInfo } from "./types";
 import { boardSize, shipList } from "./constants";
+import Cell from "../components/cell";
 
 //Function to create the cellId from the row and column input
 //Row is between 1 and 10
@@ -12,24 +13,29 @@ export function createCellId(row: number, col: number | string): string {
   return `${row}-${colHeader}`;
 }
 
-export const generateBoard = (): CellInfo[][] => {
+const generateBoard = (): CellInfo[][] => {
   const output: CellInfo[][] = [];
   for (let row = 0; row < boardSize; row++) {
     const cols: CellInfo[] = [];
 
     for (let col = 0; col < boardSize; col++) {
-      cols.push({ cellId: createCellId(row + 1, col), cellState: CellState.Unoccupied, hoverState: HoverState.None });
+      cols.push({ cellId: createCellId(row + 1, col) });
     }
     output.push(cols);
   }
   return output;
 };
 
-//Generates a board with random ship placements
-export const generateBoardWithShips = (): CellInfo[][] => {
+export const generatePregameBoard = (): PregameCellInfo[][] => {
   const board = generateBoard();
-  const occupiedCells = new Set<string>();
+  return board.map((cellRow) =>
+    cellRow.map((cell) => ({ ...cell, cellState: CellState.Unoccupied, hoverState: HoverState.None }))
+  );
+};
 
+//Generates a board with random ship placements
+export const generateGameStartBoardWithShips = (): GameStartCellInfo[][] => {
+  const occupiedCells = new Set<string>();
   //Get a random number between 0 and max-1
   const getRandomNumber = (max: number): number => {
     return Math.floor(Math.random() * max);
@@ -51,7 +57,8 @@ export const generateBoardWithShips = (): CellInfo[][] => {
     return true;
   };
 
-  // Randomly place ships on board
+  //Construct the new board
+  const board = generateBoard() as GameStartCellInfo[][];
   shipList.forEach((ship) => {
     //Select a random starting point on the board that is valid for the current ship
     //If the ship is vertical, the starting point must be within the range of the boardSize - shipSize
@@ -70,16 +77,22 @@ export const generateBoardWithShips = (): CellInfo[][] => {
     for (let i = 0; i < ship.size; i++) {
       if (orientation) {
         //Vertical
-        board[row + i][col].cellState = CellState.Occupied;
+        board[row + i][col] = { ...board[row + i][col], cellState: CellState.Hit, shipId: ship.acronym };
         occupiedCells.add(`${row + i}-${col}`);
       } else {
-        board[row][col + i].cellState = CellState.Occupied;
+        board[row][col + i] = { ...board[row][col + i], cellState: CellState.Hit, shipId: ship.acronym };
         occupiedCells.add(`${row}-${col + i}`);
       }
     }
   });
 
-  return board;
+  return board.map((cellRow, rowIdx) =>
+    cellRow.map((cell, colIdx) => {
+      if (!occupiedCells.has(`${rowIdx}-${colIdx}`)) {
+        return { ...cell, cellState: CellState.Miss };
+      } else return { ...cell };
+    })
+  );
 };
 
 //useStateRef is a custom hook that returns a ref to the state, as well as the state itself.

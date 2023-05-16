@@ -1,34 +1,23 @@
 import { ReactElement, useEffect, useState } from "react";
-import { CellInfo, CellState, GamePhase, GameStartCellInfo, HoverState, PregameCellInfo } from "./common/types";
+import { CellInfo, CellState, GamePhase, GameStartCellInfo, HoverState, PregameCellInfo, Ship } from "./common/types";
 import Pregame from "./components/pregame";
 import GameStart from "./components/gameStart";
 import "./App.css";
-import { generateBoard, generateBoardWithShips } from "./common/utils";
+import { generateGameStartBoardWithShips, generatePregameBoard } from "./common/utils";
+import { shipList } from "./common/constants";
+
+interface ShipCellInfo {
+  ship: Ship;
+  cellIds: string[];
+}
 
 function App(): ReactElement {
   const [gameState, useGameState] = useState<GamePhase>(GamePhase.PreGame);
-  const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
-  const [opponentBoard, setOpponentBoard] = useState<GameStartCellInfo[][]>(
-    generateBoardWithShips().map((cellRow) =>
-      cellRow.map((cell) => {
-        if (cell.cellState === CellState.Occupied) {
-          return {
-            ...cell,
-            cellState: CellState.Hit,
-            discovered: false,
-            hoverState: HoverState.None,
-          };
-        } else {
-          return {
-            ...cell,
-            cellState: CellState.Miss,
-            discovered: false,
-            hoverState: HoverState.None,
-          };
-        }
-      })
-    )
+  const [playerBoard, setPlayerBoard] = useState<PregameCellInfo[][]>(generatePregameBoard());
+  const [playerShipCells, setPlayerShipCells] = useState<ShipCellInfo[]>(
+    shipList.map((ship) => ({ ship, cellIds: [] }))
   );
+  const [opponentBoard, setOpponentBoard] = useState<GameStartCellInfo[][]>(generateGameStartBoardWithShips());
 
   function handleStartGame() {
     useGameState(GamePhase.GameStart);

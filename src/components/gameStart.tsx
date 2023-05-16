@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { CellInfo, CellState, GameStartCellInfo } from "../common/types";
+import { CellInfo, CellState, GameStartCellInfo, Ship } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
 
@@ -9,6 +9,7 @@ interface GameStartProps {
   handleUpdateOpponentBoard: (newBoard: GameStartCellInfo[]) => void;
   handleRestartGame: () => void;
 }
+
 export default function GameStart({
   playerBoard,
   opponentBoard,
@@ -17,7 +18,6 @@ export default function GameStart({
 }: GameStartProps) {
   const [status, setStatus] = useState<string>("");
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
   function discoverCell(id: string): void {
     const targetCell = opponentBoard.flat().find((cell) => cell.cellId === id && !cell.discovered);
@@ -36,7 +36,6 @@ export default function GameStart({
       setStatus("You sunk a ship!");
     }
     if (timeoutId.current) {
-      console.log("clearing timeout");
       clearTimeout(timeoutId.current);
     }
     timeoutId.current = setTimeout(() => {
@@ -64,7 +63,7 @@ export default function GameStart({
         </div>
         <div className="player-board">
           <h1>Your Board</h1>
-          <div className="animation-msg">{status}</div>
+          <div className="animation-msg"></div>
           <Board
             board={playerBoard}
             handleMouseEnter={function (id: string): void {}}

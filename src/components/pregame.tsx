@@ -3,7 +3,7 @@ import { CellState, HoverState, Position, PregameCellInfo, PregameShip } from ".
 import { shipList } from "../common/constants";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
-import { createCellId, generateBoard, useStateRef } from "../common/utils";
+import { createCellId, useStateRef } from "../common/utils";
 
 interface PreGameProps {
   playerBoard: PregameCellInfo[][];

@@ -20,12 +20,11 @@ export default function GameStart({
 
   type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
   function discoverCell(id: string): void {
-    handleUpdateOpponentBoard(
-      opponentBoard
-        .flat()
-        .filter((cell) => cell.cellId === id)
-        .map((cell) => ({ ...cell, discovered: true }))
-    );
+    const targetCell = opponentBoard.flat().find((cell) => cell.cellId === id && !cell.discovered);
+    if (targetCell) {
+      showAnimationMessage(targetCell.cellState);
+      handleUpdateOpponentBoard([{ ...targetCell, discovered: true }]);
+    }
   }
 
   function showAnimationMessage(state: GameStartCellStates) {

@@ -3,29 +3,32 @@ import { CellInfo, CellState, GamePhase, GameStartCellInfo, HoverState, PregameC
 import Pregame from "./components/pregame";
 import GameStart from "./components/gameStart";
 import "./App.css";
-import { generateBoard } from "./common/utils";
+import { generateBoard, generateBoardWithShips } from "./common/utils";
 
 function App(): ReactElement {
-  //Randomly generates a board with ships with random states for testing purposes
-  //To be removed later
-  type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
-  const randomStates: GameStartCellStates[] = [CellState.Miss, CellState.Hit, CellState.Sunk];
-  const generateRandomBoard = (): GameStartCellInfo[][] => {
-    return generateBoard().map((cellRow) => {
-      return cellRow.map((cell) => {
-        const randomState: CellState = randomStates[Math.floor(Math.random() * randomStates.length)];
-        return {
-          ...cell,
-          cellState: randomState,
-          discovered: false,
-          hoverState: HoverState.None,
-        };
-      });
-    });
-  };
   const [gameState, useGameState] = useState<GamePhase>(GamePhase.PreGame);
   const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
-  const [opponentBoard, setOpponentBoard] = useState<GameStartCellInfo[][]>(generateRandomBoard());
+  const [opponentBoard, setOpponentBoard] = useState<GameStartCellInfo[][]>(
+    generateBoardWithShips().map((cellRow) =>
+      cellRow.map((cell) => {
+        if (cell.cellState === CellState.Occupied) {
+          return {
+            ...cell,
+            cellState: CellState.Hit,
+            discovered: false,
+            hoverState: HoverState.None,
+          };
+        } else {
+          return {
+            ...cell,
+            cellState: CellState.Miss,
+            discovered: false,
+            hoverState: HoverState.None,
+          };
+        }
+      })
+    )
+  );
 
   function handleStartGame() {
     useGameState(GamePhase.GameStart);
@@ -89,7 +92,16 @@ function App(): ReactElement {
         return <div>Invalid game phase!</div>;
     }
   }
-  return <div className="App">{renderCurrentGamePhase()}</div>;
+  return (
+    <div className="App">
+      <GameStart
+        opponentBoard={opponentBoard}
+        playerBoard={playerBoard}
+        handleUpdateOpponentBoard={handleUpdateOpponentBoard}
+        handleRestartGame={handleRestartGame}
+      />
+    </div>
+  );
 }
 
 export default App;

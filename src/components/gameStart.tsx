@@ -1,3 +1,4 @@
+import { useState, useRef } from "react";
 import { CellInfo, CellState, GameStartCellInfo } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
@@ -8,6 +9,9 @@ interface GameStartProps {
   handleUpdateOpponentBoard: (newBoard: GameStartCellInfo[]) => void;
 }
 export default function GameStart({ playerBoard, opponentBoard, handleUpdateOpponentBoard }: GameStartProps) {
+  const [status, setStatus] = useState<string>("");
+  const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
   function discoverCell(id: string): void {
     handleUpdateOpponentBoard(

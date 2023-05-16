@@ -24,9 +24,6 @@ export default function GameStart() {
     });
   };
 
-  const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
-  const [opponentBoard, setOpponentBoard] = useState<GameStartCellInfo[][]>(generateRandomBoard());
-
   const discoverCell = useCallback(
     (id: string): void => {
       for (const cellRow of opponentBoard) {

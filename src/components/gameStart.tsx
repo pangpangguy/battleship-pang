@@ -9,6 +9,7 @@ export default function GameStart() {
 
   //Randomly generates a board with ships with random states for testing purposes
   //To be removed later
+  //TODO: In progress
   const randomStates: GameStartCellStates[] = [CellState.Miss, CellState.Hit, CellState.Sunk];
   const generateRandomBoard = (): GameStartCellInfo[][] => {
     return generateBoard().map((cellRow) => {

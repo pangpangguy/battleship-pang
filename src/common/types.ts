@@ -26,7 +26,7 @@ interface GameStartCellInfoWithShip extends CellInfo {
 }
 interface GameStartCellInfoWithoutShip extends CellInfo {
   cellState: CellState.Miss;
-  discovered: boolean;
+  isDiscovered: boolean;
 }
 
 export type GameStartCellInfo = GameStartCellInfoWithShip | GameStartCellInfoWithoutShip;

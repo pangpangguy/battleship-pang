@@ -21,7 +21,7 @@ export interface PregameCellInfo extends CellInfo {
 
 interface GameStartCellInfoWithShip extends CellInfo {
   cellState: CellState.Hit | CellState.Sunk;
-  discovered: boolean;
+  isDiscovered: boolean;
   shipId: string;
 }
 interface GameStartCellInfoWithoutShip extends CellInfo {

@@ -3,7 +3,7 @@
   height: 2.5rem;
   font-size: 0.75rem;
   border: 1px solid white;
-  background-color: rgb(138, 228, 138);
+  background-color: rgb(138, 228, 138, 1);
   display: inline-block;
   cursor: pointer;
 }

@@ -12,24 +12,24 @@
 
 .cell:not(.header):not(.discovered) {
   opacity: 0.8;
-  background-color: rgb(149, 219, 243);
+  background-color: rgba(149, 219, 243, 1);
 }
 
 .cell:not(.header).unoccupied.hovered--valid {
   opacity: 1;
   cursor: pointer;
-  background-color: rgb(73, 245, 130);
+  background-color: rgba(73, 245, 130, 1);
 }
 
 .cell:not(.header).unoccupied.hovered--invalid {
   opacity: 1;
   cursor: not-allowed;
-  background-color: rgb(248, 83, 83);
+  background-color: rgba(248, 83, 83, 1);
 }
 
 .cell:not(.header).occupied {
   cursor: not-allowed;
-  background-color: rgb(138, 228, 138);
+  background-color: rgba(138, 228, 138, 1);
 }
 
 .cell:not(.header).occupied.hovered--invalid {
@@ -42,9 +42,9 @@
 }
 
 .discovered.hit {
-  background-color: rgb(250, 111, 111);
+  background-color: rgba(250, 111, 111, 1);
 }
 
 .discovered.sunk {
-  background-color: rgb(250, 19, 19);
+  background-color: rgba(250, 19, 19, 1);
 }

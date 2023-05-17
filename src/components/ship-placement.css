@@ -18,7 +18,7 @@
 }
 
 .start-game {
-  background-color: rgb(174, 255, 152);
+  background-color: rgb(174, 255, 152, 1);
   height: 3em;
   font-size: 1em;
 }

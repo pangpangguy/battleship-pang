@@ -17,7 +17,7 @@ export default function GameStart() {
         return {
           ...cell,
           cellState: randomState,
-          discovered: false,
+          isDiscovered: false,
           hoverState: HoverState.None,
         };
       });
@@ -37,7 +37,7 @@ export default function GameStart() {
             const newBoard = opponentBoard.map((cellRow) => {
               return cellRow.map((cell) => {
                 if (cell.cellId === id) {
-                  return { ...cell, discovered: true };
+                  return { ...cell, isDiscovered: true };
                 }
                 return cell;
               });

@@ -20,7 +20,7 @@ export default function GameStart({
   const [playerShipsRemaining, setPlayerShipsRemaining] = useState<Map<string, number>>(
     new Map<string, number>(initializeScoreMap())
   );
-  const [round, setRound] = useState<number>(1);
+  const [gameState, setGameState] = useState<GameState>({ round: 1, isPlayerTurn: true });
   const [status, setStatus] = useState<string>("");
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -29,8 +29,16 @@ export default function GameStart({
   }
 
   type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
+  type GameState = {
+    round: number;
+    isPlayerTurn: boolean;
+  };
 
   function discoverCell(id: string): void {
+    if (!gameState.isPlayerTurn) {
+      return;
+    }
+
     const targetCell = opponentBoard.flat().find((cell) => cell.cellId === id && !cell.discovered);
 
     //Skip already discovered cells
@@ -52,6 +60,8 @@ export default function GameStart({
 
     showAnimationMessage(cellsToUpdate[0].cellState);
     handleUpdateOpponentBoard(cellsToUpdate);
+    setGameState((prev) => ({ ...prev, isPlayerTurn: false }));
+    simulateAIMove();
   }
 
   // Check if the discovered cell sunks the last part of ship and updates the ships remaining map
@@ -82,19 +92,35 @@ export default function GameStart({
   }
 
   function showAnimationMessage(state: GameStartCellStates) {
-    if (state === CellState.Hit) {
-      setStatus("You hit a ship!");
-    } else if (state === CellState.Miss) {
-      setStatus("You missed!");
-    } else {
-      setStatus("You sunk a ship!");
+    switch (state) {
+      case CellState.Hit:
+        setStatus("You hit a ship!");
+        break;
+      case CellState.Miss:
+        setStatus("You missed!");
+        break;
+      case CellState.Sunk:
+        setStatus("You sunk a ship!");
+        break;
     }
+
     if (timeoutId.current) {
       clearTimeout(timeoutId.current);
     }
+
     timeoutId.current = setTimeout(() => {
       setStatus("");
     }, 1000);
+  }
+
+  function simulateAIMove() {
+    setTimeout(() => {
+      //AI makes a move..
+      //TODO: Implement AI logic
+
+      //After AI move, update game state
+      setGameState((prev) => ({ round: prev.round + 1, isPlayerTurn: true }));
+    }, Math.random() * 1000 + 2000);
   }
 
   return (
@@ -104,7 +130,9 @@ export default function GameStart({
           Restart Game
         </button>
       </div>
-      <h2>Round {round}</h2>
+      <h2>
+        Round {gameState.round} - {gameState.isPlayerTurn ? "Your turn" : "AI's turn"}
+      </h2>
       <div className="boards-wrapper">
         <div className="opponent-board">
           <h3>Select a cell to attack:</h3>

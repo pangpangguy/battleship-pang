@@ -30,7 +30,7 @@ export default function GameStart() {
       for (const cellRow of opponentBoard) {
         for (const cell of cellRow) {
           if (cell.cellId === id) {
-            if (cell.discovered) {
+            if (cell.isDiscovered) {
               return; // Stop further processing if already discovered (for optimization purpose)
             }
 

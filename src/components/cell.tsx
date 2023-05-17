@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { CellInfo, CellState, GameStartCellInfo, HoverState } from "../common/types";
 import "./cell.css";
 import classNames from "classnames";

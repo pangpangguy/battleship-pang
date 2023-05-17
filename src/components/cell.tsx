@@ -1,16 +1,15 @@
-import { CellInfo, CellState, HoverState } from "../common/types";
+import { CellInfo, CellState, GameStartCellInfo, HoverState } from "../common/types";
 import "./cell.css";
 import classNames from "classnames";
 
 interface CellProps {
-  isHovered: HoverState;
   cell: CellInfo;
   handleMouseEnter: (cellId: string) => void;
   handleMouseLeave: (cellId: string) => void;
   handleMouseClick: (cellId: string) => void;
 }
 
-export default function Cell({ cell, isHovered, handleMouseEnter, handleMouseLeave, handleMouseClick }: CellProps) {
+export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleMouseClick }: CellProps) {
   return (
     <div
       onMouseEnter={() => {
@@ -20,9 +19,8 @@ export default function Cell({ cell, isHovered, handleMouseEnter, handleMouseLea
         handleMouseLeave(cell.cellId);
       }}
       className={classNames("cell", `${CellState[cell.cellState].toLowerCase()}`, {
-        hovered: isHovered === "valid",
-        "hovered--invalid": isHovered === "invalid",
-        discovered: cell.discovered,
+        [`hovered--${HoverState[cell.hoverState].toLowerCase()}`]: cell.hoverState !== HoverState.None,
+        discovered: "discovered" in cell && cell.isDiscovered === true,
       })}
       onClick={() => {
         handleMouseClick(cell.cellId);

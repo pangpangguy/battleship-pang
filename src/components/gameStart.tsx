@@ -1,47 +1,55 @@
-import { CellInfo, CellState } from "../common/types";
-import { useEffect, useState } from "react";
+import { CellInfo, CellState, GameStartCellInfo, HoverState } from "../common/types";
+import { useCallback, useEffect, useState } from "react";
 import { generateBoard } from "../common/utils";
 import Board from "./board";
 import "./gamestart.css";
 
 export default function GameStart() {
-  const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
-  const [opponentBoard, setOpponentBoard] = useState<CellInfo[][]>(generateBoard());
+  type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
 
   //Randomly generates a board with ships with random states for testing purposes
   //To be removed later
-  useEffect(() => {
-    const cellStates = Object.values(CellState).filter(
-      (state) => typeof state === "string" && state !== "Occupied" && state !== "Unoccupied"
-    );
-
-    const generateRandomBoard = (): CellInfo[][] => {
-      return generateBoard().map((row) => {
-        return row.map((cell) => {
-          const randomState = cellStates[Math.floor(Math.random() * cellStates.length)];
-          cell.cellState = CellState[randomState as keyof typeof CellState];
-          return cell;
-        });
-      });
-    };
-
-    setOpponentBoard(generateRandomBoard);
-  }, []);
-
-  function discoverCell(id: string): void {
-    const [row, col] = id.split("-");
-
-    const newBoard = opponentBoard.map((row) => {
-      return row.map((cell) => {
-        if (cell.cellId === id && !cell.discovered) {
-          return { ...cell, discovered: true };
-        }
-        return cell;
+  //TODO: In progress
+  const randomStates: GameStartCellStates[] = [CellState.Miss, CellState.Hit, CellState.Sunk];
+  const generateRandomBoard = (): GameStartCellInfo[][] => {
+    return generateBoard().map((cellRow) => {
+      return cellRow.map((cell) => {
+        const randomState: CellState = randomStates[Math.floor(Math.random() * randomStates.length)];
+        return {
+          ...cell,
+          cellState: randomState,
+          isDiscovered: false,
+          hoverState: HoverState.None,
+        };
       });
     });
+  };
 
-    setOpponentBoard(newBoard);
-  }
+  const discoverCell = useCallback(
+    (id: string): void => {
+      for (const cellRow of opponentBoard) {
+        for (const cell of cellRow) {
+          if (cell.cellId === id) {
+            if (cell.isDiscovered) {
+              return; // Stop further processing if already discovered (for optimization purpose)
+            }
+
+            //Uncover the cell
+            const newBoard = opponentBoard.map((cellRow) => {
+              return cellRow.map((cell) => {
+                if (cell.cellId === id) {
+                  return { ...cell, isDiscovered: true };
+                }
+                return cell;
+              });
+            });
+            setOpponentBoard(newBoard);
+          }
+        }
+      }
+    },
+    [opponentBoard]
+  );
 
   return (
     <div className="container">
@@ -53,7 +61,6 @@ export default function GameStart() {
           <h1>Select a cell to attack:</h1>
           <Board
             board={opponentBoard}
-            hoveredCells={{ cells: [], isValid: false }}
             handleMouseEnter={function (id: string): void {}}
             handleMouseLeave={function (id: string): void {}}
             handleMouseClick={discoverCell}
@@ -63,7 +70,6 @@ export default function GameStart() {
           <h1>Your Board</h1>
           <Board
             board={playerBoard}
-            hoveredCells={{ cells: [], isValid: false }}
             handleMouseEnter={function (id: string): void {}}
             handleMouseLeave={function (id: string): void {}}
             handleMouseClick={function (id: string): void {}}

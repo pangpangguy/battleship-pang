@@ -4,6 +4,7 @@ import { shipList } from "../common/constants";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
 import { createCellId, useStateRef } from "../common/utils";
+import "./pregame.css";
 
 interface PreGameProps {
   playerBoard: PregameCellInfo[][];
@@ -96,7 +97,6 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
               ...cell,
               hoverState: HoverState.None,
             }));
-            console.log(newHoveredCells.concat(cellsToUnhover));
             handleUpdatePlayerBoard(newHoveredCells.concat(cellsToUnhover));
           }
 
@@ -192,12 +192,14 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
 
   return (
     <div>
-      <Board
-        board={playerBoard}
-        handleMouseEnter={handleMouseEnter}
-        handleMouseLeave={handleMouseLeave}
-        handleMouseClick={handlePlaceShip}
-      />
+      <div className="pregame-board">
+        <Board
+          board={playerBoard}
+          handleMouseEnter={handleMouseEnter}
+          handleMouseLeave={handleMouseLeave}
+          handleMouseClick={handlePlaceShip}
+        />
+      </div>
       <ShipPlacement
         ships={ships}
         handleShipSelect={handleShipSelect}

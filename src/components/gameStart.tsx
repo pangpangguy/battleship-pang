@@ -3,6 +3,7 @@ import { CellInfo, CellState, GameStartCellInfo, GameStartCellInfoWithShip, Ship
 import Board from "./board";
 import "./gamestart.css";
 import { shipList } from "../common/constants";
+import classNames from "classnames";
 
 interface GameStartProps {
   playerBoard: CellInfo[][];
@@ -94,13 +95,13 @@ export default function GameStart({
   function showAnimationMessage(state: GameStartCellStates) {
     switch (state) {
       case CellState.Hit:
-        setStatus("You hit a ship!");
+        setStatus("You hit a ship! You can attack again!");
         break;
       case CellState.Miss:
         setStatus("You missed!");
         break;
       case CellState.Sunk:
-        setStatus("You sunk a ship!");
+        setStatus("You sunk a ship! You can attack again!");
         break;
     }
 
@@ -110,7 +111,7 @@ export default function GameStart({
 
     timeoutId.current = setTimeout(() => {
       setStatus("");
-    }, 1000);
+    }, 1500);
   }
 
   function simulateAIMove() {
@@ -131,10 +132,14 @@ export default function GameStart({
         </button>
       </div>
       <h2>
-        Round {gameState.round} - {gameState.isPlayerTurn ? "Your turn" : "AI's turn"}
+        Round {gameState.round} - {gameState.isPlayerTurn ? "Your turn!" : "AI's turn!"}
       </h2>
       <div className="boards-wrapper">
-        <div className="opponent-board">
+        <div
+          className={classNames("opponent-board", {
+            "player-turn": gameState.isPlayerTurn,
+          })}
+        >
           <h3>Select a cell to attack:</h3>
           <div className="animation-msg">{status}</div>
           <Board

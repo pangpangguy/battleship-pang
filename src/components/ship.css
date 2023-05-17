@@ -2,8 +2,8 @@
   width: 2.5rem;
   height: 2.5rem;
   font-size: 0.75rem;
-  border: 1px solid white;
-  background-color: rgba(138, 228, 138, 1);
+  border: 1px solid rgb(255, 255, 255);
+  background-color: rgb(138, 228, 138);
   display: inline-block;
   cursor: pointer;
 }

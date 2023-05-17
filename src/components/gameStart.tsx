@@ -59,10 +59,17 @@ export default function GameStart({
       cellsToUpdate.push({ ...targetCell, discovered: true });
     }
 
-    showAnimationMessage(cellsToUpdate[0].cellState);
+    const newCellState = cellsToUpdate[0].cellState;
+
+    showAnimationMessage(newCellState);
     handleUpdateOpponentBoard(cellsToUpdate);
-    setGameState((prev) => ({ ...prev, isPlayerTurn: false }));
-    simulateAIMove();
+
+    // Getting a hit or sunk will allow the player to continue selecting cells to attack.
+    // Missing will end the player's turn and allow the AI to make a move.
+    if (newCellState === CellState.Miss) {
+      setGameState((prev) => ({ ...prev, isPlayerTurn: false }));
+      simulateAIMove();
+    }
   }
 
   // Check if the discovered cell sunks the last part of ship and updates the ships remaining map

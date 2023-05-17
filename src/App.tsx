@@ -73,7 +73,16 @@ function App(): ReactElement {
         return <div>Invalid game phase!</div>;
     }
   }
-  return <div className="App">{renderCurrentGamePhase()}</div>;
+  return (
+    <div className="App">
+      <GameStart
+        opponentBoard={opponentBoard}
+        playerBoard={playerBoard}
+        handleUpdateOpponentBoard={handleUpdateOpponentBoard}
+        handleRestartGame={handleRestartGame}
+      />
+    </div>
+  );
 }
 
 export default App;

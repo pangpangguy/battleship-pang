@@ -24,6 +24,7 @@ interface GameStartCellInfoWithShip extends CellInfo {
   isDiscovered: boolean;
   shipId: string;
 }
+
 interface GameStartCellInfoWithoutShip extends CellInfo {
   cellState: CellState.Miss;
   isDiscovered: boolean;

@@ -1,12 +1,16 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { CellState, HoverState, Position, PregameCellInfo, PregameShip } from "../common/types";
 import { shipList } from "../common/constants";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
 import { createCellId, generateBoard, useStateRef } from "../common/utils";
 
-export default function Pregame({ handleStartGame }: { handleStartGame: () => void }) {
-  const [board, setBoard, boardRef] = useStateRef<PregameCellInfo[][]>(generateBoard() as PregameCellInfo[][]);
+interface PreGameProps {
+  playerBoard: PregameCellInfo[][];
+  handleUpdatePlayerBoard: (newBoard: PregameCellInfo[]) => void;
+  handleStartGame: () => void;
+}
+export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleStartGame }: PreGameProps) {
   const [cursorPosition, setCursorPosition] = useState<Position>({ x: 0, y: 0 });
 
   //Keeping refs as well for the following states as they are used in event listeners
@@ -19,30 +23,37 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
   const [selectedShip, setSelectedShip, selectedShipRef] = useStateRef<PregameShip | null>(null);
   const [hoveredCells, setHoveredCells, hoveredCellsRef] = useStateRef<PregameCellInfo[]>([]);
 
-  const handleMouseEnter = useCallback(
-    (id: string): void => {
-      if (selectedShip) {
-        const newHoveredCellsId = calculateHoveredCells(id, selectedShip.size, selectedShip.orientation);
+  const currentHoveredCells: PregameCellInfo[] = playerBoard
+    .flat()
+    .filter((cell) => cell.hoverState !== HoverState.None);
 
-        const newHoveredCells = checkPlacementIsValidAndReturnCells(newHoveredCellsId);
+  function handleMouseEnter(id: string): void {
+    if (selectedShip) {
+      const newHoveredCellsId = calculateHoveredCells(id, selectedShip.size, selectedShip.orientation);
 
-        //Update hovered cells and return it;
-        setHoveredCells(newHoveredCells);
-        updateBoard(newHoveredCells);
-      }
-    },
-    [selectedShip]
-  );
+      const newHoveredCells = checkPlacementIsValidAndReturnCells(newHoveredCellsId);
 
-  const handleMouseLeave = useCallback((): void => {
-    updateBoard(hoveredCells.map((cell) => ({ ...cell, hoverState: HoverState.None })));
-    setHoveredCells([]);
-  }, [board, hoveredCells]);
+      //Update hovered cells and return it;
+      setHoveredCells(newHoveredCells);
+      handleUpdatePlayerBoard(newHoveredCells);
+    }
+  }
 
-  const handlePlaceShip = useCallback((): void => {
-    if (hoveredCells[0].hoverState === HoverState.Valid) {
+  function handleMouseLeave(): void {
+    if (selectedShip) {
+      const cellsToUnhover = currentHoveredCells.map((cell) => ({
+        ...cell,
+        hoverState: HoverState.None,
+      }));
+
+      handleUpdatePlayerBoard(cellsToUnhover);
+    }
+  }
+
+  function handlePlaceShip(): void {
+    if (currentHoveredCells.length > 0 && currentHoveredCells[0].hoverState === HoverState.Valid) {
       //Update the board with cells states set to occupied
-      updateBoard(
+      handleUpdatePlayerBoard(
         hoveredCells.map((cell) => {
           cell.cellState = CellState.Occupied;
           cell.hoverState = HoverState.None;
@@ -56,12 +67,13 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
       //Remove event listeners from the placed ship
       handleShipSelect(null);
     }
-  }, [selectedShip, hoveredCells]);
-  const handleShipRotate = useCallback((event: MouseEvent): void => {
+  }
+
+  function handleShipRotate(event: MouseEvent): void {
     event.preventDefault();
 
     // If a ship is selected and the right mouse button is clicked
-    if (selectedShipRef.current !== null && event.button === 2) {
+    if (selectedShipRef.current !== null) {
       const selectedShipName = selectedShipRef.current.name;
 
       // Rotate the selected ship
@@ -74,19 +86,17 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
           setSelectedShip(newShip);
 
           //Handle the case where the ship is rotated while inside the board
-          if (hoveredCellsRef.current.length > 0) {
-            const firstCellId = hoveredCellsRef.current[0].cellId;
+          if (currentHoveredCells.length > 0) {
+            //Unhover currently hovered cells
+            const firstCellId = currentHoveredCells[0].cellId;
             const newHoveredCellsId = calculateHoveredCells(firstCellId, newShip.size, newShip.orientation);
 
-            //Unhover currently hovered cells and hover the new ones
-            const currentHoveredCells = hoveredCellsRef.current.map((cell) => ({
+            const newHoveredCells = checkPlacementIsValidAndReturnCells(newHoveredCellsId);
+            const cellsToUnhover = currentHoveredCells.map((cell) => ({
               ...cell,
               hoverState: HoverState.None,
             }));
-            const newHoveredCells = checkPlacementIsValidAndReturnCells(newHoveredCellsId);
-
-            updateBoard(newHoveredCells.concat(currentHoveredCells));
-            setHoveredCells(newHoveredCells);
+            handleUpdatePlayerBoard(newHoveredCells.concat(cellsToUnhover));
           }
 
           return newShip;
@@ -94,22 +104,6 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
       });
       setShips(newShips);
     }
-    //Dependency is empty to make sure we remove the same function that we have attached to the event listener.
-  }, []);
-
-  //Accepst a list of new target cells to be updated/replaced on the board
-  function updateBoard(cellsToUpdate: PregameCellInfo[]) {
-    //Update the new board with cells in targetCells
-    setBoard((currentBoard) =>
-      currentBoard.map((rowCells) => {
-        return rowCells.map((cell) => {
-          const newCell = cellsToUpdate.find((newCell) => newCell.cellId === cell.cellId);
-          if (newCell) {
-            return { ...newCell };
-          } else return { ...cell };
-        });
-      })
-    );
   }
 
   function updateShips() {
@@ -127,17 +121,7 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
   }
 
   function handleShipSelect(ship: PregameShip | null): void {
-    if (ship) {
-      //Selects a ship
-      setSelectedShip(ship);
-      window.addEventListener("mousemove", handleMouseMove);
-      window.addEventListener("contextmenu", handleShipRotate);
-    } else {
-      //Deselects a ship
-      setSelectedShip(null);
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("contextmenu", handleShipRotate);
-    }
+    setSelectedShip(ship);
   }
 
   function calculateHoveredCells(id: string, shipSize: number, shipOrientation: "horizontal" | "vertical"): string[] {
@@ -180,7 +164,7 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
       throw new Error("Unexpected error: No ship selected!");
     }
 
-    const cellsToCheck: PregameCellInfo[] = boardRef.current.flat().filter((cell) => cellIds.includes(cell.cellId));
+    const cellsToCheck: PregameCellInfo[] = playerBoard.flat().filter((cell) => cellIds.includes(cell.cellId));
 
     //A placement is valid is all parts of ships are inside the board and the hovered cells are unoccupied
     const placementIsValid =
@@ -193,10 +177,22 @@ export default function Pregame({ handleStartGame }: { handleStartGame: () => vo
     }));
   }
 
+  useEffect(() => {
+    if (selectedShip) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("contextmenu", handleShipRotate);
+
+      return () => {
+        window.removeEventListener("mousemove", handleMouseMove);
+        window.removeEventListener("contextmenu", handleShipRotate);
+      };
+    }
+  }, [selectedShip, handleMouseMove, handleShipRotate]);
+
   return (
     <div>
       <Board
-        board={board}
+        board={playerBoard}
         handleMouseEnter={handleMouseEnter}
         handleMouseLeave={handleMouseLeave}
         handleMouseClick={handlePlaceShip}

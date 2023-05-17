@@ -17,13 +17,13 @@ export default function GameStart() {
         return {
           ...cell,
           cellState: randomState,
-          discovered: false,
+          isDiscovered: false,
           hoverState: HoverState.None,
         };
       });
     });
   };
-
+  
   const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
   const [opponentBoard, setOpponentBoard] = useState<GameStartCellInfo[][]>(generateRandomBoard());
   const [status, setStatus] = useState<string>("");
@@ -45,7 +45,7 @@ export default function GameStart() {
             const newBoard = opponentBoard.map((cellRow) => {
               return cellRow.map((cell) => {
                 if (cell.cellId === id) {
-                  return { ...cell, discovered: true };
+                  return { ...cell, isDiscovered: true };
                 }
                 return cell;
               });
@@ -74,6 +74,7 @@ export default function GameStart() {
       setStatus("");
     }, 1000);
   }
+
 
   return (
     <div className="container">

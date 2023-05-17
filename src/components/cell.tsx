@@ -10,8 +10,9 @@ interface CellProps {
 }
 
 export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleMouseClick }: CellProps) {
-  function isPregameCell(): boolean {
-    return typeof cell === PregameCellInfo && "hoverState" in cell;
+  //Type guard
+  function isPregameCell(cell: any): cell is PregameCellInfo {
+    return "hoverState" in cell;
   }
 
   return (
@@ -23,7 +24,7 @@ export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleM
         handleMouseLeave(cell.cellId);
       }}
       className={classNames("cell", `${CellState[cell.cellState].toLowerCase()}`, {
-        [`hovered--${isPregameCell() && HoverState[(cell as PregameCellInfo).hoverState].toLowerCase()}`]:
+        [`hovered--${isPregameCell(cell) && HoverState[(cell as PregameCellInfo).hoverState].toLowerCase()}`]:
           (cell as PregameCellInfo).hoverState !== HoverState.None,
         discovered: "discovered" in cell && cell.discovered === true,
       })}

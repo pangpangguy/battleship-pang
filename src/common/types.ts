@@ -16,14 +16,14 @@ export interface CellInfo {
 
 export interface PregameCellInfo extends CellInfo {
   cellState: CellState.Unoccupied | CellState.Occupied;
-  hoverState: HoverState.None | HoverState.Valid | HoverState.Invalid;
+  hoverState: HoverState;
 }
-interface GameStartCellInfoWithShip extends CellInfo {
+export interface GameStartCellInfoWithShip extends CellInfo {
   cellState: CellState.Hit | CellState.Sunk;
   discovered: boolean;
   shipId: string;
 }
-interface GameStartCellInfoWithoutShip extends CellInfo {
+export interface GameStartCellInfoWithoutShip extends CellInfo {
   cellState: CellState.Miss;
   discovered: boolean;
 }

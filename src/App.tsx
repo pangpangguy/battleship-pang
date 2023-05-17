@@ -6,17 +6,9 @@ import "./App.css";
 import { generateGameStartBoardWithShips, generatePregameBoard } from "./common/utils";
 import { shipList } from "./common/constants";
 
-interface ShipCellInfo {
-  ship: Ship;
-  cellIds: string[];
-}
-
 function App(): ReactElement {
   const [gameState, useGameState] = useState<GamePhase>(GamePhase.PreGame);
   const [playerBoard, setPlayerBoard] = useState<PregameCellInfo[][]>(generatePregameBoard());
-  const [playerShipCells, setPlayerShipCells] = useState<ShipCellInfo[]>(
-    shipList.map((ship) => ({ ship, cellIds: [] }))
-  );
   const [opponentBoard, setOpponentBoard] = useState<GameStartCellInfo[][]>(generateGameStartBoardWithShips());
 
   function handleStartGame() {

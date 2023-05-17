@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
-import { CellInfo, CellState, GameStartCellInfo, Ship } from "../common/types";
+import { CellInfo, CellState, GameStartCellInfo, GameStartCellInfoWithShip, Ship } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
+import { shipList } from "../common/constants";
 
 interface GameStartProps {
   playerBoard: CellInfo[][];
@@ -16,15 +17,67 @@ export default function GameStart({
   handleUpdateOpponentBoard,
   handleRestartGame,
 }: GameStartProps) {
+  const [playerShipsRemaining, setPlayerShipsRemaining] = useState<Map<string, number>>(
+    new Map<string, number>(initializeScoreMap())
+  );
   const [status, setStatus] = useState<string>("");
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function initializeScoreMap(): Map<string, number> {
+    return shipList.reduce((map, ship) => map.set(ship.acronym, ship.size), new Map());
+  }
+
   type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
+
   function discoverCell(id: string): void {
     const targetCell = opponentBoard.flat().find((cell) => cell.cellId === id && !cell.discovered);
-    if (targetCell) {
-      showAnimationMessage(targetCell.cellState);
-      handleUpdateOpponentBoard([{ ...targetCell, discovered: true }]);
+
+    //Skip already discovered cells
+    if (!targetCell) {
+      return;
     }
+
+    const cellsToUpdate: GameStartCellInfo[] = [];
+
+    if ("shipId" in targetCell && checkShipIsSunkAndUpdateShipsRemaining(targetCell)) {
+      const cellsChangeToSunk: GameStartCellInfoWithShip[] = opponentBoard
+        .flat()
+        .filter((cell): cell is GameStartCellInfoWithShip => "shipId" in cell && cell.shipId === targetCell.shipId)
+        .map((cell) => ({ ...cell, cellState: CellState.Sunk, discovered: true }));
+      cellsToUpdate.push(...cellsChangeToSunk);
+    } else {
+      cellsToUpdate.push({ ...targetCell, discovered: true });
+    }
+
+    showAnimationMessage(cellsToUpdate[0].cellState);
+    handleUpdateOpponentBoard(cellsToUpdate);
+  }
+
+  // Check if the discovered cell sunks the last part of ship and updates the ships remaining map
+  function checkShipIsSunkAndUpdateShipsRemaining(cell: GameStartCellInfo): boolean {
+    //Miss
+    if (!("shipId" in cell)) return false;
+
+    const targetShipParts = playerShipsRemaining.get(cell.shipId);
+
+    //Shouldn't happen
+    if (!targetShipParts) {
+      throw new Error(`Unexpected error: ship with ID ${cell.shipId} not found in map.`);
+    }
+
+    //Hit
+    if (targetShipParts - 1 > 0) {
+      setPlayerShipsRemaining((prev) => new Map(prev).set(cell.shipId, targetShipParts - 1));
+      return false;
+    }
+
+    //Sunk : Remove from map
+    setPlayerShipsRemaining((prev) => {
+      const updatedMap = new Map(prev);
+      updatedMap.delete(cell.shipId);
+      return updatedMap;
+    });
+    return true;
   }
 
   function showAnimationMessage(state: GameStartCellStates) {

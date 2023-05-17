@@ -90,6 +90,7 @@ function App(): ReactElement {
   }
 
   return <div className="App">{renderCurrentGamePhase()}</div>;
+
 }
 
 export default App;

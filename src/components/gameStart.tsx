@@ -67,7 +67,6 @@ export default function GameStart() {
       setStatus("You sunk a ship!");
     }
     if (timeoutId.current) {
-      console.log("clearing timeout");
       clearTimeout(timeoutId.current);
     }
     timeoutId.current = setTimeout(() => {

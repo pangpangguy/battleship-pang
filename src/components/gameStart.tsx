@@ -20,6 +20,7 @@ export default function GameStart({
   const [playerShipsRemaining, setPlayerShipsRemaining] = useState<Map<string, number>>(
     new Map<string, number>(initializeScoreMap())
   );
+  const [round, setRound] = useState<number>(1);
   const [status, setStatus] = useState<string>("");
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -103,9 +104,10 @@ export default function GameStart({
           Restart Game
         </button>
       </div>
+      <h2>Round {round}</h2>
       <div className="boards-wrapper">
         <div className="opponent-board">
-          <h1>Select a cell to attack:</h1>
+          <h3>Select a cell to attack:</h3>
           <div className="animation-msg">{status}</div>
           <Board
             board={opponentBoard}
@@ -115,7 +117,7 @@ export default function GameStart({
           />
         </div>
         <div className="player-board">
-          <h1>Your Board</h1>
+          <h3>Your Board</h3>
           <div className="animation-msg"></div>
           <Board
             board={playerBoard}

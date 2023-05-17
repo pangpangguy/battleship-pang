@@ -35,7 +35,7 @@ h1 {
 
 .opponent-board .board .cell:not(.header):not(.discovered):hover {
   opacity: 1;
-  background-color: rgba(109, 205, 237, 1);
+  background-color: rgba(109, 205, 237);
 }
 
 .player-board {
@@ -57,13 +57,13 @@ h1 {
 }
 
 .restart-btn {
-  background-color: rgba(250, 204, 204, 1);
+  background-color: rgba(250, 204, 204);
   border: none;
   transition: 0.2s;
 }
 
 .restart-btn:hover {
-  background-color: rgba(152, 50, 50, 1);
+  background-color: rgba(152, 50, 50);
 }
 
 .restart-btn:focus {

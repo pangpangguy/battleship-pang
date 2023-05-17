@@ -126,7 +126,7 @@ export default function GameStart({
       //AI makes a move..
       //TODO: Implement AI logic
 
-      //After AI move, update game state
+      //After AI move, implement 2 to 3s delay to simulate game AI and update game state
       setGameState((prev) => ({ round: prev.round + 1, isPlayerTurn: true }));
     }, Math.random() * 1000 + 2000);
   }

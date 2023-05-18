@@ -4,28 +4,15 @@ import { generateBoard } from "../common/utils";
 import Board from "./board";
 import "./gamestart.css";
 
-export default function GameStart() {
+interface GameStartProps {
+  playerBoard: CellInfo[][];
+  opponentBoard: GameStartCellInfo[][];
+  handleUpdateOpponentBoard: (newBoard: GameStartCellInfo[]) => void;
+}
+  
+export default function GameStart({ playerBoard, opponentBoard, handleUpdateOpponentBoard }: GameStartProps) {
   type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
 
-  //Randomly generates a board with ships with random states for testing purposes
-  //To be removed later
-  const randomStates: GameStartCellStates[] = [CellState.Miss, CellState.Hit, CellState.Sunk];
-  const generateRandomBoard = (): GameStartCellInfo[][] => {
-    return generateBoard().map((cellRow) => {
-      return cellRow.map((cell) => {
-        const randomState: CellState = randomStates[Math.floor(Math.random() * randomStates.length)];
-        return {
-          ...cell,
-          cellState: randomState,
-          isDiscovered: false,
-          hoverState: HoverState.None,
-        };
-      });
-    });
-  };
-  
-  const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
-  const [opponentBoard, setOpponentBoard] = useState<GameStartCellInfo[][]>(generateRandomBoard());
   const [status, setStatus] = useState<string>("");
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 

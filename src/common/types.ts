@@ -28,6 +28,12 @@ export interface Position {
   y: number;
 }
 
+export interface GameState {
+  gamePhase: GamePhase;
+  playerBoard: PregameCellInfo[][] | GameStartCellInfo[][];
+  opponentBoard: undefined | GameStartCellInfo[][];
+}
+
 export enum CellState {
   Hit,
   Miss,

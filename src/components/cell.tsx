@@ -1,4 +1,5 @@
-import { CellInfo, CellState, GameStartCellInfo, HoverState, PregameCellInfo } from "../common/types";
+import { CellInfo, CellState, HoverState, PregameCellInfo } from "../common/types";
+import { isPregameCellInfo, isGameStartCellInfo } from "../common/utils";
 import "./cell.css";
 import classNames from "classnames";
 
@@ -45,15 +46,6 @@ export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleM
       //Remove empty strings and return class names as a string
       return classNamesToAdd.filter((className) => className !== "").join(" ");
     }
-  }
-
-  //Type guards
-  function isPregameCellInfo(cell: CellInfo): cell is PregameCellInfo {
-    return (cell as PregameCellInfo).hoverState !== undefined;
-  }
-
-  function isGameStartCellInfo(cell: CellInfo): cell is GameStartCellInfo {
-    return (cell as GameStartCellInfo).discovered !== undefined && (cell as GameStartCellInfo).cellState !== undefined;
   }
 
   return (

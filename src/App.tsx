@@ -31,10 +31,6 @@ function App(): ReactElement {
     useGameState(GamePhase.GameStart);
   }
 
-  function getGameStartBoard() {
-    return playerBoard;
-  }
-
   //Accepst a list of new target cells to be updated/replaced on the board
   function handleUpdatePlayerBoard(cellsToUpdate: PregameCellInfo[]) {
     //Update the new board with cells in targetCells

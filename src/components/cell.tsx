@@ -10,9 +10,50 @@ interface CellProps {
 }
 
 export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleMouseClick }: CellProps) {
-  //Type guard
-  function isPregameCell(cell: any): cell is PregameCellInfo {
-    return "hoverState" in cell;
+  function checkIsPregameCellAndGetClassNames(cell: CellInfo): string | undefined {
+    //Type guard for PregameCell
+    if (isPregameCellInfo(cell)) {
+      let classNamesToAdd: string[] = [
+        //Adds hover state class name for cell if it has one (valid/invalid)
+        cell.hoverState !== HoverState.None
+          ? `hovered--${HoverState[(cell as PregameCellInfo).hoverState].toLowerCase()}`
+          : "",
+
+        //Adds 'occupied' if cell has a ship
+        "shipId" in cell ? "occupied" : "",
+      ];
+
+      //Remove empty strings and return class names as a string
+      return classNamesToAdd.filter((className) => className !== "").join(" ");
+    }
+  }
+
+  function checkIsGameStartCellAndGetClassNames(cell: CellInfo): string | undefined {
+    //Type guard for GameStartCell
+    if (isGameStartCellInfo(cell)) {
+      let classNamesToAdd: string[] = [
+        //Adds cell state class name
+        `${CellState[cell.cellState].toLowerCase()}`,
+
+        //Adds 'occupied' if cell has a ship
+        "shipId" in cell ? "occupied" : "",
+
+        //Adds 'discovered' if cell has been discovered
+        cell.discovered ? "discovered" : "",
+      ];
+
+      //Remove empty strings and return class names as a string
+      return classNamesToAdd.filter((className) => className !== "").join(" ");
+    }
+  }
+
+  //Type guards
+  function isPregameCellInfo(cell: CellInfo): cell is PregameCellInfo {
+    return (cell as PregameCellInfo).hoverState !== undefined;
+  }
+
+  function isGameStartCellInfo(cell: CellInfo): cell is GameStartCellInfo {
+    return (cell as GameStartCellInfo).discovered !== undefined && (cell as GameStartCellInfo).cellState !== undefined;
   }
 
   return (
@@ -23,11 +64,11 @@ export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleM
       onMouseLeave={() => {
         handleMouseLeave(cell.cellId);
       }}
-      className={classNames("cell", `${CellState[cell.cellState].toLowerCase()}`, {
-        [`hovered--${isPregameCell(cell) && HoverState[(cell as PregameCellInfo).hoverState].toLowerCase()}`]:
-          (cell as PregameCellInfo).hoverState !== HoverState.None,
-        discovered: "discovered" in cell && cell.discovered === true,
-      })}
+      className={classNames(
+        "cell",
+        checkIsPregameCellAndGetClassNames(cell),
+        checkIsGameStartCellAndGetClassNames(cell)
+      )}
       onClick={() => {
         handleMouseClick(cell.cellId);
       }}

@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
-import { CellState, HoverState, Position, PregameCellInfo, PregameShip } from "../common/types";
+import { useState, useEffect } from "react";
+import { HoverState, Position, PregameCellInfo, PregameShip } from "../common/types";
 import { shipList } from "../common/constants";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
@@ -52,11 +52,11 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
   }
 
   function handlePlaceShip(): void {
-    if (currentHoveredCells.length > 0 && currentHoveredCells[0].hoverState === HoverState.Valid) {
+    if (selectedShip && currentHoveredCells.length > 0 && currentHoveredCells[0].hoverState === HoverState.Valid) {
       //Update the board with cells states set to occupied
       handleUpdatePlayerBoard(
         hoveredCells.map((cell) => {
-          cell.cellState = CellState.Occupied;
+          cell.shipId = selectedShip.acronym;
           cell.hoverState = HoverState.None;
           return cell;
         })
@@ -167,10 +167,9 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
 
     const cellsToCheck: PregameCellInfo[] = playerBoard.flat().filter((cell) => cellIds.includes(cell.cellId));
 
-    //A placement is valid is all parts of ships are inside the board and the hovered cells are unoccupied
+    //A placement is valid is all parts of ships are inside the board and the hovered cells are unoccupied (shipId is undefined)
     const placementIsValid =
-      cellIds.length === selectedShipRef.current.size &&
-      cellsToCheck.every((cell) => cell.cellState === CellState.Unoccupied);
+      cellIds.length === selectedShipRef.current.size && cellsToCheck.every((cell) => !cell.shipId);
 
     return cellsToCheck.map((cell) => ({
       ...cell,

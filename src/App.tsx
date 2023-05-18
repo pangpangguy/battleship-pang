@@ -1,10 +1,9 @@
-import { ReactElement, useEffect, useState } from "react";
-import { CellInfo, CellState, GamePhase, GameStartCellInfo, HoverState, PregameCellInfo, Ship } from "./common/types";
+import { ReactElement, useState } from "react";
+import { GamePhase, GameStartCellInfo, PregameCellInfo } from "./common/types";
 import Pregame from "./components/pregame";
 import GameStart from "./components/gameStart";
 import "./App.css";
 import { generateGameStartBoardWithShips, generatePregameBoard } from "./common/utils";
-import { shipList } from "./common/constants";
 
 function App(): ReactElement {
   const [gameState, useGameState] = useState<GamePhase>(GamePhase.PreGame);
@@ -75,12 +74,14 @@ function App(): ReactElement {
   }
   return (
     <div className="App">
-      <GameStart
-        opponentBoard={opponentBoard}
-        playerBoard={playerBoard}
-        handleUpdateOpponentBoard={handleUpdateOpponentBoard}
-        handleRestartGame={handleRestartGame}
-      />
+      {
+        <GameStart
+          opponentBoard={opponentBoard}
+          playerBoard={playerBoard}
+          handleUpdateOpponentBoard={handleUpdateOpponentBoard}
+          handleRestartGame={handleRestartGame}
+        />
+      }
     </div>
   );
 }

@@ -16,13 +16,13 @@
   background-color: rgb(149, 219, 243);
 }
 
-.cell:not(.header).unoccupied.hovered--valid {
+.cell:not(.header).hovered--valid {
   opacity: 1;
   cursor: pointer;
   background-color: rgb(73, 245, 130);
 }
 
-.cell:not(.header).unoccupied.hovered--invalid {
+.cell:not(.header).hovered--invalid {
   opacity: 1;
   cursor: not-allowed;
   background-color: rgb(248, 83, 83);
@@ -39,13 +39,13 @@
 }
 
 .discovered.miss {
-  background-color: white;
+  background-color: rgb(255, 255, 255);
 }
 
-.discovered.hit {
+.occupied.discovered.hit {
   background-color: rgb(255, 0, 0);
 }
 
-.discovered.sunk {
+.occupied.discovered.sunk {
   background-color: rgba(255, 44, 44, 0.329);
 }

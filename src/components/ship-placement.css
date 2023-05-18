@@ -1,12 +1,12 @@
 .ship-placement {
   display: flex;
-  background-color: blanchedalmond;
+  background-color: rgb(255, 235, 205);
   justify-content: space-around;
   align-items: center;
   border-radius: 15px;
   margin-top: 1rem;
   padding: 1rem;
-  border: 1px solid black;
+  border: 1px solid rgb(0, 0, 0);
   position: "relative";
 }
 .ships {
@@ -18,7 +18,7 @@
 }
 
 .start-game {
-  background-color: rgb(174, 255, 152);
+  background-color: rgba(174, 255, 152);
   height: 3em;
   font-size: 1em;
 }

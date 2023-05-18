@@ -96,7 +96,6 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
               ...cell,
               hoverState: HoverState.None,
             }));
-            console.log(newHoveredCells.concat(cellsToUnhover));
             handleUpdatePlayerBoard(newHoveredCells.concat(cellsToUnhover));
           }
 

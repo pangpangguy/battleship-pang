@@ -1,5 +1,13 @@
-import { ReactElement, useEffect, useState } from "react";
-import { CellInfo, CellState, GamePhase, GameStartCellInfo, HoverState, PregameCellInfo } from "./common/types";
+import { ReactElement, useState } from "react";
+import {
+  CellInfo,
+  CellState,
+  GamePhase,
+  GameStartCellInfo,
+  PregameCellInfo,
+  GameStartCellInfoWithShip,
+  GameStartCellInfoWithoutShip,
+} from "./common/types";
 import Pregame from "./components/pregame";
 import GameStart from "./components/gameStart";
 import "./App.css";
@@ -13,26 +21,36 @@ function App(): ReactElement {
   const generateRandomBoard = (): GameStartCellInfo[][] => {
     return generateBoard().map((cellRow) => {
       return cellRow.map((cell) => {
-        const randomState: CellState = randomStates[Math.floor(Math.random() * randomStates.length)];
-        return {
-          ...cell,
-          cellState: randomState,
-          discovered: false,
-          hoverState: HoverState.None,
-        };
+        const randomState: GameStartCellStates = randomStates[Math.floor(Math.random() * randomStates.length)];
+        if (randomState === CellState.Miss) {
+          const newCell: GameStartCellInfoWithoutShip = {
+            ...cell,
+            isDiscovered: false,
+            cellState: randomState,
+          };
+          return newCell;
+        } else {
+          const newCell: GameStartCellInfoWithShip = {
+            ...cell,
+            isDiscovered: false,
+            cellState: randomState,
+            shipId: "temp",
+          };
+          return newCell;
+        }
       });
     });
   };
-  const [gameState, useGameState] = useState<GamePhase>(GamePhase.PreGame);
+  const [gameState, setGameState] = useState<GamePhase>(GamePhase.PreGame);
   const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
   const [opponentBoard, setOpponentBoard] = useState<GameStartCellInfo[][]>(generateRandomBoard());
 
   function handleStartGame() {
-    useGameState(GamePhase.GameStart);
+    setGameState(GamePhase.GameStart);
   }
 
   function handleRestartGame() {
-    useGameState(GamePhase.PreGame);
+    setGameState(GamePhase.PreGame);
   }
 
   //Accepst a list of new target cells to be updated/replaced on the board
@@ -89,7 +107,7 @@ function App(): ReactElement {
         return <div>Invalid game phase!</div>;
     }
   }
+
   return <div className="App">{renderCurrentGamePhase()}</div>;
 }
-
 export default App;

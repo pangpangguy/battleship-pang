@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { CellInfo, CellState, GameStartCellInfo } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
@@ -9,23 +9,38 @@ interface GameStartProps {
   handleUpdateOpponentBoard: (newBoard: GameStartCellInfo[]) => void;
   handleRestartGame: () => void;
 }
+
 export default function GameStart({
   playerBoard,
   opponentBoard,
   handleUpdateOpponentBoard,
   handleRestartGame,
 }: GameStartProps) {
+  type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
+
   const [status, setStatus] = useState<string>("");
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
   function discoverCell(id: string): void {
-    handleUpdateOpponentBoard(
-      opponentBoard
-        .flat()
-        .filter((cell) => cell.cellId === id)
-        .map((cell) => ({ ...cell, discovered: true }))
-    );
+    for (const cellRow of opponentBoard) {
+      for (const cell of cellRow) {
+        if (cell.cellId === id) {
+          if (cell.isDiscovered) {
+            return; // Stop further processing if already discovered
+          }
+
+          //Play animation message
+          showAnimationMessage(cell.cellState);
+
+          //Uncover the cell
+          const updateCell = opponentBoard
+            .flat()
+            .filter((cell) => cell.cellId === id)
+            .map((cell) => ({ ...cell, isDiscovered: true }));
+          handleUpdateOpponentBoard(updateCell);
+        }
+      }
+    }
   }
 
   function showAnimationMessage(state: GameStartCellStates) {
@@ -37,7 +52,6 @@ export default function GameStart({
       setStatus("You sunk a ship!");
     }
     if (timeoutId.current) {
-      console.log("clearing timeout");
       clearTimeout(timeoutId.current);
     }
     timeoutId.current = setTimeout(() => {

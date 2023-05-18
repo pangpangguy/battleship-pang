@@ -6,9 +6,10 @@ import { shipList } from "../common/constants";
 import classNames from "classnames";
 
 interface GameStartProps {
-  playerBoard: CellInfo[][];
+  playerBoard: GameStartCellInfo[][];
   opponentBoard: GameStartCellInfo[][];
-  handleUpdateOpponentBoard: (newBoard: GameStartCellInfo[]) => void;
+  handleUpdateOpponentBoard: (cellsToUpdate: GameStartCellInfo[]) => void;
+  handleUpdatePlayerBoard: (cellsToUpdate: GameStartCellInfo[]) => void;
   handleRestartGame: () => void;
 }
 
@@ -16,6 +17,7 @@ export default function GameStart({
   playerBoard,
   opponentBoard,
   handleUpdateOpponentBoard,
+  handleUpdatePlayerBoard,
   handleRestartGame,
 }: GameStartProps) {
   const [playerShipsRemaining, setPlayerShipsRemaining] = useState<Map<string, number>>(
@@ -46,7 +48,6 @@ export default function GameStart({
       return;
     }
 
-    console.log(targetCell);
     const cellsToUpdate: GameStartCellInfo[] = [];
 
     if ("shipId" in targetCell && checkShipIsSunkAndUpdateShipsRemaining(targetCell)) {

@@ -1,5 +1,5 @@
 import { ReactElement } from "react";
-import { CellInfo, HoverState } from "../common/types";
+import { CellInfo } from "../common/types";
 import { boardSize } from "../common/constants";
 import "./board.css";
 import Cell from "./cell";

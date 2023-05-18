@@ -3,11 +3,12 @@ import { CellInfo, CellState, GamePhase, GameStartCellInfo, GameState, PregameCe
 import Pregame from "./components/pregame";
 import GameStart from "./components/gameStart";
 import "./App.css";
-import { generateGameStartBoardWithShips, generatePregameBoard } from "./common/utils";
+import { generateOpponentBoardWithShips, generatePregameBoard } from "./common/utils";
 
 function App(): ReactElement {
   const [gameState, setGameState] = useState<GameState>(getInitialGameState());
 
+  //Get initial game state (pregame ship placement page)
   function getInitialGameState(): GameState {
     return {
       gamePhase: GamePhase.PreGame,
@@ -20,7 +21,7 @@ function App(): ReactElement {
     setGameState((currentState) => ({
       gamePhase: GamePhase.GameStart,
       playerBoard: convertBoardToGameStart(currentState.playerBoard as PregameCellInfo[][]),
-      opponentBoard: generateGameStartBoardWithShips(),
+      opponentBoard: generateOpponentBoardWithShips(),
     }));
   }
 

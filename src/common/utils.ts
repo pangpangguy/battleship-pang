@@ -32,7 +32,7 @@ export const generatePregameBoard = (): PregameCellInfo[][] => {
 };
 
 //Generates a board with random ship placements
-export const generateGameStartBoardWithShips = (): GameStartCellInfo[][] => {
+export const generateOpponentBoardWithShips = (): GameStartCellInfo[][] => {
   const occupiedCells = new Set<string>();
   //Get a random number between 0 and max-1
   const getRandomNumber = (max: number): number => {

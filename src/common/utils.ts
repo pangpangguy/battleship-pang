@@ -106,3 +106,13 @@ export function useStateRef<T>(initialValue: T) {
 
   return [value, setValue, ref] as const;
 }
+
+//Type guards
+
+export function isPregameCellInfo(cell: CellInfo): cell is PregameCellInfo {
+  return (cell as PregameCellInfo).hoverState !== undefined;
+}
+
+export function isGameStartCellInfo(cell: CellInfo): cell is GameStartCellInfo {
+  return (cell as GameStartCellInfo).discovered !== undefined && (cell as GameStartCellInfo).cellState !== undefined;
+}

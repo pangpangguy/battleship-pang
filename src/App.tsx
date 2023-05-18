@@ -50,6 +50,7 @@ function App(): ReactElement {
   }
 
   function handleRestartGame() {
+    setPlayerBoard(generateBoard());
     setGameState(GamePhase.PreGame);
   }
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CellInfo, CellState, GameStartCellInfo, HoverState } from "../common/types";
+import { CellInfo, CellState, HoverState, PregameCellInfo } from "../common/types";
 import "./cell.css";
 import classNames from "classnames";
 
@@ -11,6 +11,9 @@ interface CellProps {
 }
 
 export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleMouseClick }: CellProps) {
+  function isPregameCell(cell: CellInfo): cell is PregameCellInfo {
+    return "hoverState" in cell;
+  }
   return (
     <div
       onMouseEnter={() => {
@@ -20,8 +23,9 @@ export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleM
         handleMouseLeave(cell.cellId);
       }}
       className={classNames("cell", `${CellState[cell.cellState].toLowerCase()}`, {
-        [`hovered--${HoverState[cell.hoverState].toLowerCase()}`]: cell.hoverState !== HoverState.None,
-        discovered: "discovered" in cell && cell.isDiscovered === true,
+        [`hovered--${isPregameCell(cell) && HoverState[cell.hoverState].toLowerCase()}`]:
+          "hoverState" in cell && cell.hoverState !== HoverState.None,
+        discovered: "isDiscovered" in cell && cell.isDiscovered === true,
       })}
       onClick={() => {
         handleMouseClick(cell.cellId);

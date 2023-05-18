@@ -19,7 +19,7 @@ const generateBoard = (): CellInfo[][] => {
     const cols: CellInfo[] = [];
 
     for (let col = 0; col < boardSize; col++) {
-      cols.push({ cellId: createCellId(row + 1, col), cellState: CellState.Unoccupied });
+      cols.push({ cellId: createCellId(row + 1, col) });
     }
     output.push(cols);
   }
@@ -28,9 +28,7 @@ const generateBoard = (): CellInfo[][] => {
 
 export const generatePregameBoard = (): PregameCellInfo[][] => {
   const board = generateBoard();
-  return board.map((cellRow) =>
-    cellRow.map((cell) => ({ ...cell, cellState: CellState.Unoccupied, hoverState: HoverState.None }))
-  );
+  return board.map((cellRow) => cellRow.map((cell) => ({ ...cell, hoverState: HoverState.None })));
 };
 
 //Generates a board with random ship placements
@@ -77,10 +75,10 @@ export const generateGameStartBoardWithShips = (): GameStartCellInfo[][] => {
     for (let i = 0; i < ship.size; i++) {
       if (orientation) {
         //Vertical
-        board[row + i][col] = { ...board[row + i][col], cellState: CellState.Hit, shipId: ship.acronym };
+        board[row + i][col] = { ...board[row + i][col], shipId: ship.acronym, cellState: CellState.Hit };
         occupiedCells.add(`${row + i}-${col}`);
       } else {
-        board[row][col + i] = { ...board[row][col + i], cellState: CellState.Hit, shipId: ship.acronym };
+        board[row][col + i] = { ...board[row][col + i], shipId: ship.acronym, cellState: CellState.Hit };
         occupiedCells.add(`${row}-${col + i}`);
       }
     }

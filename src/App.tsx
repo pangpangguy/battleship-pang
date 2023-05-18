@@ -23,13 +23,16 @@ function App(): ReactElement {
       });
     });
   };
-  const [gameState, useGameState] = useState<GamePhase>(GamePhase.PreGame);
+  const [gameState, setGameState] = useState<GamePhase>(GamePhase.PreGame);
   const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
   const [opponentBoard, setOpponentBoard] = useState<GameStartCellInfo[][]>(generateRandomBoard());
 
   function handleStartGame() {
-    useGameState(GamePhase.GameStart);
+    setGameState(GamePhase.GameStart);
   }
+
+  function handleRestartGame() {
+    setGameState(GamePhase.PreGame);
 
   //Accepst a list of new target cells to be updated/replaced on the board
   function handleUpdatePlayerBoard(cellsToUpdate: PregameCellInfo[]) {
@@ -76,6 +79,7 @@ function App(): ReactElement {
             opponentBoard={opponentBoard}
             playerBoard={playerBoard}
             handleUpdateOpponentBoard={handleUpdateOpponentBoard}
+            handleRestartGame={handleRestartGame}
           />
         );
       case GamePhase.GameEnd:

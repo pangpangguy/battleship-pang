@@ -8,6 +8,7 @@ interface GameStartProps {
   playerBoard: CellInfo[][];
   opponentBoard: GameStartCellInfo[][];
   handleUpdateOpponentBoard: (newBoard: GameStartCellInfo[]) => void;
+  handleRestartGame: () => void;
 }
   
 export default function GameStart({ playerBoard, opponentBoard, handleUpdateOpponentBoard }: GameStartProps) {
@@ -65,7 +66,9 @@ export default function GameStart({ playerBoard, opponentBoard, handleUpdateOppo
   return (
     <div className="container">
       <div className="restart-btn-wrapper">
-        <button className="restart-btn">Restart Game</button>
+        <button className="restart-btn" onClick={handleRestartGame}>
+          Restart Game
+        </button>
       </div>
       <div className="boards-wrapper">
         <div className="opponent-board">

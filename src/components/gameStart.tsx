@@ -1,9 +1,8 @@
 import { useState, useRef } from "react";
-import { CellInfo, CellState, GameStartCellInfo, GameStartCellInfoWithShip, Ship } from "../common/types";
+import { CellInfo, GameStartCellInfo, CellState } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
 import { shipList } from "../common/constants";
-
 interface GameStartProps {
   playerBoard: CellInfo[][];
   opponentBoard: GameStartCellInfo[][];
@@ -26,9 +25,6 @@ export default function GameStart({
   function initializeScoreMap(): Map<string, number> {
     return shipList.reduce((map, ship) => map.set(ship.acronym, ship.size), new Map());
   }
-
-  type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
-
   function discoverCell(id: string): void {
     const targetCell = opponentBoard.flat().find((cell) => cell.cellId === id && !cell.discovered);
 
@@ -37,12 +33,13 @@ export default function GameStart({
       return;
     }
 
+    console.log(targetCell);
     const cellsToUpdate: GameStartCellInfo[] = [];
 
     if ("shipId" in targetCell && checkShipIsSunkAndUpdateShipsRemaining(targetCell)) {
-      const cellsChangeToSunk: GameStartCellInfoWithShip[] = opponentBoard
+      const cellsChangeToSunk = opponentBoard
         .flat()
-        .filter((cell): cell is GameStartCellInfoWithShip => "shipId" in cell && cell.shipId === targetCell.shipId)
+        .filter((cell) => "shipId" in cell && cell.shipId === targetCell.shipId)
         .map((cell) => ({ ...cell, cellState: CellState.Sunk, discovered: true }));
       cellsToUpdate.push(...cellsChangeToSunk);
     } else {
@@ -56,9 +53,10 @@ export default function GameStart({
   // Check if the discovered cell sunks the last part of ship and updates the ships remaining map
   function checkShipIsSunkAndUpdateShipsRemaining(cell: GameStartCellInfo): boolean {
     //Miss
-    if (!("shipId" in cell)) return false;
+    if (!cell.shipId) return false;
 
-    const targetShipParts = playerShipsRemaining.get(cell.shipId);
+    const cellShipId = cell.shipId;
+    const targetShipParts = playerShipsRemaining.get(cellShipId);
 
     //Shouldn't happen
     if (!targetShipParts) {
@@ -67,20 +65,20 @@ export default function GameStart({
 
     //Hit
     if (targetShipParts - 1 > 0) {
-      setPlayerShipsRemaining((prev) => new Map(prev).set(cell.shipId, targetShipParts - 1));
+      setPlayerShipsRemaining((prev) => new Map(prev).set(cellShipId, targetShipParts - 1));
       return false;
     }
 
     //Sunk : Remove from map
     setPlayerShipsRemaining((prev) => {
       const updatedMap = new Map(prev);
-      updatedMap.delete(cell.shipId);
+      updatedMap.delete(cellShipId);
       return updatedMap;
     });
     return true;
   }
 
-  function showAnimationMessage(state: GameStartCellStates) {
+  function showAnimationMessage(state: CellState) {
     if (state === CellState.Hit) {
       setStatus("You hit a ship!");
     } else if (state === CellState.Miss) {

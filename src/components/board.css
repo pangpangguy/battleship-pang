@@ -6,5 +6,5 @@
   border: 1px solid black;
   border-radius: 15px;
   background-color: rgb(221, 221, 243);
-  cursor: default;
+  user-select: none;
 }

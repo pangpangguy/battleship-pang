@@ -1,50 +1,67 @@
-import { CellInfo, CellState } from "../common/types";
-import { useEffect, useState } from "react";
+import { GameStartCellInfo, CellState, CellInfo, HoverState } from "../common/types";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { generateBoard } from "../common/utils";
 import Board from "./board";
 import "./gamestart.css";
 
 interface GameStartProps {
+  playerBoard: CellInfo[][];
+  opponentBoard: GameStartCellInfo[][];
+  handleUpdateOpponentBoard: (newBoard: GameStartCellInfo[]) => void;
   handleRestartGame: () => void;
 }
-export default function GameStart({ handleRestartGame }: GameStartProps) {
-  const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
-  const [opponentBoard, setOpponentBoard] = useState<CellInfo[][]>(generateBoard());
+  
+export default function GameStart({ playerBoard, opponentBoard, handleUpdateOpponentBoard }: GameStartProps) {
+  type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
 
-  //Randomly generates a board with ships with random states for testing purposes
-  //To be removed later
-  useEffect(() => {
-    const cellStates = Object.values(CellState).filter(
-      (state) => typeof state === "string" && state !== "Occupied" && state !== "Unoccupied"
-    );
+  const [status, setStatus] = useState<string>("");
+  const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const generateRandomBoard = (): CellInfo[][] => {
-      return generateBoard().map((row) => {
-        return row.map((cell) => {
-          const randomState = cellStates[Math.floor(Math.random() * cellStates.length)];
-          cell.cellState = CellState[randomState as keyof typeof CellState];
-          return cell;
-        });
-      });
-    };
+  const discoverCell = useCallback(
+    (id: string): void => {
+      for (const cellRow of opponentBoard) {
+        for (const cell of cellRow) {
+          if (cell.cellId === id) {
+            if (cell.discovered) {
+              return; // Stop further processing if already discovered
+            }
 
-    setOpponentBoard(generateRandomBoard);
-  }, []);
+            //Play animation message
+            showAnimationMessage(cell.cellState);
 
-  function discoverCell(id: string): void {
-    const [row, col] = id.split("-");
-
-    const newBoard = opponentBoard.map((row) => {
-      return row.map((cell) => {
-        if (cell.cellId === id && !cell.discovered) {
-          return { ...cell, discovered: true };
+            //Uncover the cell
+            const newBoard = opponentBoard.map((cellRow) => {
+              return cellRow.map((cell) => {
+                if (cell.cellId === id) {
+                  return { ...cell, isDiscovered: true };
+                }
+                return cell;
+              });
+            });
+            setOpponentBoard(newBoard);
+          }
         }
-        return cell;
-      });
-    });
+      }
+    },
+    [opponentBoard, timeoutId]
+  );
 
-    setOpponentBoard(newBoard);
+  function showAnimationMessage(state: GameStartCellStates) {
+    if (state === CellState.Hit) {
+      setStatus("You hit a ship!");
+    } else if (state === CellState.Miss) {
+      setStatus("You missed!");
+    } else {
+      setStatus("You sunk a ship!");
+    }
+    if (timeoutId.current) {
+      clearTimeout(timeoutId.current);
+    }
+    timeoutId.current = setTimeout(() => {
+      setStatus("");
+    }, 1000);
   }
+
 
   return (
     <div className="container">
@@ -56,6 +73,7 @@ export default function GameStart({ handleRestartGame }: GameStartProps) {
       <div className="boards-wrapper">
         <div className="opponent-board">
           <h1>Select a cell to attack:</h1>
+          <div className="animation-msg">{status}</div>
           <Board
             board={opponentBoard}
             handleMouseEnter={function (id: string): void {}}
@@ -65,6 +83,7 @@ export default function GameStart({ handleRestartGame }: GameStartProps) {
         </div>
         <div className="player-board">
           <h1>Your Board</h1>
+          <div className="animation-msg">{status}</div>
           <Board
             board={playerBoard}
             handleMouseEnter={function (id: string): void {}}

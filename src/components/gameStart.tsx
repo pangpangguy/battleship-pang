@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { CellInfo, GameStartCellInfo, CellState } from "../common/types";
+import { GameStartCellInfo, CellState } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
 import { shipList } from "../common/constants";

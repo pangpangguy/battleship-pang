@@ -116,3 +116,7 @@ export function isPregameCellInfo(cell: CellInfo): cell is PregameCellInfo {
 export function isGameStartCellInfo(cell: CellInfo): cell is GameStartCellInfo {
   return (cell as GameStartCellInfo).discovered !== undefined && (cell as GameStartCellInfo).cellState !== undefined;
 }
+
+export function cellHasShip(cell: CellInfo): cell is CellInfo & { shipId: string } {
+  return "shipId" in cell && typeof cell.shipId === "string";
+}

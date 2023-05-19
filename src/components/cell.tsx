@@ -24,8 +24,6 @@ export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleM
 
       //Remove empty strings and return class names as a string
       return classNamesToAdd.filter((className) => className !== "").join(" ");
-    } else {
-      console.log(cell);
     }
   }
 

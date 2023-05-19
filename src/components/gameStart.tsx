@@ -2,7 +2,6 @@ import { useState, useRef } from "react";
 import { GameStartCellInfo, CellState } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
-import { shipList } from "../common/constants";
 
 interface GameStartProps {
   playerBoard: GameStartCellInfo[][];

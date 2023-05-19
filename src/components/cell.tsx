@@ -1,4 +1,4 @@
-import { CellInfo, CellState, HoverState, PregameCellInfo } from "../common/types";
+import { CellInfo, CellState, HoverState } from "../common/types";
 import { isPregameCellInfo, isGameStartCellInfo } from "../common/utils";
 import "./cell.css";
 import classNames from "classnames";

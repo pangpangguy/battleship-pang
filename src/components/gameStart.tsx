@@ -1,59 +1,77 @@
-import { CellInfo, CellState } from "../common/types";
-import { useEffect, useState } from "react";
-import { generateBoard } from "../common/utils";
+import { useState, useRef, useCallback } from "react";
+import { CellInfo, CellState, GameStartCellInfo } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
 
-export default function GameStart() {
-  const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
-  const [opponentBoard, setOpponentBoard] = useState<CellInfo[][]>(generateBoard());
+interface GameStartProps {
+  playerBoard: CellInfo[][];
+  opponentBoard: GameStartCellInfo[][];
+  handleUpdateOpponentBoard: (newBoard: GameStartCellInfo[]) => void;
+  handleRestartGame: () => void;
+}
 
-  //Randomly generates a board with ships with random states for testing purposes
-  //To be removed later
-  useEffect(() => {
-    const cellStates = Object.values(CellState).filter(
-      (state) => typeof state === "string" && state !== "Occupied" && state !== "Unoccupied"
-    );
+export default function GameStart({
+  playerBoard,
+  opponentBoard,
+  handleUpdateOpponentBoard,
+  handleRestartGame,
+}: GameStartProps) {
+  type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
 
-    const generateRandomBoard = (): CellInfo[][] => {
-      return generateBoard().map((row) => {
-        return row.map((cell) => {
-          const randomState = cellStates[Math.floor(Math.random() * cellStates.length)];
-          cell.cellState = CellState[randomState as keyof typeof CellState];
-          return cell;
-        });
-      });
-    };
-
-    setOpponentBoard(generateRandomBoard);
-  }, []);
+  const [status, setStatus] = useState<string>("");
+  const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function discoverCell(id: string): void {
-    const [row, col] = id.split("-");
+    for (const cellRow of opponentBoard) {
+      for (const cell of cellRow) {
+        if (cell.cellId === id) {
+          if (cell.isDiscovered) {
+            return; // Stop further processing if already discovered
+          }
 
-    const newBoard = opponentBoard.map((row) => {
-      return row.map((cell) => {
-        if (cell.cellId === id && !cell.discovered) {
-          return { ...cell, discovered: true };
+          //Play animation message
+          showAnimationMessage(cell.cellState);
+
+          //Uncover the cell
+          const updateCell = opponentBoard
+            .flat()
+            .filter((cell) => cell.cellId === id)
+            .map((cell) => ({ ...cell, isDiscovered: true }));
+          handleUpdateOpponentBoard(updateCell);
         }
-        return cell;
-      });
-    });
+      }
+    }
+  }
 
-    setOpponentBoard(newBoard);
+  function showAnimationMessage(state: GameStartCellStates) {
+    if (state === CellState.Hit) {
+      setStatus("You hit a ship!");
+    } else if (state === CellState.Miss) {
+      setStatus("You missed!");
+    } else {
+      setStatus("You sunk a ship!");
+    }
+    if (timeoutId.current) {
+      clearTimeout(timeoutId.current);
+    }
+    timeoutId.current = setTimeout(() => {
+      setStatus("");
+    }, 1000);
   }
 
   return (
     <div className="container">
       <div className="restart-btn-wrapper">
-        <button className="restart-btn">Restart Game</button>
+        <button className="restart-btn" onClick={handleRestartGame}>
+          Restart Game
+        </button>
       </div>
       <div className="boards-wrapper">
         <div className="opponent-board">
           <h1>Select a cell to attack:</h1>
+          <div className="animation-msg">{status}</div>
           <Board
             board={opponentBoard}
-            hoveredCells={{ cells: [], isValid: false }}
             handleMouseEnter={function (id: string): void {}}
             handleMouseLeave={function (id: string): void {}}
             handleMouseClick={discoverCell}
@@ -61,9 +79,9 @@ export default function GameStart() {
         </div>
         <div className="player-board">
           <h1>Your Board</h1>
+          <div className="animation-msg">{status}</div>
           <Board
             board={playerBoard}
-            hoveredCells={{ cells: [], isValid: false }}
             handleMouseEnter={function (id: string): void {}}
             handleMouseLeave={function (id: string): void {}}
             handleMouseClick={function (id: string): void {}}

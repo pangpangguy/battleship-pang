@@ -22,10 +22,6 @@ export default function GameStart({
   const [discoverOutcomeMessage, setDiscoverOutcomeMessage] = useState<string>("");
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  function initializeScoreMap(): Map<string, number> {
-    return shipList.reduce((map, ship) => map.set(ship.acronym, ship.size), new Map());
-  }
-
   function getCellsToUpdate(targetCell: GameStartCellInfo): GameStartCellInfo[] {
     const cellsToUpdate: GameStartCellInfo[] = [];
 

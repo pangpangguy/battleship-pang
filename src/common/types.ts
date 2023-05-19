@@ -19,13 +19,19 @@ export interface PregameCellInfo extends CellInfo {
 }
 
 export interface GameStartCellInfo extends CellInfo {
-  discovered: boolean;
+  isDiscovered: boolean;
   cellState: CellState;
 }
 
 export interface Position {
   x: number;
   y: number;
+}
+
+export interface GameState {
+  gamePhase: GamePhase;
+  playerBoard: PregameCellInfo[][] | GameStartCellInfo[][];
+  opponentBoard: undefined | GameStartCellInfo[][];
 }
 
 export enum CellState {

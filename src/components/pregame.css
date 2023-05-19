@@ -1,3 +1,23 @@
 .pregame-board {
   cursor: default;
 }
+
+.pregame-board .cell:not(.header).occupied {
+  cursor: not-allowed;
+  background-color: rgb(138, 228, 138);
+}
+
+.pregame-board .cell:not(.header).hovered--valid {
+  cursor: pointer;
+  background-color: rgb(73, 245, 130);
+}
+
+.pregame-board .cell:not(.header).hovered--invalid {
+  cursor: not-allowed;
+  background-color: rgb(248, 83, 83);
+}
+
+.pregame-board .cell:not(.header).occupied.hovered--invalid {
+  cursor: not-allowed;
+  background-color: rgba(193, 156, 111, 0.5);
+}

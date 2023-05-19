@@ -1,68 +1,117 @@
 import { ReactElement, useState } from "react";
-import { GamePhase, GameStartCellInfo, PregameCellInfo } from "./common/types";
+import { CellInfo, CellState, GamePhase, GameStartCellInfo, GameState, PregameCellInfo } from "./common/types";
 import Pregame from "./components/pregame";
 import GameStart from "./components/gameStart";
 import "./App.css";
-import { generateGameStartBoardWithShips, generatePregameBoard } from "./common/utils";
+import { generateBoard, generatePregameBoard } from "./common/utils";
 
 function App(): ReactElement {
-  const [gameState, useGameState] = useState<GamePhase>(GamePhase.PreGame);
-  const [playerBoard, setPlayerBoard] = useState<PregameCellInfo[][]>(generatePregameBoard());
-  const [opponentBoard, setOpponentBoard] = useState<GameStartCellInfo[][]>(generateGameStartBoardWithShips());
+  //Randomly generates a board with ships with random states for testing purposes
+  //To be removed later
+  const randomStates: CellState[] = [CellState.Miss, CellState.Hit, CellState.Sunk];
+  const generateRandomBoard = (): GameStartCellInfo[][] => {
+    return generateBoard().map((cellRow) => {
+      return cellRow.map((cell) => {
+        const randomState: CellState = randomStates[Math.floor(Math.random() * randomStates.length)];
+        return {
+          ...cell,
+          isDiscovered: false,
+          cellState: randomState,
+        };
+      });
+    });
+  };
+  const [gameState, setGameState] = useState<GameState>(getInitialGameState());
+
+  //Get initial game state (pregame ship placement page)
+  function getInitialGameState(): GameState {
+    return {
+      gamePhase: GamePhase.PreGame,
+      playerBoard: generatePregameBoard(),
+      opponentBoard: undefined,
+    };
+  }
 
   function handleStartGame() {
-    useGameState(GamePhase.GameStart);
+    setGameState((currentState) => ({
+      gamePhase: GamePhase.GameStart,
+      playerBoard: convertBoardToGameStart(currentState.playerBoard as PregameCellInfo[][]),
+      opponentBoard: generateRandomBoard(),
+    }));
   }
 
   function handleRestartGame() {
-    useGameState(GamePhase.PreGame);
+    setGameState(getInitialGameState());
   }
 
-  //Accepst a list of new target cells to be updated/replaced on the board
-  function handleUpdatePlayerBoard(cellsToUpdate: PregameCellInfo[]) {
-    //Update the new board with cells in targetCells
-    setPlayerBoard((currentBoard) =>
-      currentBoard.map((rowCells) => {
-        return rowCells.map((cell) => {
-          const newCell = cellsToUpdate.find((newCell) => newCell.cellId === cell.cellId);
-          if (newCell) {
-            return { ...newCell };
-          } else return { ...cell };
-        });
-      })
-    );
+  //Convert player's board from pregame to gameStart
+  function convertBoardToGameStart(pregamePlayerBoard: PregameCellInfo[][]): GameStartCellInfo[][] {
+    return pregamePlayerBoard.map((cellRow) => {
+      return cellRow.map((cell) => {
+        //remove hoverState and add cellState
+        const { hoverState, ...otherProperties } = cell;
+        return {
+          ...otherProperties,
+          cellState: cell.shipId ? CellState.Hit : CellState.Miss,
+          isDiscovered: false,
+        };
+      });
+    });
+  }
+
+  // Player board update handler for pregame
+  function handleUpdatePlayerPregameBoard(cellsToUpdate: PregameCellInfo[]) {
+    setGameState((currentState) => ({
+      ...currentState,
+      playerBoard: updateBoard(currentState.playerBoard as PregameCellInfo[][], cellsToUpdate),
+    }));
+  }
+
+  // Player board update handler for gameStart
+  function handleUpdatePlayerGameStartBoard(cellsToUpdate: GameStartCellInfo[]) {
+    setGameState((currentState) => ({
+      ...currentState,
+      playerBoard: updateBoard(currentState.playerBoard as GameStartCellInfo[][], cellsToUpdate),
+    }));
   }
 
   function handleUpdateOpponentBoard(cellsToUpdate: GameStartCellInfo[]) {
-    //Update the new board with cells in targetCells
-    setOpponentBoard((currentBoard) =>
-      currentBoard.map((rowCells) => {
-        return rowCells.map((cell) => {
-          const newCell = cellsToUpdate.find((newCell) => newCell.cellId === cell.cellId);
-          if (newCell) {
-            return { ...newCell };
-          } else return { ...cell };
-        });
-      })
-    );
+    setGameState((currentState) => ({
+      ...currentState,
+      opponentBoard: updateBoard(currentState.opponentBoard as GameStartCellInfo[][], cellsToUpdate),
+    }));
+  }
+
+  //Accepst a list of new target cells to be updated/replaced on the board
+  //Update the new board with cells in targetCells
+  function updateBoard<T extends CellInfo>(currentBoard: T[][], cellsToReplace: T[]): T[][] {
+    return currentBoard.map((rowCells) => {
+      return rowCells.map((cell) => {
+        const newCell = cellsToReplace.find((newCell) => newCell.cellId === cell.cellId);
+        if (newCell) {
+          return { ...newCell };
+        } else return { ...cell };
+      });
+    });
   }
 
   function renderCurrentGamePhase() {
-    switch (gameState) {
+    switch (gameState.gamePhase) {
       case GamePhase.PreGame:
         return (
           <Pregame
-            playerBoard={playerBoard as PregameCellInfo[][]}
+            playerBoard={gameState.playerBoard as PregameCellInfo[][]}
             handleStartGame={handleStartGame}
-            handleUpdatePlayerBoard={handleUpdatePlayerBoard}
+            handleUpdatePlayerBoard={handleUpdatePlayerPregameBoard}
           />
         );
       case GamePhase.GameStart:
         return (
           <GameStart
-            opponentBoard={opponentBoard}
-            playerBoard={playerBoard}
+            opponentBoard={gameState.opponentBoard as GameStartCellInfo[][]}
+            playerBoard={gameState.playerBoard as GameStartCellInfo[][]}
             handleUpdateOpponentBoard={handleUpdateOpponentBoard}
+            handleUpdatePlayerBoard={handleUpdatePlayerGameStartBoard}
             handleRestartGame={handleRestartGame}
           />
         );
@@ -72,18 +121,7 @@ function App(): ReactElement {
         return <div>Invalid game phase!</div>;
     }
   }
-  return (
-    <div className="App">
-      {
-        <GameStart
-          opponentBoard={opponentBoard}
-          playerBoard={playerBoard}
-          handleUpdateOpponentBoard={handleUpdateOpponentBoard}
-          handleRestartGame={handleRestartGame}
-        />
-      }
-    </div>
-  );
-}
 
+  return <div className="App">{renderCurrentGamePhase()}</div>;
+}
 export default App;

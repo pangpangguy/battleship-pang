@@ -69,7 +69,6 @@ h1 {
 }
 
 .animation-msg {
-  height: 2em;
+  height: 2rem;
   margin: 0 auto;
-  transition: 2s;
 }

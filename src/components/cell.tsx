@@ -16,9 +16,7 @@ export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleM
     if (isPregameCellInfo(cell)) {
       let classNamesToAdd: string[] = [
         //Adds hover state class name for cell if it has one (valid/invalid)
-        cell.hoverState !== HoverState.None
-          ? `hovered--${HoverState[(cell as PregameCellInfo).hoverState].toLowerCase()}`
-          : "",
+        cell.hoverState !== HoverState.None ? `hovered--${HoverState[cell.hoverState].toLowerCase()}` : "",
 
         //Adds 'occupied' if cell has a ship
         "shipId" in cell ? "occupied" : "",
@@ -26,6 +24,8 @@ export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleM
 
       //Remove empty strings and return class names as a string
       return classNamesToAdd.filter((className) => className !== "").join(" ");
+    } else {
+      console.log(cell);
     }
   }
 

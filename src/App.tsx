@@ -28,7 +28,6 @@ function App(): ReactElement {
     return {
       gamePhase: GamePhase.PreGame,
       playerBoard: generatePregameBoard(),
-      opponentBoard: undefined,
     };
   }
 

@@ -75,20 +75,32 @@ export const generateOpponentBoardWithShips = (): GameStartCellInfo[][] => {
     for (let i = 0; i < ship.size; i++) {
       if (orientation) {
         //Vertical
-        board[row + i][col] = { ...board[row + i][col], shipId: ship.acronym, cellState: CellState.Hit };
+        board[row + i][col] = {
+          ...board[row + i][col],
+          shipId: ship.acronym,
+          cellState: CellState.Hit,
+          isDiscovered: false,
+        };
         occupiedCells.add(`${row + i}-${col}`);
       } else {
-        board[row][col + i] = { ...board[row][col + i], shipId: ship.acronym, cellState: CellState.Hit };
+        board[row][col + i] = {
+          ...board[row][col + i],
+          shipId: ship.acronym,
+          cellState: CellState.Hit,
+          isDiscovered: false,
+        };
         occupiedCells.add(`${row}-${col + i}`);
       }
     }
   });
-
   return board.map((cellRow, rowIdx) =>
     cellRow.map((cell, colIdx) => {
       if (!occupiedCells.has(`${rowIdx}-${colIdx}`)) {
         return { ...cell, cellState: CellState.Miss };
-      } else return { ...cell };
+      } else {
+        console.log("here");
+        return { ...cell };
+      }
     })
   );
 };
@@ -114,7 +126,7 @@ export function isPregameCellInfo(cell: CellInfo): cell is PregameCellInfo {
 }
 
 export function isGameStartCellInfo(cell: CellInfo): cell is GameStartCellInfo {
-  return (cell as GameStartCellInfo).discovered !== undefined && (cell as GameStartCellInfo).cellState !== undefined;
+  return (cell as GameStartCellInfo).isDiscovered !== undefined && (cell as GameStartCellInfo).cellState !== undefined;
 }
 
 export function cellHasShip(cell: CellInfo): cell is CellInfo & { shipId: string } {

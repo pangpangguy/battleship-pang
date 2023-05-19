@@ -4,6 +4,7 @@ import { shipList } from "../common/constants";
 import { createCellId, useStateRef } from "../common/utils";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
+import "./pregame.css";
 
 interface PreGameProps {
   playerBoard: PregameCellInfo[][];

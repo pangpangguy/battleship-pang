@@ -19,7 +19,7 @@ export interface PregameCellInfo extends CellInfo {
 }
 
 export interface GameStartCellInfo extends CellInfo {
-  discovered: boolean;
+  isDiscovered: boolean;
   cellState: CellState;
 }
 

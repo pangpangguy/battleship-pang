@@ -38,12 +38,13 @@ function App(): ReactElement {
         return {
           ...otherProperties,
           cellState: cell.shipId ? CellState.Hit : CellState.Miss,
-          discovered: false,
+          isDiscovered: false,
         };
       });
     });
   }
 
+  // Player board update handler for pregame
   function handleUpdatePlayerPregameBoard(cellsToUpdate: PregameCellInfo[]) {
     setGameState((currentState) => ({
       ...currentState,
@@ -51,7 +52,7 @@ function App(): ReactElement {
     }));
   }
 
-  // Player board update handler for pregame
+  // Player board update handler for gameStart
   function handleUpdatePlayerGameStartBoard(cellsToUpdate: GameStartCellInfo[]) {
     setGameState((currentState) => ({
       ...currentState,
@@ -59,7 +60,6 @@ function App(): ReactElement {
     }));
   }
 
-  // Player board update handler for gameStart
   function handleUpdateOpponentBoard(cellsToUpdate: GameStartCellInfo[]) {
     setGameState((currentState) => ({
       ...currentState,

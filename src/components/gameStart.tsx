@@ -19,9 +19,7 @@ export default function GameStart({
   handleUpdatePlayerBoard,
   handleRestartGame,
 }: GameStartProps) {
-  const [playerShipsRemaining, setPlayerShipsRemaining] = useState<Map<string, number>>(
-    new Map<string, number>(initializeScoreMap())
-  );
+  const [opponentShipsRemaining, setOpponentShipsRemaining] = useState(new Map<string, number>(initializeScoreMap()));
   const [discoverOutcomeMessage, setDiscoverOutcomeMessage] = useState<string>("");
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -43,27 +41,29 @@ export default function GameStart({
     ) {
       const cellsChangeToSunk = opponentBoard
         .flat()
-        .filter((cell) => "shipId" in cell && cell.shipId === targetCell.shipId)
-        .map((cell) => ({ ...cell, cellState: CellState.Sunk, discovered: true }));
+        .filter((cell) => cellHasShip(cell) && cell.shipId === targetCell.shipId)
+        .map((cell) => ({ ...cell, cellState: CellState.Sunk, isDiscovered: true }));
+      console.log(cellsChangeToSunk);
       cellsToUpdate.push(...cellsChangeToSunk);
     } else {
       // Hit or Miss
-      cellsToUpdate.push({ ...targetCell, discovered: true });
+      cellsToUpdate.push({ ...targetCell, isDiscovered: true });
     }
 
     return cellsToUpdate;
   }
 
   function discoverPlayerCell(id: string) {
-    const targetCell = playerBoard.flat().find((cell) => cell.cellId === id && !cell.discovered);
+    const targetCell = opponentBoard.flat().find((cell) => cell.cellId === id && !cell.isDiscovered);
 
     //Skip already discovered cells
     if (!targetCell) {
       return;
     }
 
-    const cellsToUpdate = getCellsToUpdate(targetCell, playerShipsRemaining, setPlayerShipsRemaining);
-    handleUpdatePlayerBoard(cellsToUpdate);
+    const cellsToUpdate = getCellsToUpdate(targetCell, opponentShipsRemaining, setOpponentShipsRemaining);
+    showDiscoverOutcomeMessage(cellsToUpdate[0].cellState);
+    handleUpdateOpponentBoard(cellsToUpdate);
   }
 
   function discoverAICell(id: string) {
@@ -85,7 +85,7 @@ export default function GameStart({
     }
 
     //Check if sunk and remove from map
-    if (targetShipParts - 1 == 0) {
+    if (targetShipParts - 1 === 0) {
       setShipsRemaining((prev) => {
         const updatedMap = new Map(prev);
         updatedMap.delete(shipId);
@@ -126,7 +126,7 @@ export default function GameStart({
       <div className="boards-wrapper">
         <div className="opponent-board">
           <h1>Select a cell to attack:</h1>
-          <div className="animation-msg">{discoverOutcomeMessage}</div>
+          <div className="discover-outcome-msg">{discoverOutcomeMessage}</div>
           <Board
             board={opponentBoard}
             handleMouseEnter={function (id: string): void {}}
@@ -136,7 +136,7 @@ export default function GameStart({
         </div>
         <div className="player-board">
           <h1>Your Board</h1>
-          <div className="animation-msg"></div>
+          <div className="discover-outcome-msg"></div>
           <Board
             board={playerBoard}
             handleMouseEnter={function (id: string): void {}}

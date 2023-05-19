@@ -6,6 +6,7 @@
   background-color: rgb(240, 240, 240);
   border-radius: 10px;
   box-shadow: 0px 0px 20px rgb(191, 191, 191);
+  user-select: none;
 }
 
 h1 {
@@ -21,10 +22,9 @@ h1 {
   align-items: center;
 }
 
+/* Opponent's board (left) */
 .opponent-board {
-  width: 50%;
   margin-right: 10px;
-  user-select: none;
 }
 
 .opponent-board .board .cell:not(.header):not(.discovered) {
@@ -32,21 +32,32 @@ h1 {
 }
 
 .opponent-board .board .cell:not(.header):not(.discovered):hover {
-  opacity: 1;
   background-color: rgb(109, 205, 237);
 }
 
-.player-board {
-  width: 50%;
-  margin-right: 10px;
-  position: relative;
-  user-select: none;
-}
-
+/* Player's board (right) */
 .player-board > div {
   opacity: 0.55;
 }
 
+.player-board .occupied {
+  background-color: rgb(138, 228, 138);
+}
+
+/* For both boards*/
+.discovered.miss {
+  background-color: rgb(255, 255, 255);
+}
+
+.discovered.hit {
+  background-color: rgb(255, 0, 0);
+}
+
+.discovered.sunk {
+  background-color: rgba(255, 44, 44, 0.329);
+}
+
+/*Restart button*/
 .restart-btn-wrapper {
   display: flex;
   justify-content: flex-end;
@@ -68,7 +79,7 @@ h1 {
   outline: none;
 }
 
-.animation-msg {
+/*Discover outcome message*/
+.discover-outcome-msg {
   height: 2rem;
-  margin: 0 auto;
 }

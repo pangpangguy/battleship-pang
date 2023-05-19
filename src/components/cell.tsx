@@ -40,7 +40,7 @@ export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleM
         "shipId" in cell ? "occupied" : "",
 
         //Adds 'discovered' if cell has been discovered
-        cell.discovered ? "discovered" : "",
+        cell.isDiscovered ? "discovered" : "",
       ];
 
       //Remove empty strings and return class names as a string

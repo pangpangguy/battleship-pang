@@ -6,21 +6,6 @@ import "./App.css";
 import { generateBoard, generatePregameBoard } from "./common/utils";
 
 function App(): ReactElement {
-  //Randomly generates a board with ships with random states for testing purposes
-  //To be removed later
-  const randomStates: CellState[] = [CellState.Miss, CellState.Hit, CellState.Sunk];
-  const generateRandomBoard = (): GameStartCellInfo[][] => {
-    return generateBoard().map((cellRow) => {
-      return cellRow.map((cell) => {
-        const randomState: CellState = randomStates[Math.floor(Math.random() * randomStates.length)];
-        return {
-          ...cell,
-          isDiscovered: false,
-          cellState: randomState,
-        };
-      });
-    });
-  };
   const [gameState, setGameState] = useState<GameState>(getInitialGameState());
 
   //Get initial game state (pregame ship placement page)

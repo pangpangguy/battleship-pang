@@ -44,7 +44,6 @@ export default function GameStart({
         .flat()
         .filter((cell) => cellHasShip(cell) && cell.shipId === targetCell.shipId)
         .map((cell) => ({ ...cell, cellState: CellState.Sunk, isDiscovered: true }));
-      console.log(cellsChangeToSunk);
       cellsToUpdate.push(...cellsChangeToSunk);
     } else {
       // Hit or Miss

@@ -98,7 +98,6 @@ export const generateOpponentBoardWithShips = (): GameStartCellInfo[][] => {
       if (!occupiedCells.has(`${rowIdx}-${colIdx}`)) {
         return { ...cell, cellState: CellState.Miss };
       } else {
-        console.log("here");
         return { ...cell };
       }
     })

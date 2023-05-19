@@ -3,7 +3,7 @@ import { CellInfo, CellState, GamePhase, GameStartCellInfo, GameState, PregameCe
 import Pregame from "./components/pregame";
 import GameStart from "./components/gameStart";
 import "./App.css";
-import { generateBoard, generatePregameBoard } from "./common/utils";
+import { generateBoard, generateOpponentBoardWithShips, generatePregameBoard } from "./common/utils";
 
 function App(): ReactElement {
   const [gameState, setGameState] = useState<GameState>(getInitialGameState());
@@ -21,7 +21,7 @@ function App(): ReactElement {
     setGameState((currentState) => ({
       gamePhase: GamePhase.GameStart,
       playerBoard: convertBoardToGameStart(currentState.playerBoard as PregameCellInfo[][]),
-      opponentBoard: generateRandomBoard(),
+      opponentBoard: generateOpponentBoardWithShips(),
     }));
   }
 

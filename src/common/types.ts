@@ -31,7 +31,7 @@ export interface Position {
 export interface GameState {
   gamePhase: GamePhase;
   playerBoard: PregameCellInfo[][] | GameStartCellInfo[][];
-  opponentBoard: undefined | GameStartCellInfo[][];
+  opponentBoard?: GameStartCellInfo[][];
 }
 
 export enum CellState {

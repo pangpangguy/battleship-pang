@@ -39,7 +39,7 @@ h3 {
   cursor: pointer;
 }
 
-.opponent-board .board .cell:not(.header):not(.discovered):hover {
+.opponent-board.player-turn .board .cell:not(.header):not(.discovered):hover {
   background-color: rgb(109, 205, 237);
 }
 

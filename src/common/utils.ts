@@ -44,8 +44,8 @@ export const generateOpponentBoardWithShips = (): GameStartCellInfo[][] => {
     // If the ship is out of bounds or overlaps with another ship, return false
     for (let i = 0; i < shipSize; i++) {
       if (
-        row + i > boardSize ||
-        col + (orientation ? 0 : i) > boardSize ||
+        row + i >= boardSize ||
+        col + (orientation ? 0 : i) >= boardSize ||
         occupiedCells.has(`${row + (orientation ? i : 0)}-${col + (orientation ? 0 : i)}`)
       ) {
         return false;
@@ -78,7 +78,6 @@ export const generateOpponentBoardWithShips = (): GameStartCellInfo[][] => {
     //Get all valid positions for the current ship and select a random one
     const validPositions = getAllValidPositions(ship.size);
     const position = validPositions[getRandomNumber(validPositions.length)];
-
     for (let i = 0; i < ship.size; i++) {
       const row = position.row + (position.orientation ? i : 0);
       const col = position.col + (position.orientation ? 0 : i);

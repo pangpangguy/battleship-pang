@@ -111,6 +111,19 @@ export default function GameStart({
       //AI makes a move..
       //TODO: Implement AI logic
 
+      const undiscoveredCells = playerBoard.flat().filter((cell) => !cell.isDiscovered);
+
+      // Game over not yet implemented
+      if (!undiscoveredCells.length) {
+        return;
+      }
+
+      // Randomly select one of the undiscovered cells
+      const cellToDiscover = undiscoveredCells[Math.floor(Math.random() * undiscoveredCells.length)];
+
+      // Update the cell state to discovered, just as the player does
+      discoverAICell(cellToDiscover.cellId);
+
       //After AI move, implement 2 to 3s delay to simulate game AI and update game state
       setGameState((prev) => ({ round: prev.round + 1, isPlayerTurn: true }));
     }, Math.random() * 1000 + 2000);

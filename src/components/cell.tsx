@@ -1,4 +1,4 @@
-import { CellInfo, CellState, HoverState, PregameCellInfo } from "../common/types";
+import { CellInfo, CellState, HoverState } from "../common/types";
 import { isPregameCellInfo, isGameStartCellInfo } from "../common/utils";
 import "./cell.css";
 import classNames from "classnames";
@@ -16,9 +16,7 @@ export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleM
     if (isPregameCellInfo(cell)) {
       let classNamesToAdd: string[] = [
         //Adds hover state class name for cell if it has one (valid/invalid)
-        cell.hoverState !== HoverState.None
-          ? `hovered--${HoverState[(cell as PregameCellInfo).hoverState].toLowerCase()}`
-          : "",
+        cell.hoverState !== HoverState.None ? `hovered--${HoverState[cell.hoverState].toLowerCase()}` : "",
 
         //Adds 'occupied' if cell has a ship
         "shipId" in cell ? "occupied" : "",
@@ -40,7 +38,7 @@ export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleM
         "shipId" in cell ? "occupied" : "",
 
         //Adds 'discovered' if cell has been discovered
-        cell.discovered ? "discovered" : "",
+        cell.isDiscovered ? "discovered" : "",
       ];
 
       //Remove empty strings and return class names as a string

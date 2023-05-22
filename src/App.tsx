@@ -3,9 +3,24 @@ import { CellInfo, CellState, GamePhase, GameStartCellInfo, GameState, PregameCe
 import Pregame from "./components/pregame";
 import GameStart from "./components/gameStart";
 import "./App.css";
-import { generateOpponentBoardWithShips, generatePregameBoard } from "./common/utils";
+import { generateBoard, generatePregameBoard } from "./common/utils";
 
 function App(): ReactElement {
+  //Randomly generates a board with ships with random states for testing purposes
+  //To be removed later
+  const randomStates: CellState[] = [CellState.Miss, CellState.Hit, CellState.Sunk];
+  const generateRandomBoard = (): GameStartCellInfo[][] => {
+    return generateBoard().map((cellRow) => {
+      return cellRow.map((cell) => {
+        const randomState: CellState = randomStates[Math.floor(Math.random() * randomStates.length)];
+        return {
+          ...cell,
+          isDiscovered: false,
+          cellState: randomState,
+        };
+      });
+    });
+  };
   const [gameState, setGameState] = useState<GameState>(getInitialGameState());
 
   //Get initial game state (pregame ship placement page)
@@ -13,7 +28,6 @@ function App(): ReactElement {
     return {
       gamePhase: GamePhase.PreGame,
       playerBoard: generatePregameBoard(),
-      opponentBoard: undefined,
     };
   }
 
@@ -21,7 +35,7 @@ function App(): ReactElement {
     setGameState((currentState) => ({
       gamePhase: GamePhase.GameStart,
       playerBoard: convertBoardToGameStart(currentState.playerBoard as PregameCellInfo[][]),
-      opponentBoard: generateOpponentBoardWithShips(),
+      opponentBoard: generateRandomBoard(),
     }));
   }
 
@@ -38,12 +52,13 @@ function App(): ReactElement {
         return {
           ...otherProperties,
           cellState: cell.shipId ? CellState.Hit : CellState.Miss,
-          discovered: false,
+          isDiscovered: false,
         };
       });
     });
   }
 
+  // Player board update handler for pregame
   function handleUpdatePlayerPregameBoard(cellsToUpdate: PregameCellInfo[]) {
     setGameState((currentState) => ({
       ...currentState,
@@ -51,7 +66,7 @@ function App(): ReactElement {
     }));
   }
 
-  // Player board update handler for pregame
+  // Player board update handler for gameStart
   function handleUpdatePlayerGameStartBoard(cellsToUpdate: GameStartCellInfo[]) {
     setGameState((currentState) => ({
       ...currentState,
@@ -59,7 +74,6 @@ function App(): ReactElement {
     }));
   }
 
-  // Player board update handler for gameStart
   function handleUpdateOpponentBoard(cellsToUpdate: GameStartCellInfo[]) {
     setGameState((currentState) => ({
       ...currentState,
@@ -106,7 +120,7 @@ function App(): ReactElement {
         return <div>Invalid game phase!</div>;
     }
   }
+
   return <div className="App">{renderCurrentGamePhase()}</div>;
 }
-
 export default App;

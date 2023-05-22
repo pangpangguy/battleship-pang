@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 import { HoverState, Position, PregameCellInfo, PregameShip } from "../common/types";
 import { shipList } from "../common/constants";
+import { createCellId, useStateRef } from "../common/utils";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
+<<<<<<< HEAD
 import { createCellId, useStateRef } from "../common/utils";
+=======
+>>>>>>> feat/862jmhcy5/gamestart-core
 import "./pregame.css";
 
 interface PreGameProps {
@@ -22,7 +26,7 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
     })
   );
   const [selectedShip, setSelectedShip, selectedShipRef] = useStateRef<PregameShip | null>(null);
-  const [hoveredCells, setHoveredCells, hoveredCellsRef] = useStateRef<PregameCellInfo[]>([]);
+  const [hoveredCells, setHoveredCells] = useState<PregameCellInfo[]>([]);
 
   const currentHoveredCells: PregameCellInfo[] = playerBoard
     .flat()

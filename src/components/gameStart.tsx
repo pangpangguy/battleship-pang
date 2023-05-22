@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { CellInfo, GameStartCellInfo, CellState } from "../common/types";
+import { GameStartCellInfo, CellState } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
 import { shipList } from "../common/constants";
@@ -24,7 +24,7 @@ export default function GameStart({
     new Map<string, number>(initializeScoreMap())
   );
   const [gameState, setGameState] = useState<GameState>({ round: 1, isPlayerTurn: true });
-  const [status, setStatus] = useState<string>("");
+  const [discoverOutcomeMessage, setDiscoverOutcomeMessage] = useState<string>("");
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function initializeScoreMap(): Map<string, number> {
@@ -40,24 +40,17 @@ export default function GameStart({
     if (!gameState.isPlayerTurn) {
       return;
     }
+  }
 
-    const targetCell = opponentBoard.flat().find((cell) => cell.cellId === id && !cell.discovered);
-
-    //Skip already discovered cells
-    if (!targetCell) {
-      return;
-    }
-
+  function getCellsToUpdate(targetCell: GameStartCellInfo): GameStartCellInfo[] {
     const cellsToUpdate: GameStartCellInfo[] = [];
 
-    if ("shipId" in targetCell && checkShipIsSunkAndUpdateShipsRemaining(targetCell)) {
-      const cellsChangeToSunk = opponentBoard
-        .flat()
-        .filter((cell) => "shipId" in cell && cell.shipId === targetCell.shipId)
-        .map((cell) => ({ ...cell, cellState: CellState.Sunk, discovered: true }));
-      cellsToUpdate.push(...cellsChangeToSunk);
+    // If Sunk
+    if (false) {
+      //TODO: Handle changing state from Hit to Sunk
     } else {
-      cellsToUpdate.push({ ...targetCell, discovered: true });
+      // Hit or Miss
+      cellsToUpdate.push({ ...targetCell, isDiscovered: true });
     }
 
     const newCellState = cellsToUpdate[0].cellState;
@@ -71,46 +64,36 @@ export default function GameStart({
       setGameState((prev) => ({ ...prev, isPlayerTurn: false }));
       simulateAIMove();
     }
+    return cellsToUpdate;
   }
 
-  // Check if the discovered cell sunks the last part of ship and updates the ships remaining map
-  function checkShipIsSunkAndUpdateShipsRemaining(cell: GameStartCellInfo): boolean {
-    //Miss
-    if (!cell.shipId) return false;
+  function discoverPlayerCell(id: string) {
+    const targetCell = opponentBoard.flat().find((cell) => cell.cellId === id && !cell.isDiscovered);
 
-    const cellShipId = cell.shipId;
-    const targetShipParts = playerShipsRemaining.get(cellShipId);
-
-    //Shouldn't happen
-    if (!targetShipParts) {
-      throw new Error(`Unexpected error: ship with ID ${cell.shipId} not found in map.`);
+    //Skip already discovered cells
+    if (!targetCell) {
+      return;
     }
 
-    //Hit
-    if (targetShipParts - 1 > 0) {
-      setPlayerShipsRemaining((prev) => new Map(prev).set(cellShipId, targetShipParts - 1));
-      return false;
-    }
+    const cellsToUpdate = getCellsToUpdate(targetCell);
+    showAnimationMessage(cellsToUpdate[0].cellState);
+    handleUpdateOpponentBoard(cellsToUpdate);
+  }
 
-    //Sunk : Remove from map
-    setPlayerShipsRemaining((prev) => {
-      const updatedMap = new Map(prev);
-      updatedMap.delete(cellShipId);
-      return updatedMap;
-    });
-    return true;
+  function discoverAICell(id: string) {
+    //TODO: Implement AI
   }
 
   function showAnimationMessage(state: CellState) {
     switch (state) {
       case CellState.Hit:
-        setStatus("You hit a ship! You can attack again!");
+        setDiscoverOutcomeMessage("You hit a ship! You can attack again!");
         break;
       case CellState.Miss:
-        setStatus("You missed!");
+        setDiscoverOutcomeMessage("You missed!");
         break;
       case CellState.Sunk:
-        setStatus("You sunk a ship! You can attack again!");
+        setDiscoverOutcomeMessage("You sunk a ship! You can attack again!");
         break;
     }
 
@@ -119,7 +102,7 @@ export default function GameStart({
     }
 
     timeoutId.current = setTimeout(() => {
-      setStatus("");
+      setDiscoverOutcomeMessage("");
     }, 1500);
   }
 
@@ -150,17 +133,17 @@ export default function GameStart({
           })}
         >
           <h3>Select a cell to attack:</h3>
-          <div className="animation-msg">{status}</div>
+          <div className="discover-outcome-msg">{discoverOutcomeMessage}</div>
           <Board
             board={opponentBoard}
             handleMouseEnter={function (id: string): void {}}
             handleMouseLeave={function (id: string): void {}}
-            handleMouseClick={discoverCell}
+            handleMouseClick={discoverPlayerCell}
           />
         </div>
         <div className="player-board">
           <h3>Your Board</h3>
-          <div className="animation-msg"></div>
+          <div className="discover-outcome-msg"></div>
           <Board
             board={playerBoard}
             handleMouseEnter={function (id: string): void {}}

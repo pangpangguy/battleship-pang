@@ -5,9 +5,12 @@ import { createCellId, useStateRef } from "../common/utils";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { createCellId, useStateRef } from "../common/utils";
 =======
 >>>>>>> feat/862jmhcy5/gamestart-core
+=======
+>>>>>>> feat/862jmhcy5/gamestart-core_rounds-and-turns
 import "./pregame.css";
 
 interface PreGameProps {

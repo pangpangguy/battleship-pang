@@ -20,27 +20,13 @@ export default function GameStart({
   handleUpdatePlayerBoard,
   handleRestartGame,
 }: GameStartProps) {
-  const [playerShipsRemaining, setPlayerShipsRemaining] = useState<Map<string, number>>(
-    new Map<string, number>(initializeScoreMap())
-  );
   const [gameState, setGameState] = useState<GameState>({ round: 1, isPlayerTurn: true });
   const [discoverOutcomeMessage, setDiscoverOutcomeMessage] = useState<string>("");
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  function initializeScoreMap(): Map<string, number> {
-    return shipList.reduce((map, ship) => map.set(ship.acronym, ship.size), new Map());
-  }
-
   type GameState = {
     round: number;
     isPlayerTurn: boolean;
   };
-
-  function discoverCell(id: string): void {
-    if (!gameState.isPlayerTurn) {
-      return;
-    }
-  }
 
   function getCellsToUpdate(targetCell: GameStartCellInfo): GameStartCellInfo[] {
     const cellsToUpdate: GameStartCellInfo[] = [];
@@ -55,7 +41,7 @@ export default function GameStart({
 
     const newCellState = cellsToUpdate[0].cellState;
 
-    showAnimationMessage(newCellState);
+    showDiscoverOutcomeMessage(newCellState);
     handleUpdateOpponentBoard(cellsToUpdate);
 
     // Getting a hit or sunk will allow the player to continue selecting cells to attack.
@@ -76,7 +62,16 @@ export default function GameStart({
     }
 
     const cellsToUpdate = getCellsToUpdate(targetCell);
-    showAnimationMessage(cellsToUpdate[0].cellState);
+    const newCellState = cellsToUpdate[0].cellState; //new state of cell(s)
+
+    // Getting a hit or sunk will allow the player to continue selecting cells to attack.
+    // Missing will end the player's turn and allow the AI to make a move.
+    if (newCellState === CellState.Miss) {
+      setGameState((prev) => ({ ...prev, isPlayerTurn: false }));
+      simulateAIMove();
+    }
+
+    showDiscoverOutcomeMessage(newCellState);
     handleUpdateOpponentBoard(cellsToUpdate);
   }
 
@@ -84,7 +79,7 @@ export default function GameStart({
     //TODO: Implement AI
   }
 
-  function showAnimationMessage(state: CellState) {
+  function showDiscoverOutcomeMessage(state: CellState) {
     switch (state) {
       case CellState.Hit:
         setDiscoverOutcomeMessage("You hit a ship! You can attack again!");

@@ -11,35 +11,30 @@ export interface PregameShip extends Ship {
 
 export interface CellInfo {
   cellId: string;
-  cellState: CellState;
+  shipId?: string;
 }
 
 export interface PregameCellInfo extends CellInfo {
-  cellState: CellState.Unoccupied | CellState.Occupied;
   hoverState: HoverState;
 }
 
-export interface GameStartCellInfoWithShip extends CellInfo {
-  cellState: CellState.Hit | CellState.Sunk;
+export interface GameStartCellInfo extends CellInfo {
   isDiscovered: boolean;
-  shipId: string;
+  cellState: CellState;
 }
-
-export interface GameStartCellInfoWithoutShip extends CellInfo {
-  cellState: CellState.Miss;
-  isDiscovered: boolean;
-}
-
-export type GameStartCellInfo = GameStartCellInfoWithShip | GameStartCellInfoWithoutShip;
 
 export interface Position {
   x: number;
   y: number;
 }
 
+export interface GameState {
+  gamePhase: GamePhase;
+  playerBoard: PregameCellInfo[][] | GameStartCellInfo[][];
+  opponentBoard?: GameStartCellInfo[][];
+}
+
 export enum CellState {
-  Unoccupied,
-  Occupied,
   Hit,
   Miss,
   Sunk,

@@ -1,6 +1,6 @@
 //Util functions used commonly throughout the code.
 import { useEffect, useRef, useState } from "react";
-import { CellInfo, CellState, GamePhase, HoverState } from "./types";
+import { CellInfo, GameStartCellInfo, HoverState, PregameCellInfo } from "./types";
 import { boardSize } from "./constants";
 
 //Function to create the cellId from the row and column input
@@ -18,11 +18,16 @@ export const generateBoard = (): CellInfo[][] => {
     const cols: CellInfo[] = [];
 
     for (let col = 0; col < boardSize; col++) {
-      cols.push({ cellId: createCellId(row + 1, col), cellState: CellState.Unoccupied });
+      cols.push({ cellId: createCellId(row + 1, col) });
     }
     output.push(cols);
   }
   return output;
+};
+
+export const generatePregameBoard = (): PregameCellInfo[][] => {
+  const board = generateBoard();
+  return board.map((cellRow) => cellRow.map((cell) => ({ ...cell, hoverState: HoverState.None })));
 };
 
 //useStateRef is a custom hook that returns a ref to the state, as well as the state itself.
@@ -37,4 +42,18 @@ export function useStateRef<T>(initialValue: T) {
   }, [value]);
 
   return [value, setValue, ref] as const;
+}
+
+//Type guards
+
+export function isPregameCellInfo(cell: CellInfo): cell is PregameCellInfo {
+  return (cell as PregameCellInfo).hoverState !== undefined;
+}
+
+export function isGameStartCellInfo(cell: CellInfo): cell is GameStartCellInfo {
+  return (cell as GameStartCellInfo).isDiscovered !== undefined && (cell as GameStartCellInfo).cellState !== undefined;
+}
+
+export function cellHasShip(cell: CellInfo): cell is CellInfo & { shipId: string } {
+  return "shipId" in cell && typeof cell.shipId === "string";
 }

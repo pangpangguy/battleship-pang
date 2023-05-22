@@ -1,104 +1,116 @@
 import { ReactElement, useState } from "react";
-import {
-  CellInfo,
-  CellState,
-  GamePhase,
-  GameStartCellInfo,
-  PregameCellInfo,
-  GameStartCellInfoWithShip,
-  GameStartCellInfoWithoutShip,
-} from "./common/types";
+import { CellInfo, CellState, GamePhase, GameStartCellInfo, GameState, PregameCellInfo } from "./common/types";
 import Pregame from "./components/pregame";
 import GameStart from "./components/gameStart";
 import "./App.css";
-import { generateBoard } from "./common/utils";
+import { generateBoard, generatePregameBoard } from "./common/utils";
 
 function App(): ReactElement {
   //Randomly generates a board with ships with random states for testing purposes
   //To be removed later
-  type GameStartCellStates = CellState.Hit | CellState.Miss | CellState.Sunk;
-  const randomStates: GameStartCellStates[] = [CellState.Miss, CellState.Hit, CellState.Sunk];
+  const randomStates: CellState[] = [CellState.Miss, CellState.Hit, CellState.Sunk];
   const generateRandomBoard = (): GameStartCellInfo[][] => {
     return generateBoard().map((cellRow) => {
       return cellRow.map((cell) => {
-        const randomState: GameStartCellStates = randomStates[Math.floor(Math.random() * randomStates.length)];
-        if (randomState === CellState.Miss) {
-          const newCell: GameStartCellInfoWithoutShip = {
-            ...cell,
-            isDiscovered: false,
-            cellState: randomState,
-          };
-          return newCell;
-        } else {
-          const newCell: GameStartCellInfoWithShip = {
-            ...cell,
-            isDiscovered: false,
-            cellState: randomState,
-            shipId: "temp",
-          };
-          return newCell;
-        }
+        const randomState: CellState = randomStates[Math.floor(Math.random() * randomStates.length)];
+        return {
+          ...cell,
+          isDiscovered: false,
+          cellState: randomState,
+        };
       });
     });
   };
-  const [gameState, setGameState] = useState<GamePhase>(GamePhase.PreGame);
-  const [playerBoard, setPlayerBoard] = useState<CellInfo[][]>(generateBoard());
-  const [opponentBoard, setOpponentBoard] = useState<GameStartCellInfo[][]>(generateRandomBoard());
+  const [gameState, setGameState] = useState<GameState>(getInitialGameState());
+
+  //Get initial game state (pregame ship placement page)
+  function getInitialGameState(): GameState {
+    return {
+      gamePhase: GamePhase.PreGame,
+      playerBoard: generatePregameBoard(),
+    };
+  }
 
   function handleStartGame() {
-    setGameState(GamePhase.GameStart);
+    setGameState((currentState) => ({
+      gamePhase: GamePhase.GameStart,
+      playerBoard: convertBoardToGameStart(currentState.playerBoard as PregameCellInfo[][]),
+      opponentBoard: generateRandomBoard(),
+    }));
   }
 
   function handleRestartGame() {
-    setPlayerBoard(generateBoard());
-    setGameState(GamePhase.PreGame);
+    setGameState(getInitialGameState());
   }
 
-  //Accepst a list of new target cells to be updated/replaced on the board
-  function handleUpdatePlayerBoard(cellsToUpdate: PregameCellInfo[]) {
-    //Update the new board with cells in targetCells
-    setPlayerBoard((currentBoard) =>
-      currentBoard.map((rowCells) => {
-        return rowCells.map((cell) => {
-          const newCell = cellsToUpdate.find((newCell) => newCell.cellId === cell.cellId);
-          if (newCell) {
-            return { ...newCell };
-          } else return { ...cell };
-        });
-      })
-    );
+  //Convert player's board from pregame to gameStart
+  function convertBoardToGameStart(pregamePlayerBoard: PregameCellInfo[][]): GameStartCellInfo[][] {
+    return pregamePlayerBoard.map((cellRow) => {
+      return cellRow.map((cell) => {
+        //remove hoverState and add cellState
+        const { hoverState, ...otherProperties } = cell;
+        return {
+          ...otherProperties,
+          cellState: cell.shipId ? CellState.Hit : CellState.Miss,
+          isDiscovered: false,
+        };
+      });
+    });
+  }
+
+  // Player board update handler for pregame
+  function handleUpdatePlayerPregameBoard(cellsToUpdate: PregameCellInfo[]) {
+    setGameState((currentState) => ({
+      ...currentState,
+      playerBoard: updateBoard(currentState.playerBoard as PregameCellInfo[][], cellsToUpdate),
+    }));
+  }
+
+  // Player board update handler for gameStart
+  function handleUpdatePlayerGameStartBoard(cellsToUpdate: GameStartCellInfo[]) {
+    setGameState((currentState) => ({
+      ...currentState,
+      playerBoard: updateBoard(currentState.playerBoard as GameStartCellInfo[][], cellsToUpdate),
+    }));
   }
 
   function handleUpdateOpponentBoard(cellsToUpdate: GameStartCellInfo[]) {
-    //Update the new board with cells in targetCells
-    setOpponentBoard((currentBoard) =>
-      currentBoard.map((rowCells) => {
-        return rowCells.map((cell) => {
-          const newCell = cellsToUpdate.find((newCell) => newCell.cellId === cell.cellId);
-          if (newCell) {
-            return { ...newCell };
-          } else return { ...cell };
-        });
-      })
-    );
+    setGameState((currentState) => ({
+      ...currentState,
+      opponentBoard: updateBoard(currentState.opponentBoard as GameStartCellInfo[][], cellsToUpdate),
+    }));
+  }
+
+  //Accepst a list of new target cells to be updated/replaced on the board
+  //Update the new board with cells in targetCells
+  function updateBoard<T extends CellInfo>(currentBoard: T[][], cellsToReplace: T[]): T[][] {
+    return currentBoard.map((rowCells) => {
+      return rowCells.map((cell) => {
+        const newCell = cellsToReplace.find((newCell) => newCell.cellId === cell.cellId);
+        if (newCell) {
+          return { ...newCell };
+        } else return { ...cell };
+      });
+    });
   }
 
   function renderCurrentGamePhase() {
-    switch (gameState) {
+    switch (gameState.gamePhase) {
       case GamePhase.PreGame:
         return (
           <Pregame
-            playerBoard={playerBoard as PregameCellInfo[][]}
+            playerBoard={gameState.playerBoard as PregameCellInfo[][]}
             handleStartGame={handleStartGame}
-            handleUpdatePlayerBoard={handleUpdatePlayerBoard}
+            handleUpdatePlayerBoard={handleUpdatePlayerPregameBoard}
           />
         );
       case GamePhase.GameStart:
         return (
           <GameStart
-            opponentBoard={opponentBoard}
-            playerBoard={playerBoard}
+            opponentBoard={gameState.opponentBoard as GameStartCellInfo[][]}
+            playerBoard={gameState.playerBoard as GameStartCellInfo[][]}
             handleUpdateOpponentBoard={handleUpdateOpponentBoard}
+            handleUpdatePlayerBoard={handleUpdatePlayerGameStartBoard}
             handleRestartGame={handleRestartGame}
           />
         );

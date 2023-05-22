@@ -1,8 +1,7 @@
 //Util functions used commonly throughout the code.
 import { useEffect, useRef, useState } from "react";
-import { CellInfo, CellState, GamePhase, GameStartCellInfo, HoverState, PregameCellInfo } from "./types";
-import { boardSize, shipList } from "./constants";
-import Cell from "../components/cell";
+import { CellInfo, GameStartCellInfo, HoverState, PregameCellInfo } from "./types";
+import { boardSize } from "./constants";
 
 //Function to create the cellId from the row and column input
 //Row is between 1 and 10

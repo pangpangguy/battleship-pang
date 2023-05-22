@@ -1,7 +1,7 @@
 //Util functions used commonly throughout the code.
 import { useEffect, useRef, useState } from "react";
-import { CellInfo, GameStartCellInfo, HoverState, PregameCellInfo } from "./types";
-import { boardSize } from "./constants";
+import { CellInfo, CellState, GameStartCellInfo, HoverState, PregameCellInfo } from "./types";
+import { boardSize, shipList } from "./constants";
 
 //Function to create the cellId from the row and column input
 //Row is between 1 and 10
@@ -52,6 +52,24 @@ export const generateOpponentBoardWithShips = (): GameStartCellInfo[][] => {
     }
     // If we made it through the loop without returning, the position is valid
     return true;
+  };
+  // Returns all valid positions for a ship
+  const getAllValidPositions = (shipSize: number): { row: number; col: number; orientation: number }[] => {
+    const validPositions = [];
+
+    // Loop through each cell in the board
+    for (let row = 0; row < boardSize; row++) {
+      for (let col = 0; col < boardSize; col++) {
+        // Check both orientations
+        for (let orientation = 0; orientation < 2; orientation++) {
+          if (isValidPosition(row, col, shipSize, orientation)) {
+            validPositions.push({ row, col, orientation });
+          }
+        }
+      }
+    }
+
+    return validPositions;
   };
 
   //Construct the new board

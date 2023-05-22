@@ -1,10 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { GameStartCellInfo, CellState } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
 import { shipList } from "../common/constants";
 import classNames from "classnames";
 import { cellHasShip } from "../common/utils";
+import { useBattleshipAI } from "../common/ai";
 
 interface GameStartProps {
   playerBoard: GameStartCellInfo[][];
@@ -23,8 +24,13 @@ export default function GameStart({
 }: GameStartProps) {
   const [gameState, setGameState] = useState<GameState>({ round: 1, isPlayerTurn: true });
   const [opponentShipsRemaining, setOpponentShipsRemaining] = useState(new Map<string, number>(initializeScoreMap()));
-  const [discoverOutcomeMessage, setDiscoverOutcomeMessage] = useState<string>("");
+  const [playerShipsRemaining, setPlayerShipsRemaining] = useState(new Map<string, number>(initializeScoreMap()));
+  const [playerDiscoverOutcomeMessage, setPlayerDiscoverOutcomeMessage] = useState<string>("");
+  const [opponentDiscoverOutcomeMessage, setOpponentDiscoverOutcomeMessage] = useState<string>("");
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const { aiHitList, addCellToHitList, getAICellToAttack } = useBattleshipAI(playerBoard);
+
   type GameState = {
     round: number;
     isPlayerTurn: boolean;
@@ -55,22 +61,13 @@ export default function GameStart({
       // Hit or Miss
       cellsToUpdate.push({ ...targetCell, isDiscovered: true });
     }
-
-    const newCellState = cellsToUpdate[0].cellState;
-
-    showDiscoverOutcomeMessage(newCellState);
-    handleUpdateOpponentBoard(cellsToUpdate);
-
-    // Getting a hit or sunk will allow the player to continue selecting cells to attack.
-    // Missing will end the player's turn and allow the AI to make a move.
-    if (newCellState === CellState.Miss) {
-      setGameState((prev) => ({ ...prev, isPlayerTurn: false }));
-      simulateAIMove();
-    }
     return cellsToUpdate;
   }
 
   function discoverPlayerCell(id: string) {
+    if (!gameState.isPlayerTurn) {
+      return;
+    }
     const targetCell = opponentBoard.flat().find((cell) => cell.cellId === id && !cell.isDiscovered);
 
     //Skip already discovered cells
@@ -83,17 +80,42 @@ export default function GameStart({
 
     // Getting a hit or sunk will allow the player to continue selecting cells to attack.
     // Missing will end the player's turn and allow the AI to make a move.
-    if (newCellState === CellState.Miss) {
-      setGameState((prev) => ({ ...prev, isPlayerTurn: false }));
-      simulateAIMove();
-    }
-
-    showDiscoverOutcomeMessage(newCellState);
+    showDiscoverOutcomeMessage(newCellState, true, setPlayerDiscoverOutcomeMessage);
     handleUpdateOpponentBoard(cellsToUpdate);
+    if (newCellState === CellState.Miss) {
+      setGameState((prev) => ({ round: prev.round + 1, isPlayerTurn: false }));
+      AIMove();
+    }
   }
 
-  function discoverAICell(id: string) {
-    //TODO: Implement AI
+  function AIMove() {
+    setTimeout(() => {
+      const undiscoveredCells = playerBoard.flat().filter((cell) => !cell.isDiscovered);
+
+      // Game over not yet implemented
+      if (!undiscoveredCells.length) {
+        return;
+      }
+
+      //Get cell to attack
+      const cellToAttack: GameStartCellInfo = getAICellToAttack();
+
+      // Update the cell state to discovered, just as the player does
+      const cellsToUpdate = getCellsToUpdate(cellToAttack, playerShipsRemaining, setPlayerShipsRemaining);
+      const newCellState = cellsToUpdate[0].cellState; //new state of cell(s)
+
+      showDiscoverOutcomeMessage(newCellState, false, setOpponentDiscoverOutcomeMessage);
+      handleUpdatePlayerBoard(cellsToUpdate);
+
+      if (newCellState === CellState.Miss) {
+        setGameState((prev) => ({ round: prev.round + 1, isPlayerTurn: true }));
+      } else {
+        // If the AI gets a hit, add the cell to the hit list
+        addCellToHitList(cellToAttack);
+        //Make another move
+        AIMove();
+      }
+    }, Math.random() * 1000 + 2000);
   }
 
   // Check if the ship that is hit will be sunk
@@ -123,19 +145,25 @@ export default function GameStart({
 
     //Else update the map if is only Hit.
     setShipsRemaining((prev) => new Map(prev).set(shipId, targetShipParts - 1));
+
     return false;
   }
 
-  function showDiscoverOutcomeMessage(state: CellState) {
+  function showDiscoverOutcomeMessage(
+    state: CellState,
+    isPlayerTurn: boolean,
+    setDiscoverOutcomeMessage: React.Dispatch<React.SetStateAction<string>>
+  ) {
+    const currentAttacker = isPlayerTurn ? "You" : "AI";
     switch (state) {
       case CellState.Hit:
-        setDiscoverOutcomeMessage("You hit a ship! You can attack again!");
+        setDiscoverOutcomeMessage(`${currentAttacker} hit a ship! ${currentAttacker} can attack again!`);
         break;
       case CellState.Miss:
-        setDiscoverOutcomeMessage("You missed!");
+        setDiscoverOutcomeMessage(`${currentAttacker} missed!`);
         break;
       case CellState.Sunk:
-        setDiscoverOutcomeMessage("You sunk a ship! You can attack again!");
+        setDiscoverOutcomeMessage(`${currentAttacker} sunk a ship! ${currentAttacker} can attack again!`);
         break;
     }
 
@@ -146,29 +174,6 @@ export default function GameStart({
     timeoutId.current = setTimeout(() => {
       setDiscoverOutcomeMessage("");
     }, 1500);
-  }
-
-  function simulateAIMove() {
-    setTimeout(() => {
-      //AI makes a move..
-      //TODO: Implement AI logic
-
-      const undiscoveredCells = playerBoard.flat().filter((cell) => !cell.isDiscovered);
-
-      // Game over not yet implemented
-      if (!undiscoveredCells.length) {
-        return;
-      }
-
-      // Randomly select one of the undiscovered cells
-      const cellToDiscover = undiscoveredCells[Math.floor(Math.random() * undiscoveredCells.length)];
-
-      // Update the cell state to discovered, just as the player does
-      discoverAICell(cellToDiscover.cellId);
-
-      //After AI move, implement 2 to 3s delay to simulate game AI and update game state
-      setGameState((prev) => ({ round: prev.round + 1, isPlayerTurn: true }));
-    }, Math.random() * 1000 + 2000);
   }
 
   return (
@@ -188,7 +193,7 @@ export default function GameStart({
           })}
         >
           <h3>Select a cell to attack:</h3>
-          <div className="discover-outcome-msg">{discoverOutcomeMessage}</div>
+          <div className="discover-outcome-msg">{playerDiscoverOutcomeMessage}</div>
           <Board
             board={opponentBoard}
             handleMouseEnter={function (id: string): void {}}
@@ -198,7 +203,7 @@ export default function GameStart({
         </div>
         <div className="player-board">
           <h3>Your Board</h3>
-          <div className="discover-outcome-msg"></div>
+          <div className="discover-outcome-msg">{opponentDiscoverOutcomeMessage}</div>
           <Board
             board={playerBoard}
             handleMouseEnter={function (id: string): void {}}

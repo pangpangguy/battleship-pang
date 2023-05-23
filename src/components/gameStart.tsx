@@ -26,7 +26,10 @@ export default function GameStart({
   const [playerShipsRemaining, setPlayerShipsRemaining] = useState(new Map<string, number>(initializeScoreMap()));
   const [playerDiscoverOutcomeMessage, setPlayerDiscoverOutcomeMessage] = useState<string>("");
   const [opponentDiscoverOutcomeMessage, setOpponentDiscoverOutcomeMessage] = useState<string>("");
-  const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const playerTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const opponentTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const gameEnd = !opponentShipsRemaining.size || !playerShipsRemaining.size;
 
   type GameState = {
     round: number;
@@ -116,7 +119,7 @@ export default function GameStart({
         //Make another move
         AIMove();
       }
-    }, Math.random() * 1000 + 2000);
+    }, Math.random() * 1000);
   }
 
   // Check if the ship that is hit will be sunk
@@ -168,17 +171,29 @@ export default function GameStart({
         break;
     }
 
-    if (timeoutId.current) {
-      clearTimeout(timeoutId.current);
+    if (isPlayerTurn) {
+      playerTimeoutId.current && clearTimeout(playerTimeoutId.current);
+      playerTimeoutId.current = setTimeout(() => {
+        setDiscoverOutcomeMessage("");
+      }, 1000);
+    } else {
+      opponentTimeoutId.current && clearTimeout(opponentTimeoutId.current);
+      opponentTimeoutId.current = setTimeout(() => {
+        setDiscoverOutcomeMessage("");
+      }, 1000);
     }
-
-    timeoutId.current = setTimeout(() => {
-      setDiscoverOutcomeMessage("");
-    }, 1500);
   }
 
   return (
     <div className="container">
+      {gameEnd && (
+        <div className="game-over-overlay">
+          <h2>Game Over : {gameState.isPlayerTurn ? "You Win!" : "AI Win!"}</h2>
+          <button className="restart-btn" onClick={handleRestartGame}>
+            Restart Game
+          </button>
+        </div>
+      )}
       <div className="restart-btn-wrapper">
         <button className="restart-btn" onClick={handleRestartGame}>
           Restart Game

@@ -6,6 +6,7 @@
   border-radius: 10px;
   box-shadow: 0px 0px 20px rgb(191, 191, 191);
   user-select: none;
+  position: relative; /* Add this line */
 }
 
 h2 {
@@ -75,11 +76,11 @@ h3 {
 .restart-btn {
   background-color: rgb(250, 204, 204);
   border: none;
-  transition: 0.2s;
+  transition: 100ms;
 }
 
 .restart-btn:hover {
-  background-color: rgb(152, 50, 50);
+  background-color: rgb(219, 158, 158);
 }
 
 .restart-btn:focus {
@@ -105,4 +106,30 @@ h3 {
 .ai-animation {
   width: 1.75rem;
   height: auto;
+}
+
+.game-over-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(208, 203, 199, 0.6);
+  backdrop-filter: blur(1.3px);
+  z-index: 2;
+  color: rgb(0, 0, 0);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.game-over-overlay h2 {
+  font-size: 4rem;
+}
+.game-over-overlay .restart-btn {
+  font-size: 1.5rem;
 }

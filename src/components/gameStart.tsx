@@ -5,7 +5,7 @@ import "./gamestart.css";
 import { shipList } from "../common/constants";
 import classNames from "classnames";
 import { cellHasShip } from "../common/utils";
-
+import aiAnimation from "../assets/thinking-animation.gif";
 interface GameStartProps {
   playerBoard: GameStartCellInfo[][];
   opponentBoard: GameStartCellInfo[][];
@@ -116,7 +116,7 @@ export default function GameStart({
         //Make another move
         AIMove();
       }
-    }, Math.random() * 1000);
+    }, Math.random() * 1000 + 2000);
   }
 
   // Check if the ship that is hit will be sunk
@@ -203,7 +203,14 @@ export default function GameStart({
           />
         </div>
         <div className="player-board">
-          <h3>Your Board</h3>
+          <div className="ai-wrapper">
+            <h3>AI</h3>
+            {gameState.isPlayerTurn ? (
+              <div style={{ width: "1.5rem", height: "auto" }}></div>
+            ) : (
+              <img className="ai-animation" src={aiAnimation} alt="Animated GIF" />
+            )}
+          </div>
           <div className="discover-outcome-msg">{opponentDiscoverOutcomeMessage}</div>
           <Board
             board={playerBoard}

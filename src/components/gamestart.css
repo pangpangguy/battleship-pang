@@ -91,3 +91,8 @@ h3 {
 .discover-outcome-msg {
   height: 2rem;
 }
+
+.player-board .discover-outcome-msg {
+  /*Remove the "unclickable" display effect on the player's board.*/
+  opacity: 1;
+}

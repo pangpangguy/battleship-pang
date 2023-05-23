@@ -12,6 +12,12 @@ export function createCellId(row: number, col: number | string): string {
   return `${row}-${colHeader}`;
 }
 
+//Function to get row and col from cellId
+export function getRowAndColFromId(cellId: string): { row: number; col: number } {
+  const [row, colHeader] = cellId.split("-");
+  return { row: parseInt(row), col: colHeader.charCodeAt(0) - "A".charCodeAt(0) };
+}
+
 export const generateBoard = (): CellInfo[][] => {
   const output: CellInfo[][] = [];
   for (let row = 0; row < boardSize; row++) {
@@ -54,7 +60,7 @@ export const generateOpponentBoardWithShips = (): GameStartCellInfo[][] => {
     // If we made it through the loop without returning, the position is valid
     return true;
   };
-
+  // Returns all valid positions for a ship
   const getAllValidPositions = (shipSize: number): { row: number; col: number; orientation: number }[] => {
     const validPositions = [];
 
@@ -69,6 +75,7 @@ export const generateOpponentBoardWithShips = (): GameStartCellInfo[][] => {
         }
       }
     }
+
     return validPositions;
   };
 

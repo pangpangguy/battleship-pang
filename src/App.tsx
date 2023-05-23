@@ -3,7 +3,7 @@ import { CellInfo, CellState, GamePhase, GameStartCellInfo, GameState, PregameCe
 import Pregame from "./components/pregame";
 import GameStart from "./components/gameStart";
 import "./App.css";
-import { generateBoard, generateOpponentBoardWithShips, generatePregameBoard } from "./common/utils";
+import { generateOpponentBoardWithShips, generatePregameBoard } from "./common/utils";
 
 function App(): ReactElement {
   const [gameState, setGameState] = useState<GameState>(getInitialGameState());

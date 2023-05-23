@@ -3,7 +3,6 @@
   flex-direction: column;
   margin: 20px;
   padding: 20px;
-  background-color: rgb(240, 240, 240);
   border-radius: 10px;
   box-shadow: 0px 0px 20px rgb(191, 191, 191);
   user-select: none;
@@ -87,12 +86,23 @@ h3 {
   outline: none;
 }
 
-/*Discover outcome message*/
-.discover-outcome-msg {
-  height: 2rem;
-}
+.player-board .ai-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
-.player-board .discover-outcome-msg {
   /*Remove the "unclickable" display effect on the player's board.*/
   opacity: 1;
+}
+
+.discover-outcome-msg {
+  height: 2rem;
+
+  /*Remove the "unclickable" display effect on the player's board.*/
+  opacity: 1;
+}
+
+.ai-animation {
+  width: 1.75rem;
+  height: auto;
 }

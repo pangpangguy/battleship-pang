@@ -5,7 +5,7 @@ import "./gamestart.css";
 import { shipList } from "../common/constants";
 import classNames from "classnames";
 import { cellHasShip } from "../common/utils";
-
+import aiAnimation from "../assets/thinking-animation.gif";
 interface GameStartProps {
   playerBoard: GameStartCellInfo[][];
   opponentBoard: GameStartCellInfo[][];
@@ -116,7 +116,7 @@ export default function GameStart({
         //Make another move
         AIMove();
       }
-    }, Math.random() * 1000);
+    }, Math.random() * 1000 + 2000);
   }
 
   // Check if the ship that is hit will be sunk
@@ -184,16 +184,16 @@ export default function GameStart({
           Restart Game
         </button>
       </div>
-      <h2>
+      <h1>
         Round {gameState.round} - {gameState.isPlayerTurn ? "Your turn!" : "AI's turn!"}
-      </h2>
+      </h1>
       <div className="boards-wrapper">
         <div
           className={classNames("opponent-board", {
             "player-turn": gameState.isPlayerTurn,
           })}
         >
-          <h3>Select a cell to attack:</h3>
+          <h2>Select a cell to attack:</h2>
           <div className="discover-outcome-msg">{playerDiscoverOutcomeMessage}</div>
           <Board
             board={opponentBoard}
@@ -203,7 +203,14 @@ export default function GameStart({
           />
         </div>
         <div className="player-board">
-          <h3>Your Board</h3>
+          <div className="ai-wrapper">
+            <h2>AI</h2>
+            {gameState.isPlayerTurn ? (
+              <div style={{ width: "1.75rem", height: "auto" }}></div>
+            ) : (
+              <img className="ai-animation" src={aiAnimation} alt="Animated GIF" />
+            )}
+          </div>
           <div className="discover-outcome-msg">{opponentDiscoverOutcomeMessage}</div>
           <Board
             board={playerBoard}

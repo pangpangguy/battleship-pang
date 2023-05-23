@@ -6,7 +6,7 @@
   border-radius: 10px;
   box-shadow: 0px 0px 20px rgb(191, 191, 191);
   user-select: none;
-  position: relative; /* Add this line */
+  position: relative;
 }
 
 h2 {

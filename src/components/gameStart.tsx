@@ -119,7 +119,7 @@ export default function GameStart({
         //Make another move
         AIMove();
       }
-    }, Math.random() * 1000);
+    }, Math.random() * 1000 + 2000);
   }
 
   // Check if the ship that is hit will be sunk

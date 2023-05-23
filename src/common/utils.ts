@@ -39,6 +39,7 @@ export const generatePregameBoard = (): PregameCellInfo[][] => {
 //Generates a board with random ship placements for the opponent (AI)
 export const generateOpponentBoardWithShips = (): GameStartCellInfo[][] => {
   const occupiedCells = new Set<string>();
+
   //Get a random number between 0 and max-1
   const getRandomNumber = (max: number): number => {
     return Math.floor(Math.random() * max);
@@ -49,8 +50,8 @@ export const generateOpponentBoardWithShips = (): GameStartCellInfo[][] => {
     // If the ship is out of bounds or overlaps with another ship, return false
     for (let i = 0; i < shipSize; i++) {
       if (
-        row + i > boardSize ||
-        col + (orientation ? 0 : i) > boardSize ||
+        row + i >= boardSize ||
+        col + (orientation ? 0 : i) >= boardSize ||
         occupiedCells.has(`${row + (orientation ? i : 0)}-${col + (orientation ? 0 : i)}`)
       ) {
         return false;
@@ -81,41 +82,23 @@ export const generateOpponentBoardWithShips = (): GameStartCellInfo[][] => {
   //Construct the new board
   const board = generateBoard() as GameStartCellInfo[][];
   shipList.forEach((ship) => {
-    //Select a random starting point on the board that is valid for the current ship
-    //If the ship is vertical, the starting point must be within the range of the boardSize - shipSize
-    //This is to ensure that the ship does not go out of bounds
-    const max = boardSize - ship.size;
-    var row, col, orientation;
-    do {
-      //Randomly select an orientation for the ship
-      orientation = Math.floor(Math.random() * 2);
-
-      //Based on the orientation, select a random starting point
-      row = orientation === 0 ? getRandomNumber(boardSize) : getRandomNumber(max);
-      col = orientation === 1 ? getRandomNumber(boardSize) : getRandomNumber(max);
-    } while (!isValidPosition(row, col, ship.size, orientation));
-
+    //Get all valid positions for the current ship and select a random one
+    const validPositions = getAllValidPositions(ship.size);
+    const position = validPositions[getRandomNumber(validPositions.length)];
     for (let i = 0; i < ship.size; i++) {
-      if (orientation) {
-        //Vertical
-        board[row + i][col] = {
-          ...board[row + i][col],
-          shipId: ship.acronym,
-          cellState: CellState.Hit,
-          isDiscovered: false,
-        };
-        occupiedCells.add(`${row + i}-${col}`);
-      } else {
-        board[row][col + i] = {
-          ...board[row][col + i],
-          shipId: ship.acronym,
-          cellState: CellState.Hit,
-          isDiscovered: false,
-        };
-        occupiedCells.add(`${row}-${col + i}`);
-      }
+      const row = position.row + (position.orientation ? i : 0);
+      const col = position.col + (position.orientation ? 0 : i);
+      board[row][col] = {
+        ...board[row][col],
+        shipId: ship.acronym,
+        cellState: CellState.Hit,
+        isDiscovered: false,
+      };
+
+      occupiedCells.add(`${row}-${col}`);
     }
   });
+
   return board.map((cellRow, rowIdx) =>
     cellRow.map((cell, colIdx) => {
       if (!occupiedCells.has(`${rowIdx}-${colIdx}`)) {

@@ -87,12 +87,12 @@ h3 {
 }
 
 .player-board .ai-wrapper {
-  /*Remove the "unclickable" display effect on the player's board.*/
-  opacity: 1;
-
   display: flex;
   justify-content: center;
   align-items: center;
+
+  /*Remove the "unclickable" display effect on the player's board.*/
+  opacity: 1;
 }
 
 .discover-outcome-msg {
@@ -103,7 +103,6 @@ h3 {
 }
 
 .ai-animation {
-  width: 1.5rem; /* Adjust the size as desired */
+  width: 1.5rem;
   height: auto;
-  min-width: 1.5rem;
 }

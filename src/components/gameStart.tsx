@@ -184,16 +184,16 @@ export default function GameStart({
           Restart Game
         </button>
       </div>
-      <h2>
+      <h1>
         Round {gameState.round} - {gameState.isPlayerTurn ? "Your turn!" : "AI's turn!"}
-      </h2>
+      </h1>
       <div className="boards-wrapper">
         <div
           className={classNames("opponent-board", {
             "player-turn": gameState.isPlayerTurn,
           })}
         >
-          <h3>Select a cell to attack:</h3>
+          <h2>Select a cell to attack:</h2>
           <div className="discover-outcome-msg">{playerDiscoverOutcomeMessage}</div>
           <Board
             board={opponentBoard}
@@ -204,9 +204,9 @@ export default function GameStart({
         </div>
         <div className="player-board">
           <div className="ai-wrapper">
-            <h3>AI</h3>
+            <h2>AI</h2>
             {gameState.isPlayerTurn ? (
-              <div style={{ width: "1.5rem", height: "auto" }}></div>
+              <div style={{ width: "1.75rem", height: "auto" }}></div>
             ) : (
               <img className="ai-animation" src={aiAnimation} alt="Animated GIF" />
             )}

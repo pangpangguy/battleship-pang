@@ -1,11 +1,10 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { GameStartCellInfo, CellState } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
 import { shipList } from "../common/constants";
 import classNames from "classnames";
 import { cellHasShip } from "../common/utils";
-import { useBattleshipAI } from "../common/ai";
 
 interface GameStartProps {
   playerBoard: GameStartCellInfo[][];
@@ -29,8 +28,6 @@ export default function GameStart({
   const [opponentDiscoverOutcomeMessage, setOpponentDiscoverOutcomeMessage] = useState<string>("");
   const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const { aiHitList, addCellToHitList, getAICellToAttack } = useBattleshipAI(playerBoard);
-
   type GameState = {
     round: number;
     isPlayerTurn: boolean;
@@ -41,6 +38,7 @@ export default function GameStart({
   }
 
   function getCellsToUpdate(
+    board: GameStartCellInfo[][],
     targetCell: GameStartCellInfo,
     shipsRemaining: Map<string, number>,
     setShipsRemaining: (value: (prevState: Map<string, number>) => Map<string, number>) => void
@@ -52,7 +50,7 @@ export default function GameStart({
       cellHasShip(targetCell) &&
       checkShipIsSunkAndUpdateShipsRemaining(targetCell.shipId, shipsRemaining, setShipsRemaining)
     ) {
-      const cellsChangeToSunk = opponentBoard
+      const cellsChangeToSunk = board
         .flat()
         .filter((cell) => cellHasShip(cell) && cell.shipId === targetCell.shipId)
         .map((cell) => ({ ...cell, cellState: CellState.Sunk, isDiscovered: true }));
@@ -75,7 +73,12 @@ export default function GameStart({
       return;
     }
 
-    const cellsToUpdate = getCellsToUpdate(targetCell, opponentShipsRemaining, setOpponentShipsRemaining);
+    const cellsToUpdate = getCellsToUpdate(
+      opponentBoard,
+      targetCell,
+      opponentShipsRemaining,
+      setOpponentShipsRemaining
+    );
     const newCellState = cellsToUpdate[0].cellState; //new state of cell(s)
 
     // Getting a hit or sunk will allow the player to continue selecting cells to attack.
@@ -98,10 +101,10 @@ export default function GameStart({
       }
 
       //Get cell to attack
-      const cellToAttack: GameStartCellInfo = getAICellToAttack();
+      const cellToAttack: GameStartCellInfo = undiscoveredCells[Math.floor(Math.random() * undiscoveredCells.length)];
 
       // Update the cell state to discovered, just as the player does
-      const cellsToUpdate = getCellsToUpdate(cellToAttack, playerShipsRemaining, setPlayerShipsRemaining);
+      const cellsToUpdate = getCellsToUpdate(playerBoard, cellToAttack, playerShipsRemaining, setPlayerShipsRemaining);
       const newCellState = cellsToUpdate[0].cellState; //new state of cell(s)
 
       showDiscoverOutcomeMessage(newCellState, false, setOpponentDiscoverOutcomeMessage);
@@ -110,12 +113,10 @@ export default function GameStart({
       if (newCellState === CellState.Miss) {
         setGameState((prev) => ({ round: prev.round + 1, isPlayerTurn: true }));
       } else {
-        // If the AI gets a hit, add the cell to the hit list
-        addCellToHitList(cellToAttack);
         //Make another move
         AIMove();
       }
-    }, Math.random() * 1000 + 2000);
+    }, Math.random() * 1000);
   }
 
   // Check if the ship that is hit will be sunk

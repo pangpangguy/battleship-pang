@@ -12,6 +12,12 @@ export function createCellId(row: number, col: number | string): string {
   return `${row}-${colHeader}`;
 }
 
+//Function to get row and col from cellId
+export function getRowAndColFromId(cellId: string): { row: number; col: number } {
+  const [row, colHeader] = cellId.split("-");
+  return { row: parseInt(row), col: colHeader.charCodeAt(0) - "A".charCodeAt(0) };
+}
+
 export const generateBoard = (): CellInfo[][] => {
   const output: CellInfo[][] = [];
   for (let row = 0; row < boardSize; row++) {

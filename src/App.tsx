@@ -93,7 +93,7 @@ function App(): ReactElement {
   }
 
   async function handleGameEnd(score: number) {
-    //First get existing data
+    //Fetch existing data
     const data = await fetch(api.concat(`?id=${apiId}`))
       .then((response) => {
         if (!response.ok) {
@@ -105,8 +105,10 @@ function App(): ReactElement {
         return response.data;
       });
 
+    //Update the data
     const dataToSend = { id: apiId, data: data.concat({ name: playerName, score: score }) };
 
+    //Send POST request
     try {
       const response = await fetch(api, {
         method: "POST",

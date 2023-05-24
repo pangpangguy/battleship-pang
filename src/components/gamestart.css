@@ -76,6 +76,7 @@ h3 {
 .restart-btn {
   background-color: rgb(250, 204, 204);
   border: none;
+  border-radius: 10px;
   transition: 100ms;
 }
 
@@ -98,7 +99,9 @@ h3 {
 
 .discover-outcome-msg {
   height: 2rem;
+}
 
+.player-board .discover-outcome-msg {
   /*Remove the "unclickable" display effect on the player's board.*/
   opacity: 1;
 }

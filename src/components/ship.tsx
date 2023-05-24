@@ -30,11 +30,7 @@ export default function Ship({
   const shipCells: ReactElement[] = [];
   for (let i = 0; i < ship.size; i++) {
     const cellId = `${ship.acronym}-${i}`;
-    shipCells.push(
-      <div className={classNames("ship-cell")} key={cellId}>
-        {cellId}
-      </div>
-    );
+    shipCells.push(<div className={classNames("ship-cell")} key={cellId}></div>);
   }
   return (
     <>

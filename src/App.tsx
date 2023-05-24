@@ -5,15 +5,21 @@ import Pregame from "./components/pregame";
 import GameStart from "./components/gameStart";
 import MainPage from "./components/mainpage";
 import "./App.css";
+import { api, apiId } from "./common/constants";
 
 function App(): ReactElement {
   const [gameState, setGameState] = useState<GameState>(getInitialGameState());
+  const [playerName, setPlayerName] = useState<string>("");
 
   //Get initial game state (pregame ship placement page)
   function getInitialGameState(): GameState {
     return {
       gamePhase: GamePhase.MainPage,
     };
+  }
+
+  function handleNameInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setPlayerName(event.target.value);
   }
 
   function handleEnterPregame() {
@@ -86,6 +92,35 @@ function App(): ReactElement {
     });
   }
 
+  async function handleGameEnd(score: number) {
+    //First get existing data
+    const data = await fetch(api.concat(`?id=${apiId}`))
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Response not ok");
+        }
+        return response.json();
+      })
+      .then((response) => {
+        return response.data;
+      });
+
+    const dataToSend = { id: apiId, data: data.concat({ name: playerName, score: score }) };
+
+    try {
+      const response = await fetch(api, {
+        method: "POST",
+        body: JSON.stringify(dataToSend),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+    } catch (error) {
+      throw new Error("Unexpected error occured: " + error);
+    }
+  }
+
   function renderCurrentGamePhase() {
     switch (gameState.gamePhase) {
       case GamePhase.PreGame:
@@ -104,10 +139,17 @@ function App(): ReactElement {
             handleUpdateOpponentBoard={handleUpdateOpponentBoard}
             handleUpdatePlayerBoard={handleUpdatePlayerGameStartBoard}
             handleRestartGame={handleRestartGame}
+            handleGameEnd={handleGameEnd}
           />
         );
       case GamePhase.MainPage:
-        return <MainPage handleEnterPregame={handleEnterPregame} />;
+        return (
+          <MainPage
+            handleEnterPregame={handleEnterPregame}
+            handleNameInputChange={handleNameInputChange}
+            playerName={playerName}
+          />
+        );
       default:
         return <div>Invalid game phase!</div>;
     }

@@ -1,8 +1,8 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { GameStartCellInfo, CellState } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
-import { shipList } from "../common/constants";
+import { shipList, api, apiId } from "../common/constants";
 import classNames from "classnames";
 import { cellHasShip } from "../common/utils";
 import aiAnimation from "../assets/thinking-animation.gif";
@@ -12,6 +12,7 @@ interface GameStartProps {
   handleUpdateOpponentBoard: (cellsToUpdate: GameStartCellInfo[]) => void;
   handleUpdatePlayerBoard: (cellsToUpdate: GameStartCellInfo[]) => void;
   handleRestartGame: () => void;
+  handleGameEnd: (score: number) => void;
 }
 
 export default function GameStart({
@@ -20,6 +21,7 @@ export default function GameStart({
   handleUpdateOpponentBoard,
   handleUpdatePlayerBoard,
   handleRestartGame,
+  handleGameEnd,
 }: GameStartProps) {
   const [gameState, setGameState] = useState<GameState>({ round: 1, isPlayerTurn: true });
   const [opponentShipsRemaining, setOpponentShipsRemaining] = useState(new Map<string, number>(initializeScoreMap()));
@@ -29,7 +31,7 @@ export default function GameStart({
   const playerTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
   const opponentTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const gameEnd = !opponentShipsRemaining.size || !playerShipsRemaining.size;
+  const gameEnd = true;
 
   type GameState = {
     round: number;
@@ -96,13 +98,10 @@ export default function GameStart({
 
   function AIMove() {
     setTimeout(() => {
-      const undiscoveredCells = playerBoard.flat().filter((cell) => !cell.isDiscovered);
-
-      // Game over not yet implemented
-      if (!undiscoveredCells.length) {
+      if (gameEnd) {
         return;
       }
-
+      const undiscoveredCells = playerBoard.flat().filter((cell) => !cell.isDiscovered);
       //Get cell to attack
       const cellToAttack: GameStartCellInfo = undiscoveredCells[Math.floor(Math.random() * undiscoveredCells.length)];
 
@@ -184,11 +183,18 @@ export default function GameStart({
     }
   }
 
+  useEffect(() => {
+    if (gameEnd && gameState.isPlayerTurn) {
+      handleGameEnd(gameState.round);
+    }
+  }, [gameEnd]);
+
   return (
     <div className="container">
       {gameEnd && (
         <div className="game-over-overlay">
           <h2>Game Over : {gameState.isPlayerTurn ? "You Win!" : "AI Win!"}</h2>
+          {gameState.isPlayerTurn && <h3>You defeated the AI in {gameState.round} rounds!</h3>}
           <button className="restart-btn" onClick={handleRestartGame}>
             Restart Game
           </button>

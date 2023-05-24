@@ -212,8 +212,8 @@ export default function GameStart({
           <div className="discover-outcome-msg">{playerDiscoverOutcomeMessage}</div>
           <Board
             board={opponentBoard}
-            handleMouseEnter={function (id: string): void {}}
-            handleMouseLeave={function (id: string): void {}}
+            handleMouseEnter={function (): void {}}
+            handleMouseLeave={function (): void {}}
             handleMouseClick={discoverPlayerCell}
           />
         </div>
@@ -229,9 +229,9 @@ export default function GameStart({
           <div className="discover-outcome-msg">{opponentDiscoverOutcomeMessage}</div>
           <Board
             board={playerBoard}
-            handleMouseEnter={function (id: string): void {}}
-            handleMouseLeave={function (id: string): void {}}
-            handleMouseClick={function (id: string): void {}}
+            handleMouseEnter={function (): void {}}
+            handleMouseLeave={function (): void {}}
+            handleMouseClick={function (): void {}}
           />
         </div>
       </div>

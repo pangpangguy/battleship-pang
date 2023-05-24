@@ -1,11 +1,10 @@
 import { ReactElement, useState } from "react";
 import { CellInfo, CellState, GamePhase, GameStartCellInfo, GameState, PregameCellInfo } from "./common/types";
+import { generateOpponentBoardWithShips, generatePregameBoard } from "./common/utils";
 import Pregame from "./components/pregame";
 import GameStart from "./components/gameStart";
-
-import "./App.css";
-import { generateOpponentBoardWithShips, generatePregameBoard } from "./common/utils";
 import MainPage from "./components/mainpage";
+import "./App.css";
 
 function App(): ReactElement {
   const [gameState, setGameState] = useState<GameState>(getInitialGameState());
@@ -18,7 +17,7 @@ function App(): ReactElement {
   }
 
   function handleEnterPregame() {
-    setGameState((currentState) => ({
+    setGameState(() => ({
       gamePhase: GamePhase.PreGame,
       playerBoard: generatePregameBoard(),
     }));

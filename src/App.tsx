@@ -2,8 +2,10 @@ import { ReactElement, useState } from "react";
 import { CellInfo, CellState, GamePhase, GameStartCellInfo, GameState, PregameCellInfo } from "./common/types";
 import Pregame from "./components/pregame";
 import GameStart from "./components/gameStart";
+
 import "./App.css";
 import { generateOpponentBoardWithShips, generatePregameBoard } from "./common/utils";
+import MainPage from "./components/mainpage";
 
 function App(): ReactElement {
   const [gameState, setGameState] = useState<GameState>(getInitialGameState());
@@ -11,9 +13,15 @@ function App(): ReactElement {
   //Get initial game state (pregame ship placement page)
   function getInitialGameState(): GameState {
     return {
+      gamePhase: GamePhase.MainPage,
+    };
+  }
+
+  function handleEnterPregame() {
+    setGameState((currentState) => ({
       gamePhase: GamePhase.PreGame,
       playerBoard: generatePregameBoard(),
-    };
+    }));
   }
 
   function handleStartGame() {
@@ -99,8 +107,8 @@ function App(): ReactElement {
             handleRestartGame={handleRestartGame}
           />
         );
-      case GamePhase.GameEnd:
-        return <div>Game over!</div>;
+      case GamePhase.MainPage:
+        return <MainPage handleEnterPregame={handleEnterPregame} />;
       default:
         return <div>Invalid game phase!</div>;
     }

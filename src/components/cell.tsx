@@ -62,8 +62,6 @@ export default function Cell({ cell, handleMouseEnter, handleMouseLeave, handleM
       onClick={() => {
         handleMouseClick(cell.cellId);
       }}
-    >
-      {cell.cellId}
-    </div>
+    ></div>
   );
 }

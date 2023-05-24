@@ -103,6 +103,11 @@ h3 {
   opacity: 1;
 }
 
+.player-board .discover-outcome-msg {
+  /*Remove the "unclickable" display effect on the player's board.*/
+  opacity: 1;
+}
+
 .ai-animation {
   width: 1.75rem;
   height: auto;

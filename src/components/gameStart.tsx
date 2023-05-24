@@ -89,7 +89,7 @@ export default function GameStart({
     showDiscoverOutcomeMessage(newCellState, true, setPlayerDiscoverOutcomeMessage);
     handleUpdateOpponentBoard(cellsToUpdate);
     if (newCellState === CellState.Miss) {
-      setGameState((prev) => ({ round: prev.round + 1, isPlayerTurn: false }));
+      setGameState((prev) => ({ ...prev, isPlayerTurn: false }));
       AIMove();
     }
   }

@@ -145,6 +145,7 @@ function App(): ReactElement {
             handleUpdatePlayerBoard={handleUpdatePlayerGameStartBoard}
             handleRestartGame={handleRestartGame}
             handleGameEnd={handleGameEnd}
+            handleEnterLeaderboard={handleEnterLeaderboard}
           />
         );
       case GamePhase.MainPage:

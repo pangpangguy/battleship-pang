@@ -6,6 +6,7 @@ import { shipList } from "../common/constants";
 import classNames from "classnames";
 import { cellHasShip } from "../common/utils";
 import aiAnimation from "../assets/thinking-animation.gif";
+
 interface GameStartProps {
   playerBoard: GameStartCellInfo[][];
   opponentBoard: GameStartCellInfo[][];

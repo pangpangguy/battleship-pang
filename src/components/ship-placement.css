@@ -19,12 +19,16 @@
 }
 
 .start-game {
-  background-color: rgb(174, 255, 152);
-  height: 3rem;
-  font-size: 1rem;
+  background-color: rgb(179, 255, 159);
+  border-radius: 10px;
+  border: none;
+  transition: 150ms;
+}
+
+.start-game:hover {
+  background-color: rgb(134, 229, 107);
 }
 
 .start-game:disabled {
   cursor: not-allowed;
-  border: none;
 }

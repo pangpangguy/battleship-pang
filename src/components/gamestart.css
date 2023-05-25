@@ -3,17 +3,21 @@
   flex-direction: column;
   margin: 20px;
   padding: 20px;
-  background-color: rgb(240, 240, 240);
   border-radius: 10px;
   box-shadow: 0px 0px 20px rgb(191, 191, 191);
   user-select: none;
+  position: relative;
 }
 
-h1 {
-  font-size: 2.5rem;
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
   max-width: 100%;
   overflow-wrap: break-word;
   white-space: nowrap;
+  margin: 0;
 }
 
 .boards-wrapper {
@@ -27,11 +31,15 @@ h1 {
   margin-right: 10px;
 }
 
-.opponent-board .board .cell:not(.header):not(.discovered) {
+.opponent-board:not(.player-turn) {
+  cursor: not-allowed;
+}
+
+.opponent-board.player-turn .board .cell:not(.header):not(.discovered) {
   cursor: pointer;
 }
 
-.opponent-board .board .cell:not(.header):not(.discovered):hover {
+.opponent-board.player-turn .board .cell:not(.header):not(.discovered):hover {
   background-color: rgb(109, 205, 237);
 }
 
@@ -68,18 +76,63 @@ h1 {
 .restart-btn {
   background-color: rgb(250, 204, 204);
   border: none;
-  transition: 0.2s;
+  border-radius: 10px;
+  transition: 100ms;
 }
 
 .restart-btn:hover {
-  background-color: rgb(152, 50, 50);
+  background-color: rgb(219, 158, 158);
 }
 
 .restart-btn:focus {
   outline: none;
 }
 
-/*Discover outcome message*/
+.player-board .ai-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /*Remove the "unclickable" display effect on the player's board.*/
+  opacity: 1;
+}
+
 .discover-outcome-msg {
   height: 2rem;
+}
+
+.player-board .discover-outcome-msg {
+  /*Remove the "unclickable" display effect on the player's board.*/
+  opacity: 1;
+}
+
+.ai-animation {
+  width: 1.75rem;
+  height: auto;
+}
+
+.game-over-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(208, 203, 199, 0.6);
+  backdrop-filter: blur(1.3px);
+  z-index: 2;
+  color: rgb(0, 0, 0);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.game-over-overlay h2 {
+  font-size: 4rem;
+}
+.game-over-overlay .restart-btn {
+  font-size: 1.5rem;
 }

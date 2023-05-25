@@ -2,7 +2,10 @@ import { useState, useRef } from "react";
 import { GameStartCellInfo, CellState } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
-
+import { shipList } from "../common/constants";
+import classNames from "classnames";
+import { cellHasShip } from "../common/utils";
+import aiAnimation from "../assets/thinking-animation.gif";
 interface GameStartProps {
   playerBoard: GameStartCellInfo[][];
   opponentBoard: GameStartCellInfo[][];
@@ -18,24 +21,55 @@ export default function GameStart({
   handleUpdatePlayerBoard,
   handleRestartGame,
 }: GameStartProps) {
-  const [discoverOutcomeMessage, setDiscoverOutcomeMessage] = useState<string>("");
-  const timeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [gameState, setGameState] = useState<GameState>({ round: 1, isPlayerTurn: true });
+  const [opponentShipsRemaining, setOpponentShipsRemaining] = useState(new Map<string, number>(initializeScoreMap()));
+  const [playerShipsRemaining, setPlayerShipsRemaining] = useState(new Map<string, number>(initializeScoreMap()));
+  const [playerDiscoverOutcomeMessage, setPlayerDiscoverOutcomeMessage] = useState<string>("");
+  const [opponentDiscoverOutcomeMessage, setOpponentDiscoverOutcomeMessage] = useState<string>("");
+  const playerTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const opponentTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const aiMoveTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  function getCellsToUpdate(targetCell: GameStartCellInfo): GameStartCellInfo[] {
+  const gameEnd = !opponentShipsRemaining.size || !playerShipsRemaining.size;
+
+  type GameState = {
+    round: number;
+    isPlayerTurn: boolean;
+  };
+
+  function initializeScoreMap(): Map<string, number> {
+    return shipList.reduce((map, ship) => map.set(ship.acronym, ship.size), new Map());
+  }
+
+  function getCellsToUpdate(
+    board: GameStartCellInfo[][],
+    targetCell: GameStartCellInfo,
+    shipsRemaining: Map<string, number>,
+    setShipsRemaining: (value: (prevState: Map<string, number>) => Map<string, number>) => void
+  ): GameStartCellInfo[] {
     const cellsToUpdate: GameStartCellInfo[] = [];
 
     // If Sunk
-    if (false) {
-      //TODO: Handle changing state from Hit to Sunk
+    if (
+      cellHasShip(targetCell) &&
+      checkShipIsSunkAndUpdateShipsRemaining(targetCell.shipId, shipsRemaining, setShipsRemaining)
+    ) {
+      const cellsChangeToSunk = board
+        .flat()
+        .filter((cell) => cellHasShip(cell) && cell.shipId === targetCell.shipId)
+        .map((cell) => ({ ...cell, cellState: CellState.Sunk, isDiscovered: true }));
+      cellsToUpdate.push(...cellsChangeToSunk);
     } else {
       // Hit or Miss
       cellsToUpdate.push({ ...targetCell, isDiscovered: true });
     }
-
     return cellsToUpdate;
   }
 
   function discoverPlayerCell(id: string) {
+    if (!gameState.isPlayerTurn) {
+      return;
+    }
     const targetCell = opponentBoard.flat().find((cell) => cell.cellId === id && !cell.isDiscovered);
 
     //Skip already discovered cells
@@ -43,57 +77,168 @@ export default function GameStart({
       return;
     }
 
-    const cellsToUpdate = getCellsToUpdate(targetCell);
-    showDiscoverOutcomeMessage(cellsToUpdate[0].cellState);
+    const cellsToUpdate = getCellsToUpdate(
+      opponentBoard,
+      targetCell,
+      opponentShipsRemaining,
+      setOpponentShipsRemaining
+    );
+    const newCellState = cellsToUpdate[0].cellState; //new state of cell(s)
+
+    // Getting a hit or sunk will allow the player to continue selecting cells to attack.
+    // Missing will end the player's turn and allow the AI to make a move.
+    showDiscoverOutcomeMessage(newCellState, true, setPlayerDiscoverOutcomeMessage);
     handleUpdateOpponentBoard(cellsToUpdate);
+    if (newCellState === CellState.Miss) {
+      setGameState((prev) => ({ round: prev.round + 1, isPlayerTurn: false }));
+      AIMove();
+    }
   }
 
-  function discoverAICell(id: string) {
-    //TODO: Implement AI
+  function AIMove() {
+    aiMoveTimeoutId.current = setTimeout(() => {
+      const undiscoveredCells = playerBoard.flat().filter((cell) => !cell.isDiscovered);
+
+      // Game over not yet implemented
+      if (!undiscoveredCells.length) {
+        return;
+      }
+
+      //Get cell to attack
+      const cellToAttack: GameStartCellInfo = undiscoveredCells[Math.floor(Math.random() * undiscoveredCells.length)];
+
+      // Update the cell state to discovered, just as the player does
+      const cellsToUpdate = getCellsToUpdate(playerBoard, cellToAttack, playerShipsRemaining, setPlayerShipsRemaining);
+      const newCellState = cellsToUpdate[0].cellState; //new state of cell(s)
+
+      showDiscoverOutcomeMessage(newCellState, false, setOpponentDiscoverOutcomeMessage);
+      handleUpdatePlayerBoard(cellsToUpdate);
+
+      if (newCellState === CellState.Miss) {
+        setGameState((prev) => ({ round: prev.round + 1, isPlayerTurn: true }));
+      } else {
+        //Make another move
+        AIMove();
+      }
+    }, Math.random() * 1000 + 2000);
   }
 
-  function showDiscoverOutcomeMessage(state: CellState) {
-    if (state === CellState.Hit) {
-      setDiscoverOutcomeMessage("You hit a ship!");
-    } else if (state === CellState.Miss) {
-      setDiscoverOutcomeMessage("You missed!");
+  // Check if the ship that is hit will be sunk
+  // If sunk, remove from map and return true; otherwise, update the ship parts remaining and return false
+  function checkShipIsSunkAndUpdateShipsRemaining(
+    shipId: string,
+    shipsRemaining: Map<string, number>,
+    setShipsRemaining: (value: (prevState: Map<string, number>) => Map<string, number>) => void
+  ): boolean {
+    const targetShipParts = shipsRemaining.get(shipId);
+
+    //Shouldn't happen
+    if (!targetShipParts) {
+      throw new Error(`Unexpected error: ship with ID ${shipId} not found in map.`);
+    }
+
+    //Check if sunk and remove from map
+    if (targetShipParts - 1 === 0) {
+      setShipsRemaining((prev) => {
+        const updatedMap = new Map(prev);
+        updatedMap.delete(shipId);
+        return updatedMap;
+      });
+
+      return true;
+    }
+
+    //Else update the map if is only Hit.
+    setShipsRemaining((prev) => new Map(prev).set(shipId, targetShipParts - 1));
+
+    return false;
+  }
+
+  function showDiscoverOutcomeMessage(
+    state: CellState,
+    isPlayerTurn: boolean,
+    setDiscoverOutcomeMessage: React.Dispatch<React.SetStateAction<string>>
+  ) {
+    const currentAttacker = isPlayerTurn ? "You" : "AI";
+    switch (state) {
+      case CellState.Hit:
+        setDiscoverOutcomeMessage(`${currentAttacker} hit a ship! ${currentAttacker} can attack again!`);
+        break;
+      case CellState.Miss:
+        setDiscoverOutcomeMessage(`${currentAttacker} missed!`);
+        break;
+      case CellState.Sunk:
+        setDiscoverOutcomeMessage(`${currentAttacker} sunk a ship! ${currentAttacker} can attack again!`);
+        break;
+    }
+
+    if (isPlayerTurn) {
+      playerTimeoutId.current && clearTimeout(playerTimeoutId.current);
+      playerTimeoutId.current = setTimeout(() => {
+        setDiscoverOutcomeMessage("");
+      }, 1000);
     } else {
-      setDiscoverOutcomeMessage("You sunk a ship!");
+      opponentTimeoutId.current && clearTimeout(opponentTimeoutId.current);
+      opponentTimeoutId.current = setTimeout(() => {
+        setDiscoverOutcomeMessage("");
+      }, 1000);
     }
-    if (timeoutId.current) {
-      clearTimeout(timeoutId.current);
-    }
-    timeoutId.current = setTimeout(() => {
-      setDiscoverOutcomeMessage("");
-    }, 1000);
   }
 
   return (
     <div className="container">
+      {gameEnd && (
+        <div className="game-over-overlay">
+          <h2>Game Over : {gameState.isPlayerTurn ? "You Win!" : "AI Win!"}</h2>
+          <button className="restart-btn" onClick={handleRestartGame}>
+            Restart Game
+          </button>
+        </div>
+      )}
       <div className="restart-btn-wrapper">
-        <button className="restart-btn" onClick={handleRestartGame}>
+        <button
+          className="restart-btn"
+          onClick={() => {
+            aiMoveTimeoutId.current && clearTimeout(aiMoveTimeoutId.current);
+            handleRestartGame();
+          }}
+        >
           Restart Game
         </button>
       </div>
+      <h1>
+        Round {gameState.round} - {gameState.isPlayerTurn ? "Your turn!" : "AI's turn!"}
+      </h1>
       <div className="boards-wrapper">
-        <div className="opponent-board">
-          <h1>Select a cell to attack:</h1>
-          <div className="discover-outcome-msg">{discoverOutcomeMessage}</div>
+        <div
+          className={classNames("opponent-board", {
+            "player-turn": gameState.isPlayerTurn,
+          })}
+        >
+          <h2>Select a cell to attack:</h2>
+          <div className="discover-outcome-msg">{playerDiscoverOutcomeMessage}</div>
           <Board
             board={opponentBoard}
-            handleMouseEnter={function (id: string): void {}}
-            handleMouseLeave={function (id: string): void {}}
+            handleMouseEnter={function (): void {}}
+            handleMouseLeave={function (): void {}}
             handleMouseClick={discoverPlayerCell}
           />
         </div>
         <div className="player-board">
-          <h1>Your Board</h1>
-          <div className="discover-outcome-msg"></div>
+          <div className="ai-wrapper">
+            <h2>AI</h2>
+            {gameState.isPlayerTurn ? (
+              <div style={{ width: "1.75rem", height: "auto" }}></div>
+            ) : (
+              <img className="ai-animation" src={aiAnimation} alt="Animated GIF" />
+            )}
+          </div>
+          <div className="discover-outcome-msg">{opponentDiscoverOutcomeMessage}</div>
           <Board
             board={playerBoard}
-            handleMouseEnter={function (id: string): void {}}
-            handleMouseLeave={function (id: string): void {}}
-            handleMouseClick={function (id: string): void {}}
+            handleMouseEnter={function (): void {}}
+            handleMouseLeave={function (): void {}}
+            handleMouseClick={function (): void {}}
           />
         </div>
       </div>

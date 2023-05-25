@@ -28,6 +28,7 @@ export default function GameStart({
   const [opponentDiscoverOutcomeMessage, setOpponentDiscoverOutcomeMessage] = useState<string>("");
   const playerTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
   const opponentTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const aiMoveTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const gameEnd = !opponentShipsRemaining.size || !playerShipsRemaining.size;
 
@@ -95,7 +96,7 @@ export default function GameStart({
   }
 
   function AIMove() {
-    setTimeout(() => {
+    aiMoveTimeoutId.current = setTimeout(() => {
       const undiscoveredCells = playerBoard.flat().filter((cell) => !cell.isDiscovered);
 
       // Game over not yet implemented
@@ -195,7 +196,13 @@ export default function GameStart({
         </div>
       )}
       <div className="restart-btn-wrapper">
-        <button className="restart-btn" onClick={handleRestartGame}>
+        <button
+          className="restart-btn"
+          onClick={() => {
+            aiMoveTimeoutId.current && clearTimeout(aiMoveTimeoutId.current);
+            handleRestartGame();
+          }}
+        >
           Restart Game
         </button>
       </div>
@@ -212,8 +219,8 @@ export default function GameStart({
           <div className="discover-outcome-msg">{playerDiscoverOutcomeMessage}</div>
           <Board
             board={opponentBoard}
-            handleMouseEnter={function (id: string): void {}}
-            handleMouseLeave={function (id: string): void {}}
+            handleMouseEnter={function (): void {}}
+            handleMouseLeave={function (): void {}}
             handleMouseClick={discoverPlayerCell}
           />
         </div>
@@ -229,9 +236,9 @@ export default function GameStart({
           <div className="discover-outcome-msg">{opponentDiscoverOutcomeMessage}</div>
           <Board
             board={playerBoard}
-            handleMouseEnter={function (id: string): void {}}
-            handleMouseLeave={function (id: string): void {}}
-            handleMouseClick={function (id: string): void {}}
+            handleMouseEnter={function (): void {}}
+            handleMouseLeave={function (): void {}}
+            handleMouseClick={function (): void {}}
           />
         </div>
       </div>

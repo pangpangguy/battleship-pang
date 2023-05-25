@@ -34,6 +34,11 @@ export interface GameState {
   opponentBoard?: GameStartCellInfo[][];
 }
 
+export interface ScoreData {
+  name: string;
+  score: number;
+}
+
 export enum CellState {
   Hit,
   Miss,

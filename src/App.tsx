@@ -24,7 +24,7 @@ function App(): ReactElement {
   const [gameState, setGameState] = useState<GameState>(getInitialGameState());
   const [playerName, setPlayerName] = useState<string>("");
 
-  //Get initial game state (pregame ship placement page)
+  //Get initial game state
   function getInitialGameState(): GameState {
     return {
       gamePhase: GamePhase.MainPage,
@@ -157,7 +157,15 @@ function App(): ReactElement {
           />
         );
       case GamePhase.Leaderboard:
-        return <Leaderboard />;
+        return (
+          <Leaderboard
+            handleReturnMainPage={() => {
+              setGameState(() => ({
+                gamePhase: GamePhase.MainPage,
+              }));
+            }}
+          />
+        );
       default:
         return <div>Invalid game phase!</div>;
     }

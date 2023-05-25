@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getScoreboardData } from "../common/utils";
 import { ScoreData } from "../common/types";
-import "./leaderboard.css";
-interface LeaderboardProps {}
+import { Player } from "@lottiefiles/react-lottie-player";
 
-export default function MainPage({}: LeaderboardProps) {
+import "./leaderboard.css";
+interface LeaderboardProps {
+  handleReturnMainPage: () => void;
+}
+
+export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
   const [leaderboard, setLeaderboard] = useState<ScoreData[]>(Array(10));
 
   function getPlacementIndex(place: number) {
@@ -61,6 +65,9 @@ export default function MainPage({}: LeaderboardProps) {
           </div>
         );
       })}
+      <button className="return-btn" onClick={handleReturnMainPage}>
+        Return
+      </button>
     </div>
   );
 }

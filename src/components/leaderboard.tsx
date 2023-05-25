@@ -10,6 +10,8 @@ interface LeaderboardProps {
 
 export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
   const [leaderboard, setLeaderboard] = useState<ScoreData[]>(Array(10));
+  const [loading, setLoading] = useState(true);
+  const loadingTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function getPlacementIndex(place: number) {
     if (place === 1) return "1st";
@@ -43,6 +45,7 @@ export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
             leaderboard[i] = data[i];
           }
           leaderboard.sort((a, b) => a.score - b.score);
+          setLoading(false);
           return leaderboard;
         });
       } catch (error) {
@@ -55,6 +58,15 @@ export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
 
   return (
     <div className="leaderboard">
+      {loading && (
+        <Player
+          src="https://assets8.lottiefiles.com/packages/lf20_b88nh30c.json"
+          className="loading-animation"
+          loop
+          autoplay
+        />
+      )}
+
       <h1>Leaderboard</h1>
       {leaderboard.map((entry, index) => {
         return (

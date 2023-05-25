@@ -109,11 +109,30 @@ function App(): ReactElement {
       //Fetch existing scoreboard
       const scoreboard = await getScoreboardData();
 
-      // Update the scoreboard
-      const newScoreboard: ScoreData[] = scoreboard.concat({ name: playerName, score: score });
+      // Check if scoreboard already has 10 entries
+      if (scoreboard.length >= 10) {
+        // Find the maximum score in the scoreboard
+        const maxScore = Math.max(...scoreboard.map((entry) => entry.score));
 
-      // Send upate request to server
-      await postNewScoreboard(newScoreboard);
+        // Only add the new score if it is less than the maximum score
+        if (score < maxScore) {
+          // Remove the entry with the maximum score
+          const index = scoreboard.findIndex((entry) => entry.score === maxScore);
+          scoreboard.splice(index, 1);
+
+          // Add the new score
+          scoreboard.push({ name: playerName, score: score });
+
+          // Send update request to server
+          await postNewScoreboard(scoreboard);
+        }
+      } else {
+        // If scoreboard has less than 10 entries, simply add the new score
+        const newScoreboard: ScoreData[] = scoreboard.concat({ name: playerName, score: score });
+
+        // Send update request to server
+        await postNewScoreboard(newScoreboard);
+      }
     } catch (error) {
       console.error("Unexpected error occurred while handling Game End: ", error);
     }

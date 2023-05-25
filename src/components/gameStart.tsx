@@ -2,10 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { GameStartCellInfo, CellState } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
-import { shipList, api, apiId } from "../common/constants";
+import { shipList } from "../common/constants";
 import classNames from "classnames";
 import { cellHasShip } from "../common/utils";
 import aiAnimation from "../assets/thinking-animation.gif";
+
 interface GameStartProps {
   playerBoard: GameStartCellInfo[][];
   opponentBoard: GameStartCellInfo[][];
@@ -13,6 +14,7 @@ interface GameStartProps {
   handleUpdatePlayerBoard: (cellsToUpdate: GameStartCellInfo[]) => void;
   handleRestartGame: () => void;
   handleGameEnd: (score: number) => void;
+  handleEnterLeaderboard: () => void;
 }
 
 export default function GameStart({
@@ -22,6 +24,7 @@ export default function GameStart({
   handleUpdatePlayerBoard,
   handleRestartGame,
   handleGameEnd,
+  handleEnterLeaderboard,
 }: GameStartProps) {
   const [gameState, setGameState] = useState<GameState>({ round: 1, isPlayerTurn: true });
   const [opponentShipsRemaining, setOpponentShipsRemaining] = useState(new Map<string, number>(initializeScoreMap()));
@@ -32,7 +35,7 @@ export default function GameStart({
   const opponentTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
   const aiMoveTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const gameEnd = true;
+  const gameEnd = !playerShipsRemaining.size || !opponentShipsRemaining.size;
 
   type GameState = {
     round: number;
@@ -196,14 +199,17 @@ export default function GameStart({
         <div className="game-over-overlay">
           <h2>Game Over : {gameState.isPlayerTurn ? "You Win!" : "AI Win!"}</h2>
           {gameState.isPlayerTurn && <h3>You defeated the AI in {gameState.round} rounds!</h3>}
-          <button className="restart-btn" onClick={handleRestartGame}>
+          <button className="gamestart-btn game-end-btn" onClick={handleRestartGame}>
             Restart Game
+          </button>
+          <button className="gamestart-btn game-end-btn" onClick={handleEnterLeaderboard}>
+            Go to leaderboard
           </button>
         </div>
       )}
       <div className="restart-btn-wrapper">
         <button
-          className="restart-btn"
+          className="gamestart-btn"
           onClick={() => {
             aiMoveTimeoutId.current && clearTimeout(aiMoveTimeoutId.current);
             handleRestartGame();

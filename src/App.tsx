@@ -1,11 +1,23 @@
 import { ReactElement, useState } from "react";
-import { CellInfo, CellState, GamePhase, GameStartCellInfo, GameState, PregameCellInfo } from "./common/types";
-import { generateOpponentBoardWithShips, generatePregameBoard } from "./common/utils";
+import {
+  CellInfo,
+  CellState,
+  GamePhase,
+  GameStartCellInfo,
+  GameState,
+  PregameCellInfo,
+  ScoreData,
+} from "./common/types";
+import {
+  generateOpponentBoardWithShips,
+  generatePregameBoard,
+  getScoreboardData,
+  postNewScoreboard,
+} from "./common/utils";
 import Pregame from "./components/pregame";
 import GameStart from "./components/gameStart";
 import MainPage from "./components/mainpage";
 import "./App.css";
-import { api, apiId } from "./common/constants";
 import Leaderboard from "./components/leaderboard";
 
 function App(): ReactElement {
@@ -100,33 +112,17 @@ function App(): ReactElement {
   }
 
   async function handleGameEnd(score: number) {
-    //Fetch existing data
-    const data = await fetch(api.concat(`?id=${apiId}`))
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Response not ok");
-        }
-        return response.json();
-      })
-      .then((response) => {
-        return response.data;
-      });
-
-    //Update the data
-    const dataToSend = { id: apiId, data: data.concat({ name: playerName, score: score }) };
-
-    //Send POST request
     try {
-      const response = await fetch(api, {
-        method: "POST",
-        body: JSON.stringify(dataToSend),
-      });
+      //Fetch existing scoreboard
+      const scoreboard = await getScoreboardData();
 
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
+      // Update the scoreboard
+      const newScoreboard: ScoreData[] = scoreboard.concat({ name: playerName, score: score });
+
+      // Send upate request to server
+      await postNewScoreboard(newScoreboard);
     } catch (error) {
-      throw new Error("Unexpected error occured: " + error);
+      console.error("Unexpected error occurred while handling Game End: ", error);
     }
   }
 

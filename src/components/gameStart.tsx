@@ -32,7 +32,7 @@ export default function GameStart({
   const opponentTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
   const aiMoveTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const gameEnd = !opponentShipsRemaining.size || !playerShipsRemaining.size;
+  const gameEnd = true;
 
   type GameState = {
     round: number;

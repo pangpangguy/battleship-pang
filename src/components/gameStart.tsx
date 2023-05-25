@@ -30,6 +30,7 @@ export default function GameStart({
   const [opponentDiscoverOutcomeMessage, setOpponentDiscoverOutcomeMessage] = useState<string>("");
   const playerTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
   const opponentTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const aiMoveTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const gameEnd = !opponentShipsRemaining.size || !playerShipsRemaining.size;
 
@@ -97,7 +98,7 @@ export default function GameStart({
   }
 
   function AIMove() {
-    setTimeout(() => {
+    aiMoveTimeoutId.current = setTimeout(() => {
       if (gameEnd) {
         return;
       }
@@ -201,7 +202,13 @@ export default function GameStart({
         </div>
       )}
       <div className="restart-btn-wrapper">
-        <button className="restart-btn" onClick={handleRestartGame}>
+        <button
+          className="restart-btn"
+          onClick={() => {
+            aiMoveTimeoutId.current && clearTimeout(aiMoveTimeoutId.current);
+            handleRestartGame();
+          }}
+        >
           Restart Game
         </button>
       </div>

@@ -6,6 +6,7 @@ import GameStart from "./components/gameStart";
 import MainPage from "./components/mainpage";
 import "./App.css";
 import { api, apiId } from "./common/constants";
+import Leaderboard from "./components/leaderboard";
 
 function App(): ReactElement {
   const [gameState, setGameState] = useState<GameState>(getInitialGameState());
@@ -34,6 +35,12 @@ function App(): ReactElement {
       gamePhase: GamePhase.GameStart,
       playerBoard: convertBoardToGameStart(currentState.playerBoard as PregameCellInfo[][]),
       opponentBoard: generateOpponentBoardWithShips(),
+    }));
+  }
+
+  function handleEnterLeaderboard() {
+    setGameState(() => ({
+      gamePhase: GamePhase.Leaderboard,
     }));
   }
 
@@ -149,9 +156,12 @@ function App(): ReactElement {
           <MainPage
             handleEnterPregame={handleEnterPregame}
             handleNameInputChange={handleNameInputChange}
+            handleEnterLeaderboard={handleEnterLeaderboard}
             playerName={playerName}
           />
         );
+      case GamePhase.Leaderboard:
+        return <Leaderboard />;
       default:
         return <div>Invalid game phase!</div>;
     }

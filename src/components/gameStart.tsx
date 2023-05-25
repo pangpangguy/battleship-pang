@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { GameStartCellInfo, CellState } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
-import { shipList, api, apiId } from "../common/constants";
+import { shipList } from "../common/constants";
 import classNames from "classnames";
 import { cellHasShip } from "../common/utils";
 import aiAnimation from "../assets/thinking-animation.gif";

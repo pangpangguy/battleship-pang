@@ -20,3 +20,9 @@
 .ship-disabled-overlay--hide {
   display: none;
 }
+
+.ship:hover .ship-cell {
+  /* Example hover styles */
+  background-color: rgb(76, 189, 76);
+  cursor: pointer;
+}

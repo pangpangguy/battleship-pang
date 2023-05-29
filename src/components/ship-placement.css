@@ -26,7 +26,7 @@
   transition: 150ms;
 }
 
-.start-game:hover {
+.start-game:not(:disabled):hover {
   background-color: rgb(134, 229, 107);
 }
 

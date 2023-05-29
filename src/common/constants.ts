@@ -9,3 +9,7 @@ export const shipList: Ship[] = [
 ];
 
 export const boardSize: number = 10;
+
+export const api: string = "https://fi3si9acoa.execute-api.ap-southeast-1.amazonaws.com/";
+
+export const apiId: string = "pangpangguy";

@@ -1,0 +1,52 @@
+.mainpage-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 5rem;
+}
+
+.title {
+  color: #333;
+  font-size: 4.5rem;
+}
+
+.main-page-btn {
+  border: 3px solid rgb(51, 51, 68);
+  padding: 10px 20px;
+  margin-top: 1.7rem;
+  background-color: transparent;
+  color: rgb(51, 51, 68);
+  font-size: 30px;
+  opacity: 0.8;
+  transition: 200ms, opacity 500ms;
+}
+
+.main-page-btn:not(:disabled):hover {
+  background-color: rgba(51, 51, 68, 0.1);
+  transform: translateY(-10px);
+  opacity: 1;
+}
+
+.start-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.name-input {
+  width: 50%;
+  padding: 1.2rem 1.5rem;
+  margin: 2rem;
+
+  border: none;
+  border-radius: 5px;
+
+  outline: none;
+  box-shadow: 0 2px 5px rgba(51, 51, 68, 0.15);
+  background-color: rgb(240, 240, 240);
+
+  text-align: center;
+  font-size: 1.2rem;
+
+  transition: background-color 0.3s ease;
+}

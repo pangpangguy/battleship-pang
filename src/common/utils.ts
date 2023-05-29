@@ -1,7 +1,7 @@
 //Util functions used commonly throughout the code.
 import { useEffect, useRef, useState } from "react";
-import { CellInfo, CellState, GameStartCellInfo, HoverState, PregameCellInfo } from "./types";
-import { boardSize, shipList } from "./constants";
+import { CellInfo, CellState, GameStartCellInfo, HoverState, PregameCellInfo, ScoreData } from "./types";
+import { api, apiId, boardSize, shipList } from "./constants";
 
 //Function to create the cellId from the row and column input
 //Row is between 1 and 10
@@ -136,4 +136,32 @@ export function isGameStartCellInfo(cell: CellInfo): cell is GameStartCellInfo {
 
 export function cellHasShip(cell: CellInfo): cell is CellInfo & { shipId: string } {
   return "shipId" in cell && typeof cell.shipId === "string";
+}
+
+//API related functions
+//GET data
+export async function getScoreboardData(): Promise<ScoreData[]> {
+  const response = await fetch(`${api}?id=${apiId}`);
+  if (!response.ok) {
+    throw new Error("Response not ok");
+  }
+  const data = await response.json();
+  return data.data.scoreboard;
+}
+
+//POST data
+export async function postNewScoreboard(newScoreboard: ScoreData[]): Promise<void> {
+  const response = await fetch(api, {
+    method: "POST",
+    body: JSON.stringify({
+      id: apiId,
+      data: {
+        scoreboard: newScoreboard,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
 }

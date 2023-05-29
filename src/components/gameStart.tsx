@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { GameStartCellInfo, CellState } from "../common/types";
 import Board from "./board";
 import "./gamestart.css";
@@ -6,12 +6,15 @@ import { shipList } from "../common/constants";
 import classNames from "classnames";
 import { cellHasShip } from "../common/utils";
 import aiAnimation from "../assets/thinking-animation.gif";
+
 interface GameStartProps {
   playerBoard: GameStartCellInfo[][];
   opponentBoard: GameStartCellInfo[][];
   handleUpdateOpponentBoard: (cellsToUpdate: GameStartCellInfo[]) => void;
   handleUpdatePlayerBoard: (cellsToUpdate: GameStartCellInfo[]) => void;
   handleRestartGame: () => void;
+  handleGameEnd: (score: number) => void;
+  handleEnterLeaderboard: () => void;
 }
 
 export default function GameStart({
@@ -20,6 +23,8 @@ export default function GameStart({
   handleUpdateOpponentBoard,
   handleUpdatePlayerBoard,
   handleRestartGame,
+  handleGameEnd,
+  handleEnterLeaderboard,
 }: GameStartProps) {
   const [gameState, setGameState] = useState<GameState>({ round: 1, isPlayerTurn: true });
   const [opponentShipsRemaining, setOpponentShipsRemaining] = useState(new Map<string, number>(initializeScoreMap()));
@@ -90,20 +95,17 @@ export default function GameStart({
     showDiscoverOutcomeMessage(newCellState, true, setPlayerDiscoverOutcomeMessage);
     handleUpdateOpponentBoard(cellsToUpdate);
     if (newCellState === CellState.Miss) {
-      setGameState((prev) => ({ round: prev.round + 1, isPlayerTurn: false }));
+      setGameState((prev) => ({ ...prev, isPlayerTurn: false }));
       AIMove();
     }
   }
 
   function AIMove() {
     aiMoveTimeoutId.current = setTimeout(() => {
-      const undiscoveredCells = playerBoard.flat().filter((cell) => !cell.isDiscovered);
-
-      // Game over not yet implemented
-      if (!undiscoveredCells.length) {
+      if (gameEnd) {
         return;
       }
-
+      const undiscoveredCells = playerBoard.flat().filter((cell) => !cell.isDiscovered);
       //Get cell to attack
       const cellToAttack: GameStartCellInfo = undiscoveredCells[Math.floor(Math.random() * undiscoveredCells.length)];
 
@@ -185,19 +187,29 @@ export default function GameStart({
     }
   }
 
+  useEffect(() => {
+    if (gameEnd && gameState.isPlayerTurn) {
+      handleGameEnd(gameState.round);
+    }
+  }, [gameEnd]);
+
   return (
     <div className="container">
       {gameEnd && (
         <div className="game-over-overlay">
           <h2>Game Over : {gameState.isPlayerTurn ? "You Win!" : "AI Win!"}</h2>
-          <button className="restart-btn" onClick={handleRestartGame}>
+          {gameState.isPlayerTurn && <h3>You defeated the AI in {gameState.round} rounds!</h3>}
+          <button className="gamestart-btn game-end-btn" onClick={handleRestartGame}>
             Restart Game
+          </button>
+          <button className="gamestart-btn game-end-btn" onClick={handleEnterLeaderboard}>
+            Go to leaderboard
           </button>
         </div>
       )}
       <div className="restart-btn-wrapper">
         <button
-          className="restart-btn"
+          className="gamestart-btn"
           onClick={() => {
             aiMoveTimeoutId.current && clearTimeout(aiMoveTimeoutId.current);
             handleRestartGame();

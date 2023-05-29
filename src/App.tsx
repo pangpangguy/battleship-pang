@@ -1,19 +1,45 @@
 import { ReactElement, useState } from "react";
-import { CellInfo, CellState, GamePhase, GameStartCellInfo, GameState, PregameCellInfo } from "./common/types";
+import {
+  CellInfo,
+  CellState,
+  GamePhase,
+  GameStartCellInfo,
+  GameState,
+  PregameCellInfo,
+  ScoreData,
+} from "./common/types";
+import {
+  generateOpponentBoardWithShips,
+  generatePregameBoard,
+  getScoreboardData,
+  postNewScoreboard,
+} from "./common/utils";
 import Pregame from "./components/pregame";
 import GameStart from "./components/gameStart";
+import MainPage from "./components/mainpage";
 import "./App.css";
-import { generateOpponentBoardWithShips, generatePregameBoard } from "./common/utils";
+import Leaderboard from "./components/leaderboard";
 
 function App(): ReactElement {
   const [gameState, setGameState] = useState<GameState>(getInitialGameState());
+  const [playerName, setPlayerName] = useState<string>("");
 
-  //Get initial game state (pregame ship placement page)
+  //Get initial game state
   function getInitialGameState(): GameState {
     return {
+      gamePhase: GamePhase.MainPage,
+    };
+  }
+
+  function handleNameInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setPlayerName(event.target.value);
+  }
+
+  function handleEnterPregame() {
+    setGameState(() => ({
       gamePhase: GamePhase.PreGame,
       playerBoard: generatePregameBoard(),
-    };
+    }));
   }
 
   function handleStartGame() {
@@ -21,6 +47,12 @@ function App(): ReactElement {
       gamePhase: GamePhase.GameStart,
       playerBoard: convertBoardToGameStart(currentState.playerBoard as PregameCellInfo[][]),
       opponentBoard: generateOpponentBoardWithShips(),
+    }));
+  }
+
+  function handleEnterLeaderboard() {
+    setGameState(() => ({
+      gamePhase: GamePhase.Leaderboard,
     }));
   }
 
@@ -79,6 +111,40 @@ function App(): ReactElement {
     });
   }
 
+  async function handleGameEnd(score: number) {
+    try {
+      //Fetch existing scoreboard
+      const scoreboard = await getScoreboardData();
+
+      // Check if scoreboard already has 10 entries
+      if (scoreboard.length >= 10) {
+        // Find the maximum score in the scoreboard
+        const maxScore = Math.max(...scoreboard.map((entry) => entry.score));
+
+        // Only add the new score if it is less than the maximum score
+        if (score < maxScore) {
+          // Remove the entry with the maximum score
+          const index = scoreboard.findIndex((entry) => entry.score === maxScore);
+          scoreboard.splice(index, 1);
+
+          // Add the new score
+          scoreboard.push({ name: playerName, score: score });
+
+          // Send update request to server
+          await postNewScoreboard(scoreboard);
+        }
+      } else {
+        // If scoreboard has less than 10 entries, simply add the new score
+        const newScoreboard: ScoreData[] = scoreboard.concat({ name: playerName, score: score });
+
+        // Send update request to server
+        await postNewScoreboard(newScoreboard);
+      }
+    } catch (error) {
+      console.error("Unexpected error occurred while handling Game End: ", error);
+    }
+  }
+
   function renderCurrentGamePhase() {
     switch (gameState.gamePhase) {
       case GamePhase.PreGame:
@@ -97,10 +163,29 @@ function App(): ReactElement {
             handleUpdateOpponentBoard={handleUpdateOpponentBoard}
             handleUpdatePlayerBoard={handleUpdatePlayerGameStartBoard}
             handleRestartGame={handleRestartGame}
+            handleGameEnd={handleGameEnd}
+            handleEnterLeaderboard={handleEnterLeaderboard}
           />
         );
-      case GamePhase.GameEnd:
-        return <div>Game over!</div>;
+      case GamePhase.MainPage:
+        return (
+          <MainPage
+            handleEnterPregame={handleEnterPregame}
+            handleNameInputChange={handleNameInputChange}
+            handleEnterLeaderboard={handleEnterLeaderboard}
+            playerName={playerName}
+          />
+        );
+      case GamePhase.Leaderboard:
+        return (
+          <Leaderboard
+            handleReturnMainPage={() => {
+              setGameState(() => ({
+                gamePhase: GamePhase.MainPage,
+              }));
+            }}
+          />
+        );
       default:
         return <div>Invalid game phase!</div>;
     }

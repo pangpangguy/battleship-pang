@@ -1,0 +1,54 @@
+.leaderboard {
+  /* take up half of screen size */
+  width: 50vw;
+
+  /*Prevent highlighting text*/
+  user-select: none;
+}
+
+h1 {
+  margin: 0 auto 1.3rem;
+  font-size: 4rem;
+}
+
+.return-btn {
+  border: 3px solid rgb(51, 51, 68);
+  margin-top: 2rem;
+  background-color: transparent;
+  color: rgb(51, 51, 68);
+  transition: 200ms;
+}
+
+.return-btn:hover {
+  background-color: rgba(51, 51, 68, 0.1);
+  transform: scale(1.2);
+}
+
+.board-entry {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  align-items: center;
+  margin: 0.6rem auto;
+  padding: 0.5rem 0.5rem;
+  border-radius: 5px;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-size: 1.75rem;
+  margin: 0;
+}
+
+.gold {
+  color: rgb(226, 192, 2);
+}
+
+.silver {
+  color: rgb(144, 144, 144);
+}
+
+.bronze {
+  color: #cd7f32;
+}

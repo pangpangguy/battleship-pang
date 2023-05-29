@@ -30,8 +30,13 @@ export interface Position {
 
 export interface GameState {
   gamePhase: GamePhase;
-  playerBoard: PregameCellInfo[][] | GameStartCellInfo[][];
+  playerBoard?: PregameCellInfo[][] | GameStartCellInfo[][];
   opponentBoard?: GameStartCellInfo[][];
+}
+
+export interface ScoreData {
+  name: string;
+  score: number;
 }
 
 export enum CellState {
@@ -47,7 +52,8 @@ export enum HoverState {
 }
 
 export enum GamePhase {
+  MainPage,
   PreGame,
   GameStart,
-  GameEnd,
+  Leaderboard,
 }

@@ -55,4 +55,5 @@ export enum GamePhase {
   MainPage,
   PreGame,
   GameStart,
+  Leaderboard,
 }

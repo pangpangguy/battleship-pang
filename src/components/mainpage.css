@@ -11,10 +11,10 @@
   font-size: 4.5rem;
 }
 
-.start-btn {
+.main-page-btn {
   border: 3px solid rgb(51, 51, 68);
   padding: 10px 20px;
-  margin-top: 3rem;
+  margin-top: 1.7rem;
   background-color: transparent;
   color: rgb(51, 51, 68);
   font-size: 30px;
@@ -22,7 +22,7 @@
   transition: 200ms, opacity 500ms;
 }
 
-.start-btn:not(:disabled):hover {
+.main-page-btn:not(:disabled):hover {
   background-color: rgba(51, 51, 68, 0.1);
   transform: translateY(-10px);
   opacity: 1;
@@ -36,6 +36,7 @@
 .name-input {
   width: 50%;
   padding: 1.2rem 1.5rem;
+  margin: 2rem;
 
   border: none;
   border-radius: 5px;

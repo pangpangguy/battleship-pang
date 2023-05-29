@@ -18,12 +18,13 @@ import Pregame from "./components/pregame";
 import GameStart from "./components/gameStart";
 import MainPage from "./components/mainpage";
 import "./App.css";
+import Leaderboard from "./components/leaderboard";
 
 function App(): ReactElement {
   const [gameState, setGameState] = useState<GameState>(getInitialGameState());
   const [playerName, setPlayerName] = useState<string>("");
 
-  //Get initial game state (pregame ship placement page)
+  //Get initial game state
   function getInitialGameState(): GameState {
     return {
       gamePhase: GamePhase.MainPage,
@@ -46,6 +47,12 @@ function App(): ReactElement {
       gamePhase: GamePhase.GameStart,
       playerBoard: convertBoardToGameStart(currentState.playerBoard as PregameCellInfo[][]),
       opponentBoard: generateOpponentBoardWithShips(),
+    }));
+  }
+
+  function handleEnterLeaderboard() {
+    setGameState(() => ({
+      gamePhase: GamePhase.Leaderboard,
     }));
   }
 
@@ -157,6 +164,7 @@ function App(): ReactElement {
             handleUpdatePlayerBoard={handleUpdatePlayerGameStartBoard}
             handleRestartGame={handleRestartGame}
             handleGameEnd={handleGameEnd}
+            handleEnterLeaderboard={handleEnterLeaderboard}
           />
         );
       case GamePhase.MainPage:
@@ -164,7 +172,18 @@ function App(): ReactElement {
           <MainPage
             handleEnterPregame={handleEnterPregame}
             handleNameInputChange={handleNameInputChange}
+            handleEnterLeaderboard={handleEnterLeaderboard}
             playerName={playerName}
+          />
+        );
+      case GamePhase.Leaderboard:
+        return (
+          <Leaderboard
+            handleReturnMainPage={() => {
+              setGameState(() => ({
+                gamePhase: GamePhase.MainPage,
+              }));
+            }}
           />
         );
       default:

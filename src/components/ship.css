@@ -12,6 +12,11 @@
   display: block;
 }
 
-.ship--on-board {
+.ship-disabled-overlay {
   opacity: 0.5;
+  display: unset;
+}
+
+.ship-disabled-overlay--hide {
+  display: none;
 }

@@ -55,6 +55,7 @@ export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
   return (
     <div className="leaderboard">
       <h1>Leaderboard</h1>
+      <h2 className="description">Based on the number of rounds required to beat the AI</h2>
       {leaderboard.map((entry, index) => {
         return (
           <div className={`board-entry ${getMedalClass(index + 1)}`} key={index}>

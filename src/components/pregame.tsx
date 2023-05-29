@@ -190,22 +190,30 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
   }, [selectedShip, handleMouseMove, handleShipRotate]);
 
   return (
-    <div>
-      <div className="pregame-board">
-        <Board
-          board={playerBoard}
-          handleMouseEnter={handleMouseEnter}
-          handleMouseLeave={handleMouseLeave}
-          handleMouseClick={handlePlaceShip}
-        />
+    <>
+      <h1>Place your ships on the board</h1>
+      <h2>Click the ship once to select it and move it onto the board to place it:</h2>
+      <div className="pregame">
+        <div>
+          <h3>Your Ships:</h3>
+          <ShipPlacement
+            ships={ships}
+            handleShipSelect={handleShipSelect}
+            selectedShip={selectedShip}
+            cursorPosition={cursorPosition}
+            handleStartGame={handleStartGame}
+          />
+        </div>
+        <div className="pregame-board">
+          <h3>Your Board:</h3>
+          <Board
+            board={playerBoard}
+            handleMouseEnter={handleMouseEnter}
+            handleMouseLeave={handleMouseLeave}
+            handleMouseClick={handlePlaceShip}
+          />
+        </div>
       </div>
-      <ShipPlacement
-        ships={ships}
-        handleShipSelect={handleShipSelect}
-        selectedShip={selectedShip}
-        cursorPosition={cursorPosition}
-        handleStartGame={handleStartGame}
-      />
-    </div>
+    </>
   );
 }

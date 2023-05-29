@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { HoverState, Position, PregameCellInfo, PregameShip } from "../common/types";
 import { shipList } from "../common/constants";
-import { createCellId, useStateRef } from "../common/utils";
+import { createCellId, getMaximumPosition, useStateRef } from "../common/utils";
 import Board from "./board";
 import ShipPlacement from "./ship-placement";
 import "./pregame.css";
@@ -13,6 +13,7 @@ interface PreGameProps {
 }
 export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleStartGame }: PreGameProps) {
   const [cursorPosition, setCursorPosition] = useState<Position>({ x: 0, y: 0 });
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
   //Keeping refs as well for the following states as they are used in event listeners
   const [ships, setShips, shipsRef] = useStateRef(
@@ -177,6 +178,22 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
     }));
   }
 
+  function getWindowDimensions() {
+    const { innerWidth: width, innerHeight: height } = window;
+    return {
+      x: width,
+      y: height,
+    };
+  }
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowDimensions(getWindowDimensions());
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   useEffect(() => {
     window.addEventListener("mousemove", handleMouseMove);
     if (selectedShip) {
@@ -187,7 +204,17 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("contextmenu", handleShipRotate);
     };
-  }, [selectedShip, handleMouseMove, handleShipRotate]);
+  }, [selectedShip, handleShipRotate, handleMouseMove]);
+
+  function getPosition(): Position {
+    if (!selectedShip) {
+      return { x: 0, y: 0 };
+    }
+
+    const { x: maxLeft, y: maxTop } = getMaximumPosition(windowDimensions, selectedShip.size, selectedShip.orientation);
+
+    return { x: Math.min(cursorPosition.x, maxLeft), y: Math.min(cursorPosition.y, maxTop) };
+  }
 
   return (
     <div>
@@ -203,7 +230,7 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
         ships={ships}
         handleShipSelect={handleShipSelect}
         selectedShip={selectedShip}
-        cursorPosition={cursorPosition}
+        cursorPosition={getPosition()}
         handleStartGame={handleStartGame}
       />
     </div>

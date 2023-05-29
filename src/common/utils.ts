@@ -1,7 +1,7 @@
 //Util functions used commonly throughout the code.
 import { useEffect, useRef, useState } from "react";
-import { CellInfo, CellState, GameStartCellInfo, HoverState, PregameCellInfo, ScoreData } from "./types";
-import { api, apiId, boardSize, shipList } from "./constants";
+import { CellInfo, CellState, GameStartCellInfo, HoverState, Position, PregameCellInfo, ScoreData } from "./types";
+import { api, apiId, boardSize, fontSizeInPixels, shipList } from "./constants";
 
 //Function to create the cellId from the row and column input
 //Row is between 1 and 10
@@ -164,4 +164,26 @@ export async function postNewScoreboard(newScoreboard: ScoreData[]): Promise<voi
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
+}
+
+export function getMaximumPosition(
+  windowDimension: Position,
+  shipSize: number,
+  orientation: "horizontal" | "vertical"
+): Position {
+  var maxLeftPos, maxTopPos;
+
+  const padding = 10;
+  if (orientation === "horizontal") {
+    maxLeftPos = windowDimension.x - fontSizeInPixels * 2.5 * shipSize - padding;
+    maxTopPos = windowDimension.y - fontSizeInPixels * 2.5 - padding;
+  } else {
+    maxLeftPos = windowDimension.x - fontSizeInPixels * 2.5 - padding;
+    maxTopPos = windowDimension.y - fontSizeInPixels * 2.5 * shipSize - padding;
+  }
+
+  return {
+    x: maxLeftPos,
+    y: maxTopPos,
+  };
 }

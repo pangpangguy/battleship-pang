@@ -7,6 +7,7 @@
   box-shadow: 0px 0px 20px rgb(191, 191, 191);
   user-select: none;
   position: relative;
+  background-color: rgb(255, 255, 255);
 }
 
 h2 {
@@ -47,20 +48,20 @@ h3 {
 }
 
 .player-board .occupied {
-  background-color: rgb(138, 228, 138);
+  background-color: rgb(29, 53, 87);
 }
 
 /* For both boards*/
 .discovered.miss {
-  background-color: rgb(255, 255, 255);
+  background-color: rgb(241, 250, 238);
 }
 
 .discovered.hit {
-  background-color: rgb(255, 0, 0);
+  background-color: rgb(230, 39, 55);
 }
 
 .discovered.sunk {
-  background-color: rgba(255, 44, 44, 0.329);
+  background-color: rgba(230, 57, 70, 0.3);
 }
 
 /*Game start button*/

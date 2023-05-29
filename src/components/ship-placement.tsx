@@ -43,7 +43,7 @@ export default function ShipPlacement({
   return (
     <div className="ship-placement" onClick={handleDeselectShip}>
       <div className="ships">{renderShips}</div>
-      <button className="start-game" disabled={ships.some((ship) => !ship.onBoard)} onClick={handleStartGame}>
+      <button disabled={ships.some((ship) => !ship.onBoard)} onClick={handleStartGame}>
         {" "}
         Start Game
       </button>

@@ -173,7 +173,7 @@ export function getMaximumPosition(
 ): Position {
   var maxLeftPos, maxTopPos;
 
-  const padding = 10;
+  const padding = windowDimension.x * 0.025;
   if (orientation === "horizontal") {
     maxLeftPos = windowDimension.x - fontSizeInPixels * 2.5 * shipSize - padding;
     maxTopPos = windowDimension.y - fontSizeInPixels * 2.5 - padding;

@@ -148,13 +148,10 @@ function App(): ReactElement {
   }
 
   // Show the overlay message if the user is in mobile mode, or the screen size (width) is <600px
-  function disableGame(): boolean {
-    const isMobileDevice = () => {
-      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    };
-
-    return isMobileDevice() || windowSize <= 600;
-  }
+  const isMobileDevice: boolean = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+  const disableGame: boolean = isMobileDevice || windowSize <= 600;
 
   useEffect(() => {
     setPlayerName("");
@@ -221,7 +218,7 @@ function App(): ReactElement {
 
   return (
     <div className="App">
-      {disableGame() && (
+      {disableGame && (
         <div className="disabled-game-overlay">
           This game is not optimized for mobile or smaller screen sizes, change device or to a bigger screen size plz
         </div>

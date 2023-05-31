@@ -1,9 +1,11 @@
 .board {
   display: grid;
-  grid-template-columns: repeat(11, auto);
-  gap: 1px;
+  grid-template-columns: repeat(11, 2.5rem);
   padding: 2rem;
   border-radius: 15px;
   background-color: rgba(221, 221, 243, 0.7);
-  user-select: none;
+}
+
+.col {
+  margin: 0;
 }

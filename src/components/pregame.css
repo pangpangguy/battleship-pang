@@ -4,8 +4,19 @@
   gap: 1.5rem;
 }
 
-.pregame-board {
-  cursor: default;
+.pregame > * {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pregame h3 {
+  margin: 1rem;
+}
+
+.pregame button {
+  font-size: 1.1rem;
+  padding: 0.3rem 0.6rem;
 }
 
 .pregame-board .cell:not(.header).occupied {
@@ -25,4 +36,12 @@
 .pregame-board .cell:not(.header).occupied.hovered--invalid {
   cursor: not-allowed;
   background-color: rgba(139, 68, 85, 0.8);
+}
+
+@media (max-width: 1100px) {
+  .pregame {
+    grid-template-columns: 1fr;
+    /* The items will now be stacked vertically, but you might want to reverse the order so that 
+       the 'ShipPlacement' component appears below the 'Board' component */
+  }
 }

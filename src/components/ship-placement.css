@@ -4,10 +4,8 @@
   justify-content: space-around;
   align-items: center;
   border-radius: 15px;
-  margin-top: 1rem;
   padding: 1rem;
   position: "relative";
-  user-select: none;
 }
 
 .ships {

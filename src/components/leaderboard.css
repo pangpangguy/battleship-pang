@@ -1,9 +1,6 @@
 .leaderboard {
   /* take up half of screen size */
   width: 50vw;
-
-  /*Prevent highlighting text*/
-  user-select: none;
 }
 
 h1 {

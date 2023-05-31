@@ -194,7 +194,7 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
       <h1>Place your ships on the board</h1>
       <h2>Click the ship once to select it and move it onto the board to place it:</h2>
       <div className="pregame">
-        <div>
+        <div className="ship-area">
           <h3>Your Ships:</h3>
           <ShipPlacement
             ships={ships}

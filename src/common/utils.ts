@@ -1,7 +1,7 @@
 //Util functions used commonly throughout the code.
 import { useEffect, useRef, useState } from "react";
-import { CellInfo, CellState, GameStartCellInfo, HoverState, PregameCellInfo, ScoreData } from "./types";
-import { api, apiId, boardSize, shipList } from "./constants";
+import { CellInfo, CellState, GameStartCellInfo, HoverState, Position, PregameCellInfo, ScoreData } from "./types";
+import { api, apiId, boardSize, fontSizeInPixels, shipList } from "./constants";
 
 //Function to create the cellId from the row and column input
 //Row is between 1 and 10
@@ -164,4 +164,28 @@ export async function postNewScoreboard(newScoreboard: ScoreData[]): Promise<voi
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
+}
+
+export function getMaximumPosition(
+  windowDimension: Position,
+  shipSize: number,
+  orientation: "horizontal" | "vertical"
+): Position {
+  var maxLeftPos, maxTopPos;
+
+  //Width of a ship cell is 2.5rem as defined in ship.css, but increasing it slightly to 2.9
+  //to act as padding
+  const cellSize = fontSizeInPixels * 2.9;
+  if (orientation === "horizontal") {
+    maxLeftPos = windowDimension.x - cellSize * shipSize;
+    maxTopPos = windowDimension.y - cellSize;
+  } else {
+    maxLeftPos = windowDimension.x - cellSize;
+    maxTopPos = windowDimension.y - cellSize * shipSize;
+  }
+
+  return {
+    x: maxLeftPos,
+    y: maxTopPos,
+  };
 }

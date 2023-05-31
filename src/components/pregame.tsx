@@ -119,7 +119,7 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
   }
 
   function handleMouseMove(event: MouseEvent): void {
-    setCursorPosition({ x: event.clientX, y: event.clientY });
+    setCursorPosition({ x: event.pageX, y: event.pageY });
   }
 
   function handleShipSelect(ship: PregameShip | null): void {
@@ -217,22 +217,32 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
   }
 
   return (
-    <div>
-      <div className="pregame-board">
-        <Board
-          board={playerBoard}
-          handleMouseEnter={handleMouseEnter}
-          handleMouseLeave={handleMouseLeave}
-          handleMouseClick={handlePlaceShip}
-        />
+    <>
+      <div className="pregame-title">
+        <h1>Place your ships on the board</h1>
+        <h2>Click the ship once to select it and move it onto the board to place it:</h2>
       </div>
-      <ShipPlacement
-        ships={ships}
-        handleShipSelect={handleShipSelect}
-        selectedShip={selectedShip}
-        cursorPosition={getPosition()}
-        handleStartGame={handleStartGame}
-      />
-    </div>
+      <div className="pregame-layout">
+        <div>
+          <h3>Your Ships:</h3>
+          <ShipPlacement
+            ships={ships}
+            handleShipSelect={handleShipSelect}
+            selectedShip={selectedShip}
+            cursorPosition={cursorPosition}
+            handleStartGame={handleStartGame}
+          />
+        </div>
+        <div className="pregame-board">
+          <h3>Your Board:</h3>
+          <Board
+            board={playerBoard}
+            handleMouseEnter={handleMouseEnter}
+            handleMouseLeave={handleMouseLeave}
+            handleMouseClick={handlePlaceShip}
+          />
+        </div>
+      </div>
+    </>
   );
 }

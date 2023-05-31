@@ -17,7 +17,7 @@ export default function MainPage({
     <div className="mainpage-container">
       <h1 className="title">Super Cool Battleship Game</h1>
       <input type="text" className="name-input" placeholder="Enter Your Name" onChange={handleNameInputChange} />
-      <button onClick={handleEnterPregame} className="main-page-btn start-btn" disabled={playerName.length <= 0}>
+      <button onClick={handleEnterPregame} className="main-page-btn" disabled={playerName.length <= 0}>
         Start Game
       </button>
 

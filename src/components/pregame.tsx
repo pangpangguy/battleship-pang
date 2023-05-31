@@ -179,7 +179,9 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
   }
 
   function getWindowDimensions() {
-    const { innerWidth: width, innerHeight: height } = window;
+    const width = document.documentElement.scrollWidth;
+    const height = document.documentElement.scrollHeight;
+
     return {
       x: width,
       y: height,
@@ -229,7 +231,7 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
             ships={ships}
             handleShipSelect={handleShipSelect}
             selectedShip={selectedShip}
-            cursorPosition={cursorPosition}
+            cursorPosition={getPosition()}
             handleStartGame={handleStartGame}
           />
         </div>

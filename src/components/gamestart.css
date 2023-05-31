@@ -147,12 +147,22 @@ h3 {
   font-size: 1.5rem;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1100px) {
   .boards-wrapper {
     flex-direction: column;
   }
 
   .boards-wrapper .board {
     margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 800px) {
+  .container h1 {
+    font-size: 3rem;
+  }
+
+  .container button {
+    font-size: 1rem;
   }
 }

@@ -191,9 +191,11 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
 
   return (
     <>
-      <h1>Place your ships on the board</h1>
-      <h2>Click the ship once to select it and move it onto the board to place it:</h2>
-      <div className="pregame">
+      <div className="pregame-title">
+        <h1>Place your ships on the board</h1>
+        <h2>Click the ship once to select it and move it onto the board to place it:</h2>
+      </div>
+      <div className="pregame-layout">
         <div>
           <h3>Your Ships:</h3>
           <ShipPlacement

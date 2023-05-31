@@ -178,15 +178,15 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
   }
 
   useEffect(() => {
+    window.addEventListener("mousemove", handleMouseMove);
     if (selectedShip) {
-      window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("contextmenu", handleShipRotate);
-
-      return () => {
-        window.removeEventListener("mousemove", handleMouseMove);
-        window.removeEventListener("contextmenu", handleShipRotate);
-      };
     }
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("contextmenu", handleShipRotate);
+    };
   }, [selectedShip, handleMouseMove, handleShipRotate]);
 
   return (

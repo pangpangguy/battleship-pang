@@ -119,7 +119,7 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
   }
 
   function handleMouseMove(event: MouseEvent): void {
-    setCursorPosition({ x: event.clientX, y: event.clientY });
+    setCursorPosition({ x: event.pageX, y: event.pageY });
   }
 
   function handleShipSelect(ship: PregameShip | null): void {

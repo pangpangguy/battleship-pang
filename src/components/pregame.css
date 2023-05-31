@@ -19,6 +19,10 @@
   padding: 0.3rem 0.6rem;
 }
 
+.pregame-board {
+  cursor: default;
+}
+
 .pregame-board .cell:not(.header).occupied {
   background-color: rgb(29, 53, 87);
 }
@@ -41,7 +45,5 @@
 @media (max-width: 1100px) {
   .pregame {
     grid-template-columns: 1fr;
-    /* The items will now be stacked vertically, but you might want to reverse the order so that 
-       the 'ShipPlacement' component appears below the 'Board' component */
   }
 }

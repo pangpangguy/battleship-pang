@@ -155,8 +155,10 @@ function App(): ReactElement {
     return isMobileDevice() || windowSize <= 600;
   }
 
-  // Keep track of window resize events
   useEffect(() => {
+    setPlayerName("");
+
+    //To handle when user resizes the window/ changes to mobile
     const handleResize = () => {
       setWindowSize(window.innerWidth);
     };
@@ -220,7 +222,7 @@ function App(): ReactElement {
     <div className="App">
       {disableGame() && (
         <div className="disabled-game-overlay">
-          This game is not optimized for mobile or small screen sizes, change to a bigger screen size plz
+          This game is not optimized for mobile or smaller screen sizes, change device or to a bigger screen size plz
         </div>
       )}
       {renderCurrentGamePhase()}

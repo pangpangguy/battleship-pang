@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getScoreboardData } from "../common/utils";
 import { ScoreData } from "../common/types";
-
+import { Player } from "@lottiefiles/react-lottie-player";
+import loadingAnimation from "../assets/loading.json";
+import { IoMdWifi } from "react-icons/io";
 import "./leaderboard.css";
+
 interface LeaderboardProps {
   handleReturnMainPage: () => void;
 }
@@ -57,29 +60,24 @@ export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
 
   return (
     <div className="leaderboard">
-      {loading && (
-        <Player
-          src="https://assets8.lottiefiles.com/packages/lf20_b88nh30c.json"
-          className="loading-animation"
-          loop
-          autoplay
-        />
+      {loading ? (
+        <Player src={loadingAnimation} className="loading-animation" loop autoplay />
+      ) : (
+        <>
+          <h1>Leaderboard</h1>
+          <h2 className="description">Based on the number of rounds required to beat the AI</h2>
+          {leaderboard.map((entry, index) => (
+            <div className={`board-entry ${getMedalClass(index + 1)}`} key={index}>
+              <h3>{getPlacementIndex(index + 1)}</h3>
+              <h3>{entry ? entry.name : "---"}</h3>
+              <h3>{entry ? entry.score : "---"}</h3>
+            </div>
+          ))}
+          <button className="return-btn" onClick={handleReturnMainPage}>
+            Return
+          </button>
+        </>
       )}
-
-      <h1>Leaderboard</h1>
-      <h2 className="description">Based on the number of rounds required to beat the AI</h2>
-      {leaderboard.map((entry, index) => {
-        return (
-          <div className={`board-entry ${getMedalClass(index + 1)}`} key={index}>
-            <h3>{getPlacementIndex(index + 1)}</h3>
-            <h3>{entry ? entry.name : "---"}</h3>
-            <h3>{entry ? entry.score : "---"}</h3>
-          </div>
-        );
-      })}
-      <button className="return-btn" onClick={handleReturnMainPage}>
-        Return
-      </button>
     </div>
   );
 }

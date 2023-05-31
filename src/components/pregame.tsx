@@ -179,7 +179,9 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
   }
 
   function getWindowDimensions() {
-    const { innerWidth: width, innerHeight: height } = window;
+    const width = document.documentElement.scrollWidth;
+    const height = document.documentElement.scrollHeight;
+
     return {
       x: width,
       y: height,

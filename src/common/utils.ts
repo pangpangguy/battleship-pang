@@ -173,13 +173,15 @@ export function getMaximumPosition(
 ): Position {
   var maxLeftPos, maxTopPos;
 
-  const padding = windowDimension.x * 0.025;
+  //Width of a ship cell is 2.5rem as defined in ship.css, but increasing it slightly to 2.9
+  //to act as padding
+  const cellSize = fontSizeInPixels * 2.9;
   if (orientation === "horizontal") {
-    maxLeftPos = windowDimension.x - fontSizeInPixels * 2.5 * shipSize - padding;
-    maxTopPos = windowDimension.y - fontSizeInPixels * 2.5 - padding;
+    maxLeftPos = windowDimension.x - cellSize * shipSize;
+    maxTopPos = windowDimension.y - cellSize;
   } else {
-    maxLeftPos = windowDimension.x - fontSizeInPixels * 2.5 - padding;
-    maxTopPos = windowDimension.y - fontSizeInPixels * 2.5 * shipSize - padding;
+    maxLeftPos = windowDimension.x - cellSize;
+    maxTopPos = windowDimension.y - cellSize * shipSize;
   }
 
   return {

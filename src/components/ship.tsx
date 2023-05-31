@@ -15,7 +15,8 @@ export default function Ship({
   onShipSelect: (ship: PregameShip) => void;
   selected: boolean;
 }) {
-  const style = {
+  //Dynamically set the position of the ship when it is selected so it follows the cursor
+  const positionStyle = {
     left: `${shipPosition.x}px`,
     top: `${shipPosition.y}px`,
     position: selected ? "absolute" : "static",
@@ -36,7 +37,7 @@ export default function Ship({
     <>
       {!ship.onBoard && (
         <div
-          style={style}
+          style={positionStyle}
           className={classNames("ship", {
             "ship-cell--vertical": selected && ship.orientation === "vertical",
           })}

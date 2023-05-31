@@ -3,7 +3,7 @@ import { getScoreboardData } from "../common/utils";
 import { ScoreData } from "../common/types";
 import { Player } from "@lottiefiles/react-lottie-player";
 import loadingAnimation from "../assets/loading.json";
-import { IoMdWifi } from "react-icons/io";
+import { MdSignalWifiOff } from "react-icons/md";
 import "./leaderboard.css";
 
 interface LeaderboardProps {
@@ -13,10 +13,7 @@ interface LeaderboardProps {
 export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
   const [leaderboard, setLeaderboard] = useState<ScoreData[]>(Array(10));
   const [loading, setLoading] = useState(true);
-<<<<<<< HEAD
   const [timeoutError, setTimeoutError] = useState<boolean>(false); //Display a timeout error when it takes too long
-=======
->>>>>>> feat/862jx5wc5/animation
   const loadingTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function getPlacementIndex(place: number) {
@@ -53,10 +50,6 @@ export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
           }
           leaderboard.sort((a, b) => a.score - b.score);
           setLoading(false);
-<<<<<<< HEAD
-
-=======
->>>>>>> feat/862jx5wc5/animation
           return leaderboard;
         });
       } catch (error) {
@@ -67,7 +60,7 @@ export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
     loadingTimeoutId.current = setTimeout(() => {
       setLoading(false);
       setTimeoutError(true);
-    }, 3000);
+    }, 10000);
 
     getLeaderboard();
 
@@ -83,17 +76,32 @@ export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
 
   return (
     <div className="leaderboard">
-      {loading ? (
-        <Player src={loadingAnimation} className="loading-animation" loop autoplay />
+      {timeoutError ? (
+        <div className="error-message">
+          <MdSignalWifiOff size={48} />
+          <h3>Fail to load the leaderboard.</h3>
+          <h3>Bad connection or potato PC.</h3>
+          <button className="return-btn" onClick={handleReturnMainPage}>
+            Return
+          </button>
+        </div>
+      ) : loading ? (
+        <Player
+          src={loadingAnimation}
+          className="loading-animation"
+          loop
+          autoplay
+          style={{ width: "50rem", height: "20rem" }}
+        />
       ) : (
         <>
           <h1>Leaderboard</h1>
           <h2 className="description">Based on the number of rounds required to beat the AI</h2>
           {leaderboard.map((entry, index) => (
             <div className={`board-entry ${getMedalClass(index + 1)}`} key={index}>
-              <h3>{getPlacementIndex(index + 1)}</h3>
-              <h3>{entry ? entry.name : "---"}</h3>
-              <h3>{entry ? entry.score : "---"}</h3>
+              <p>{getPlacementIndex(index + 1)}</p>
+              <p>{entry ? entry.name : "---"}</p>
+              <p>{entry ? entry.score : "---"}</p>
             </div>
           ))}
           <button className="return-btn" onClick={handleReturnMainPage}>

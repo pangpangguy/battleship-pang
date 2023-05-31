@@ -34,25 +34,22 @@ export default function Ship({
   }
   return (
     <>
-      <div
-        style={style}
-        className={classNames("ship", {
-          "ship--on-board": ship.onBoard,
-          "ship-cell--vertical": selected && ship.orientation === "vertical",
-        })}
-        onClick={(e) => {
-          e.stopPropagation();
-          handleShipClick(ship);
-        }}
-      >
-        {shipCells}
-      </div>
-
+      {!ship.onBoard && (
+        <div
+          style={style}
+          className={classNames("ship", {
+            "ship-cell--vertical": selected && ship.orientation === "vertical",
+          })}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleShipClick(ship);
+          }}
+        >
+          {shipCells}
+        </div>
+      )}
       {/* This is the ship that is displayed in the ship placement area while the selected ship moved around*/}
-      <div
-        className={classNames("ship", { "ship--on-board": ship.onBoard })}
-        style={{ display: selected ? "unset" : "none" }}
-      >
+      <div className={selected || ship.onBoard ? "ship-disabled-overlay" : "ship-disabled-overlay--hide"}>
         {shipCells}
       </div>
     </>

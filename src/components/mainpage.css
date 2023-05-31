@@ -12,25 +12,14 @@
 }
 
 .main-page-btn {
-  border: 3px solid rgb(51, 51, 68);
-  padding: 10px 20px;
   margin-top: 1.7rem;
-  background-color: transparent;
-  color: rgb(51, 51, 68);
-  font-size: 30px;
-  opacity: 0.8;
-  transition: 200ms, opacity 500ms;
+  font-size: 2rem;
 }
 
 .main-page-btn:not(:disabled):hover {
   background-color: rgba(51, 51, 68, 0.1);
   transform: translateY(-10px);
   opacity: 1;
-}
-
-.start-btn:disabled {
-  opacity: 0.3;
-  cursor: default;
 }
 
 .name-input {

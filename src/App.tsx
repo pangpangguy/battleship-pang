@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import {
   CellInfo,
   CellState,
@@ -23,6 +23,7 @@ import Leaderboard from "./components/leaderboard";
 function App(): ReactElement {
   const [gameState, setGameState] = useState<GameState>(getInitialGameState());
   const [playerName, setPlayerName] = useState<string>("");
+  const [windowSize, setWindowSize] = useState<number>(window.innerWidth);
 
   //Get initial game state
   function getInitialGameState(): GameState {
@@ -57,6 +58,7 @@ function App(): ReactElement {
   }
 
   function handleRestartGame() {
+    setPlayerName("");
     setGameState(getInitialGameState());
   }
 
@@ -145,6 +147,32 @@ function App(): ReactElement {
     }
   }
 
+  // Show the overlay message if the user is in mobile mode, or the screen size (width) is <600px
+  function disableGame(): boolean {
+    const isMobileDevice = () => {
+      return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    };
+
+    return isMobileDevice() || windowSize <= 600;
+  }
+
+  useEffect(() => {
+    setPlayerName("");
+
+    //To handle when user resizes the window/ changes to mobile
+    const handleResize = () => {
+      setWindowSize(window.innerWidth);
+    };
+
+    // Register the window resize listener
+    window.addEventListener("resize", handleResize);
+
+    // Unregister the listener on cleanup
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []); // Empty dependency array ensures this effect runs once on mount and cleans up on unmount
+
   function renderCurrentGamePhase() {
     switch (gameState.gamePhase) {
       case GamePhase.PreGame:
@@ -191,6 +219,15 @@ function App(): ReactElement {
     }
   }
 
-  return <div className="App">{renderCurrentGamePhase()}</div>;
+  return (
+    <div className="App">
+      {disableGame() && (
+        <div className="disabled-game-overlay">
+          This game is not optimized for mobile or smaller screen sizes, change device or to a bigger screen size plz
+        </div>
+      )}
+      {renderCurrentGamePhase()}
+    </div>
+  );
 }
 export default App;

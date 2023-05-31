@@ -147,6 +147,7 @@ function App(): ReactElement {
     }
   }
 
+  // Show the overlay message if the user is in mobile mode, or the screen size (width) is <600px
   function disableGame(): boolean {
     const isMobileDevice = () => {
       return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);

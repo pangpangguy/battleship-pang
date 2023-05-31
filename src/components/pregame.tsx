@@ -231,7 +231,7 @@ export default function Pregame({ playerBoard, handleUpdatePlayerBoard, handleSt
             ships={ships}
             handleShipSelect={handleShipSelect}
             selectedShip={selectedShip}
-            cursorPosition={cursorPosition}
+            cursorPosition={getPosition()}
             handleStartGame={handleStartGame}
           />
         </div>

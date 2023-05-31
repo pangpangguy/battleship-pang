@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getScoreboardData } from "../common/utils";
 import { ScoreData } from "../common/types";
 
@@ -9,6 +9,9 @@ interface LeaderboardProps {
 
 export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
   const [leaderboard, setLeaderboard] = useState<ScoreData[]>(Array(10));
+  const [loading, setLoading] = useState(true);
+  const [timeoutError, setTimeoutError] = useState<boolean>(false); //Display a timeout error when it takes too long
+  const loadingTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function getPlacementIndex(place: number) {
     if (place === 1) return "1st";
@@ -36,6 +39,7 @@ export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
         //Fetch existing scoreboard
         const data = await getScoreboardData();
 
+        loadingTimeoutId.current && clearTimeout(loadingTimeoutId.current);
         setLeaderboard((prev) => {
           const leaderboard = [...prev];
           for (let i = 0; i < data.length; i++) {
@@ -43,6 +47,7 @@ export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
           }
           leaderboard.sort((a, b) => a.score - b.score);
           setLoading(false);
+
           return leaderboard;
         });
       } catch (error) {
@@ -50,7 +55,21 @@ export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
       }
     };
 
+    loadingTimeoutId.current = setTimeout(() => {
+      setLoading(false);
+      setTimeoutError(true);
+    }, 3000);
+
     getLeaderboard();
+
+    //Cleanup
+    //In development mode, React renders components twice, creating 2 different timeout Ids (ref: https://react.dev/learn/synchronizing-with-effects)
+    //This code below is to clear the timeoutId from the first render.
+    return () => {
+      if (loadingTimeoutId.current) {
+        clearTimeout(loadingTimeoutId.current);
+      }
+    };
   }, []);
 
   return (

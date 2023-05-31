@@ -42,6 +42,7 @@ export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
             leaderboard[i] = data[i];
           }
           leaderboard.sort((a, b) => a.score - b.score);
+          setLoading(false);
           return leaderboard;
         });
       } catch (error) {
@@ -54,6 +55,14 @@ export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
 
   return (
     <div className="leaderboard">
+      {loading && (
+        <Player
+          src="https://assets8.lottiefiles.com/packages/lf20_b88nh30c.json"
+          className="loading-animation"
+          loop
+          autoplay
+        />
+      )}
       <h1>Leaderboard</h1>
       <h2 className="description">Based on the number of rounds required to beat the AI</h2>
       {leaderboard.map((entry, index) => {

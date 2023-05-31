@@ -199,17 +199,14 @@ export default function GameStart({
         <div className="game-over-overlay">
           <h2>Game Over : {gameState.isPlayerTurn ? "You Win!" : "AI Win!"}</h2>
           {gameState.isPlayerTurn && <h3>You defeated the AI in {gameState.round} rounds!</h3>}
-          <button className="gamestart-btn game-end-btn" onClick={handleRestartGame}>
-            Restart Game
-          </button>
-          <button className="gamestart-btn game-end-btn" onClick={handleEnterLeaderboard}>
+          <button onClick={handleRestartGame}>Restart Game</button>
+          <button style={{ marginTop: "1rem" }} onClick={handleEnterLeaderboard}>
             Go to leaderboard
           </button>
         </div>
       )}
       <div className="restart-btn-wrapper">
         <button
-          className="gamestart-btn"
           onClick={() => {
             aiMoveTimeoutId.current && clearTimeout(aiMoveTimeoutId.current);
             handleRestartGame();

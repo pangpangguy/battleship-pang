@@ -1,34 +1,17 @@
 .ship-placement {
   display: flex;
-  background-color: rgb(255, 235, 205);
+  background-color: rgba(221, 221, 243, 0.7);
   justify-content: space-around;
   align-items: center;
   border-radius: 15px;
-  margin-top: 1rem;
   padding: 1rem;
-  border: 1px solid rgb(0, 0, 0);
   position: "relative";
-  user-select: none;
 }
+
 .ships {
   display: grid;
   width: auto;
   grid-template-columns: auto;
   grid-template-rows: repeat(5, auto);
   gap: 0.5rem;
-}
-
-.start-game {
-  background-color: rgb(179, 255, 159);
-  border-radius: 10px;
-  border: none;
-  transition: 150ms;
-}
-
-.start-game:hover {
-  background-color: rgb(134, 229, 107);
-}
-
-.start-game:disabled {
-  cursor: not-allowed;
 }

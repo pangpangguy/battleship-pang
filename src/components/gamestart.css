@@ -1,12 +1,13 @@
 .container {
   display: flex;
   flex-direction: column;
-  margin: 20px;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0px 0px 20px rgb(191, 191, 191);
-  user-select: none;
   position: relative;
+  /*
+  For debugging purpose: 
+  background-color: rgb(255, 255, 255);
+  */
 }
 
 h2 {
@@ -47,20 +48,20 @@ h3 {
 }
 
 .player-board .occupied {
-  background-color: rgb(138, 228, 138);
+  background-color: rgb(29, 53, 87);
 }
 
 /* For both boards*/
 .discovered.miss {
-  background-color: rgb(255, 255, 255);
+  background-color: rgb(241, 250, 238);
 }
 
 .discovered.hit {
-  background-color: rgb(255, 0, 0);
+  background-color: rgb(230, 39, 55);
 }
 
 .discovered.sunk {
-  background-color: rgba(255, 44, 44, 0.329);
+  background-color: rgba(230, 57, 70, 0.3);
 }
 
 /*Game start button*/
@@ -141,6 +142,31 @@ h3 {
 .game-over-overlay h2 {
   font-size: 4rem;
 }
+
 .game-over-overlay .restart-btn {
   font-size: 1.5rem;
+}
+
+@media (max-width: 1100px) {
+  .boards-wrapper {
+    flex-direction: column;
+  }
+
+  .boards-wrapper .board {
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 800px) {
+  .container h1 {
+    font-size: 2rem;
+  }
+
+  .container h2 {
+    font-size: 1.5rem;
+  }
+
+  .container button {
+    font-size: 1rem;
+  }
 }

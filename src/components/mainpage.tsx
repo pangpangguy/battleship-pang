@@ -14,7 +14,7 @@ export default function MainPage({
   playerName,
 }: MainPageProps) {
   return (
-    <div className="mainpage-container">
+    <div className="mainpage-container animate__animated animate__fadeIn">
       <h1 className="title">Super Cool Battleship Game</h1>
       <input type="text" className="name-input" placeholder="Enter Your Name" onChange={handleNameInputChange} />
       <button onClick={handleEnterPregame} className="main-page-btn" disabled={playerName.length <= 0}>

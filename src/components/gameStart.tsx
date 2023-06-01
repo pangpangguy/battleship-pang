@@ -5,7 +5,8 @@ import "./gamestart.css";
 import { shipList } from "../common/constants";
 import classNames from "classnames";
 import { cellHasShip } from "../common/utils";
-import aiAnimation from "../assets/thinking-animation.gif";
+import aiAnimation from "../assets/thinking.json";
+import { Player } from "@lottiefiles/react-lottie-player";
 
 interface GameStartProps {
   playerBoard: GameStartCellInfo[][];
@@ -29,8 +30,8 @@ export default function GameStart({
   const [gameState, setGameState] = useState<GameState>({ round: 1, isPlayerTurn: true });
   const [opponentShipsRemaining, setOpponentShipsRemaining] = useState(new Map<string, number>(initializeScoreMap()));
   const [playerShipsRemaining, setPlayerShipsRemaining] = useState(new Map<string, number>(initializeScoreMap()));
-  const [playerDiscoverOutcomeMessage, setPlayerDiscoverOutcomeMessage] = useState<string>("");
-  const [opponentDiscoverOutcomeMessage, setOpponentDiscoverOutcomeMessage] = useState<string>("");
+  const [playerMessage, setPlayerMessage] = useState<string>("Select a cell to attack");
+  const [opponentMessage, setOpponentMessage] = useState<string>("AI");
   const playerTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
   const opponentTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
   const aiMoveTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -92,10 +93,11 @@ export default function GameStart({
 
     // Getting a hit or sunk will allow the player to continue selecting cells to attack.
     // Missing will end the player's turn and allow the AI to make a move.
-    showDiscoverOutcomeMessage(newCellState, true, setPlayerDiscoverOutcomeMessage);
+    showDiscoverOutcomeMessage(newCellState, true, setPlayerMessage);
     handleUpdateOpponentBoard(cellsToUpdate);
     if (newCellState === CellState.Miss) {
       setGameState((prev) => ({ ...prev, isPlayerTurn: false }));
+      setTimeout(() => setOpponentMessage("AI is thinking"), 500);
       AIMove();
     }
   }
@@ -113,16 +115,17 @@ export default function GameStart({
       const cellsToUpdate = getCellsToUpdate(playerBoard, cellToAttack, playerShipsRemaining, setPlayerShipsRemaining);
       const newCellState = cellsToUpdate[0].cellState; //new state of cell(s)
 
-      showDiscoverOutcomeMessage(newCellState, false, setOpponentDiscoverOutcomeMessage);
+      showDiscoverOutcomeMessage(newCellState, false, setOpponentMessage);
       handleUpdatePlayerBoard(cellsToUpdate);
 
       if (newCellState === CellState.Miss) {
         setGameState((prev) => ({ round: prev.round + 1, isPlayerTurn: true }));
+        setTimeout(() => setPlayerMessage("Select a cell to attack"), 500);
       } else {
         //Make another move
         AIMove();
       }
-    }, Math.random() * 1000 + 2000);
+    }, Math.random() * 1000 + 3000);
   }
 
   // Check if the ship that is hit will be sunk
@@ -173,19 +176,12 @@ export default function GameStart({
         setDiscoverOutcomeMessage(`${currentAttacker} sunk a ship! ${currentAttacker} can attack again!`);
         break;
     }
-
-    if (isPlayerTurn) {
-      playerTimeoutId.current && clearTimeout(playerTimeoutId.current);
-      playerTimeoutId.current = setTimeout(() => {
-        setDiscoverOutcomeMessage("");
-      }, 1000);
-    } else {
-      opponentTimeoutId.current && clearTimeout(opponentTimeoutId.current);
-      opponentTimeoutId.current = setTimeout(() => {
-        setDiscoverOutcomeMessage("");
-      }, 1000);
-    }
   }
+
+  const showAIThinkingAnimation: boolean =
+    opponentMessage === "AI is thinking" ||
+    opponentMessage === "AI hit a ship! AI can attack again!" ||
+    opponentMessage === "AI sunk a ship! AI can attack again!";
 
   useEffect(() => {
     if (gameEnd && gameState.isPlayerTurn) {
@@ -194,7 +190,7 @@ export default function GameStart({
   }, [gameEnd]);
 
   return (
-    <div className="container">
+    <div className="container animate__animated animate__fadeIn">
       {gameEnd && (
         <div className="game-over-overlay">
           <h2>Game Over : {gameState.isPlayerTurn ? "You Win!" : "AI Win!"}</h2>
@@ -215,17 +211,27 @@ export default function GameStart({
           Restart Game
         </button>
       </div>
-      <h1>
-        Round {gameState.round} - {gameState.isPlayerTurn ? "Your turn!" : "AI's turn!"}
-      </h1>
+      <div className="animate__animated animate__fadeIn" key={gameState.round}>
+        <h1>
+          Round {gameState.round} -&nbsp;
+          <span
+            className="animate__animated animate__fadeIn"
+            key={`${gameState.round}-${gameState.isPlayerTurn ? "player" : "ai"}`}
+          >
+            {gameState.isPlayerTurn ? "Your turn!" : "AI's turn!"}
+          </span>
+        </h1>
+      </div>
       <div className="boards-wrapper">
         <div
           className={classNames("opponent-board", {
             "player-turn": gameState.isPlayerTurn,
           })}
         >
-          <h2>Select a cell to attack:</h2>
-          <div className="discover-outcome-msg">{playerDiscoverOutcomeMessage}</div>
+          <div className="message animate__animated animate__fadeInDown" key={playerMessage}>
+            {playerMessage}
+          </div>
+
           <Board
             board={opponentBoard}
             handleMouseEnter={function (): void {}}
@@ -233,16 +239,16 @@ export default function GameStart({
             handleMouseClick={discoverPlayerCell}
           />
         </div>
-        <div className="player-board">
-          <div className="ai-wrapper">
-            <h2>AI</h2>
-            {gameState.isPlayerTurn ? (
-              <div style={{ width: "1.75rem", height: "auto" }}></div>
-            ) : (
-              <img className="ai-animation" src={aiAnimation} alt="Animated GIF" />
-            )}
+        <div
+          className={classNames("player-board", {
+            "player-turn": gameState.isPlayerTurn,
+          })}
+        >
+          <div className="message animate__animated animate__fadeInDown" key={opponentMessage}>
+            {opponentMessage}
+            {showAIThinkingAnimation && <Player src={aiAnimation} className="ai-animation" loop autoplay />}
           </div>
-          <div className="discover-outcome-msg">{opponentDiscoverOutcomeMessage}</div>
+
           <Board
             board={playerBoard}
             handleMouseEnter={function (): void {}}

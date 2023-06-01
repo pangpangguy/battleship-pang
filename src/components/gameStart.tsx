@@ -95,7 +95,7 @@ export default function GameStart({
     handleUpdateOpponentBoard(cellsToUpdate);
     if (newCellState === CellState.Miss) {
       setGameState((prev) => ({ ...prev, isPlayerTurn: false }));
-      setTimeout(() => setOpponentMessage("AI is thinking"), 250);
+      setOpponentMessage("AI is thinking");
       AIMove();
     }
   }
@@ -118,7 +118,7 @@ export default function GameStart({
 
       if (newCellState === CellState.Miss) {
         setGameState((prev) => ({ round: prev.round + 1, isPlayerTurn: true }));
-        setTimeout(() => setPlayerMessage("Select a cell to attack"), 250);
+        setPlayerMessage("Select a cell to attack");
       } else {
         //Make another move
         AIMove();

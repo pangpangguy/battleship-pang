@@ -32,8 +32,6 @@ export default function GameStart({
   const [playerShipsRemaining, setPlayerShipsRemaining] = useState(new Map<string, number>(initializeScoreMap()));
   const [playerMessage, setPlayerMessage] = useState<string>("Select a cell to attack");
   const [opponentMessage, setOpponentMessage] = useState<string>("AI");
-  const playerTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const opponentTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
   const aiMoveTimeoutId = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const gameEnd = !opponentShipsRemaining.size || !playerShipsRemaining.size;
@@ -97,7 +95,7 @@ export default function GameStart({
     handleUpdateOpponentBoard(cellsToUpdate);
     if (newCellState === CellState.Miss) {
       setGameState((prev) => ({ ...prev, isPlayerTurn: false }));
-      setTimeout(() => setOpponentMessage("AI is thinking"), 500);
+      setTimeout(() => setOpponentMessage("AI is thinking"), 250);
       AIMove();
     }
   }
@@ -120,7 +118,7 @@ export default function GameStart({
 
       if (newCellState === CellState.Miss) {
         setGameState((prev) => ({ round: prev.round + 1, isPlayerTurn: true }));
-        setTimeout(() => setPlayerMessage("Select a cell to attack"), 500);
+        setTimeout(() => setPlayerMessage("Select a cell to attack"), 250);
       } else {
         //Make another move
         AIMove();

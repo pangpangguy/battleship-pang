@@ -54,18 +54,27 @@ export default function MainPage({ handleReturnMainPage }: LeaderboardProps) {
 
   return (
     <div className="leaderboard">
-      <h1>Leaderboard</h1>
-      <h2 className="description">Based on the number of rounds required to beat the AI</h2>
+      <h1 className="animate__animated animate__fadeIn">Leaderboard</h1>
+      <h2 className="description  animate__animated animate__fadeIn">
+        Based on the number of rounds required to beat the AI
+      </h2>
       {leaderboard.map((entry, index) => {
         return (
-          <div className={`board-entry ${getMedalClass(index + 1)}`} key={index}>
+          <div
+            className={`board-entry ${getMedalClass(index + 1)} animate__animated animate__fadeInUp`}
+            style={{ animationDelay: `${index * 0.08}s` }}
+            key={index}
+          >
             <p>{getPlacementIndex(index + 1)}</p>
             <p>{entry ? entry.name : "---"}</p>
             <p>{entry ? entry.score : "---"}</p>
           </div>
         );
       })}
-      <button className="return-btn" onClick={handleReturnMainPage}>
+      <button
+        className="return-btn  animate__animated animate__fadeInUp animate__delay-1s"
+        onClick={handleReturnMainPage}
+      >
         Return
       </button>
     </div>

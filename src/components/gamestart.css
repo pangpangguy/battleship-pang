@@ -32,6 +32,7 @@ h3 {
 
 .opponent-board:not(.player-turn) {
   cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .opponent-board.player-turn .board .cell:not(.header):not(.discovered) {
@@ -43,8 +44,12 @@ h3 {
 }
 
 /* Player's board (right) */
-.player-board > div {
-  opacity: 0.55;
+.player-board {
+  cursor: not-allowed;
+}
+
+.player-board.player-turn {
+  opacity: 0.6;
 }
 
 .player-board .occupied {
@@ -96,28 +101,21 @@ h3 {
   display: flex;
   justify-content: center;
   align-items: center;
-
-  /*Remove the "unclickable" display effect on the player's board.*/
-  opacity: 1;
 }
 
-.discover-outcome-msg {
-  height: 2rem;
-}
-
-.player-board .discover-outcome-msg {
-  /*Remove the "unclickable" display effect on the player's board.*/
-  opacity: 1;
-}
-
-.player-board .discover-outcome-msg {
-  /*Remove the "unclickable" display effect on the player's board.*/
-  opacity: 1;
+.message {
+  font-size: 1.5rem;
+  font-weight: 500;
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-10px);
 }
 
 .ai-animation {
-  width: 1.75rem;
-  height: auto;
+  width: 3rem;
+  height: 3rem;
 }
 
 .game-over-overlay {
